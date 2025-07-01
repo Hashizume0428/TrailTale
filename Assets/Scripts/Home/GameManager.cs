@@ -1,14 +1,28 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
-public class GameManager:MonoBehaviour
+using UnityEngine.UI;
+public class GameManager : MonoBehaviour
 {
-    
-  public void StartBotton()
+    [SerializeField] GameObject configPanel;
+
+    public void StartBotton()
     {
         Debug.Log("Start");
         SceneManager.LoadScene("home");
 
     }
+
+    
+
+    public void ShowconfigPanel()
+    {
+        configPanel.SetActive(true);
+    }
+
+    public void HideConfigPanel()
+    {
+        configPanel.SetActive(false);
+}
 
     public void ItemPageBotton() 
     {
