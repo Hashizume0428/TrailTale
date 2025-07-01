@@ -1,0 +1,9 @@
+{
+    "theme": "宇宙生物と共存している未来の世界",
+    "location": "あべのハルカス",
+    "event": [
+        {"status": "攻撃力", "change": "up"},
+        {"status": "防御力", "change": "up"},
+        {"status": "体力", "change": "down"}
+    ]
+}
