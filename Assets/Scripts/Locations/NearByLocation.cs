@@ -20,7 +20,7 @@ public class NearByLocation : MonoBehaviour
 
     private string CreateRequestJson()
     {
-        var request = new NearBySearchRequest
+        var request = new RequestData
         {
             maxResultCount = 10,
             rankPreference = "DISTANCE",
@@ -30,8 +30,8 @@ public class NearByLocation : MonoBehaviour
                 {
                     center = new LatLng
                     {
-                        latitude = 34.7633,
-                        longitude = 135.5011
+                        latitude = 34.2679,
+                        longitude = 135.1512
                     },
                     radius = 100.0f
                 }

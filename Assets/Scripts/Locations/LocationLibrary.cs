@@ -30,9 +30,11 @@ namespace LocationLibrary
         }
     }
 
-    // NearBy
+    /// <summary>
+    /// NearBySearchを行うときに、このクラスをJSONに変換して使う
+    /// </summary>
     [Serializable]
-    public class NearBySearchRequest
+    public class RequestData
     {
         public int maxResultCount;
         public string rankPreference;
