@@ -399,6 +399,10 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 1577014321}
+    - target: {fileID: 4706896111560513956, guid: ff777550372da574ca6151b9135f33a3, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -933
+      objectReference: {fileID: 0}
     - target: {fileID: 4905812661672822422, guid: ff777550372da574ca6151b9135f33a3, type: 3}
       propertyPath: m_Name
       value: "\u80CC\u666F\u3068\u304B"
@@ -497,7 +501,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5413697374350970861, guid: ff777550372da574ca6151b9135f33a3, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -994.7698
+      value: -941
       objectReference: {fileID: 0}
     - target: {fileID: 5435807425235491328, guid: ff777550372da574ca6151b9135f33a3, type: 3}
       propertyPath: m_AdditionalShaderChannelsFlag
@@ -521,11 +525,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6349363931971545816, guid: ff777550372da574ca6151b9135f33a3, type: 3}
       propertyPath: m_MatchWidthOrHeight
-      value: 0.6
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6349363931971545816, guid: ff777550372da574ca6151b9135f33a3, type: 3}
       propertyPath: m_ReferenceResolution.x
-      value: 1800
+      value: 1500
       objectReference: {fileID: 0}
     - target: {fileID: 6349363931971545816, guid: ff777550372da574ca6151b9135f33a3, type: 3}
       propertyPath: m_ReferenceResolution.y
