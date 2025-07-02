@@ -38,7 +38,7 @@ public class GameManager : MonoBehaviour
     public void ScenarioPageBotton()
     {
         Debug.Log("Scenariopage");
-        SceneManager.LoadScene("Scenario");
+        SceneManager.LoadScene("ScenarioTest");
     }
 
     public void SettingBotton()

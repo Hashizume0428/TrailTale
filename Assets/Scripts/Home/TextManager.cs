@@ -1,7 +1,7 @@
 using UnityEngine;
-using TMPro; // TextMeshProUGUIを使う場合は必須です。
-using System.Collections; // コルーチンを使う場合は必須です。
-using System.Collections.Generic; // Queueを使う場合は必須です。
+using TMPro; // TextMeshProUGUIを使用する場合は必須です。
+using System.Collections; // コルーチンを使用する場合は必須です。
+using System.Collections.Generic; // Queueを使用する場合は必須です。
 
 // MonoBehaviourを継承することでオブジェクトにコンポーネントとして
 // アタッチすることができるようになる
@@ -11,22 +11,29 @@ public class TextManager : MonoBehaviour
     // インスペクター上で値を変更できる
     [SerializeField]
     private TextMeshProUGUI mainText; // メインのテキスト表示用
-    // private TextMeshProUGUI nameText; // 名前の表示用 → 誰が話しているかの機能は削除済みのため、ここでは削除しませんが、もしnameTextが使われていない場合は削除してください。
 
     [Header("Text Settings")] // インスペクターでの表示を分かりやすくする
+    // captionSpeedはPlayerPrefsからロードするため、ここでは[SerializeField]を付けません。
+    private float captionSpeed;
+
+    // 新しく速度段階を定義する値。インスペクターから調整できるようにSerializeFieldも付けます。
+    [SerializeField, Header("Caption Speeds (seconds per char)")]
+    private float fastSpeed = 0.02f;   // 早い速度（秒/文字）
     [SerializeField]
-    private float captionSpeed = 0.05f; // 1文字表示ごとの待機時間 (秒)
+    private float normalSpeed = 0.05f; // 普通の速度（秒/文字）
+    [SerializeField]
+    private float slowSpeed = 0.1f;    // 遅い速度（秒/文字）
 
-    // テキスト分割用の定数
-    // private const char SEPARATE_MAIN_START = '「'; // 不要であれば削除
-    // private const char SEPARATE_MAIN_END = '」';   // 不要であれば削除
-    private const char SEPARATE_PAGE = '&'; // ページ区切り文字
+    // テキストのページ区切り文字
+    private const char SEPARATE_PAGE = '&';
+    // PlayerPrefsで使用するキー名（定数）
+    private const string CAPTION_SPEED_KEY = "CaptionSpeed";
 
-    // テスト用のテキスト。名前のフォーマットが不要になるため修正しました。
-    [TextArea(3, 10)] // インスペクターで複数行入力できるようにする
+    // 表示するテキスト全体。インスペクターで複数行入力できるようにします。
+    [TextArea(3, 10)]
     [SerializeField]
     private string _fullStoryText =
-        "Hello,World!&これはテキスト表示のサンプルです&こんにちは！&次のページはこれで終わりだよ。"; // 名前表示を削除した場合のサンプル
+        "Hello,World!&これはテキスト表示のサンプルです&こんにちは！&次のページはこれで終わりだよ。";
 
     // 1文字ずつ表示するためのキュー
     private Queue<char> _charQueue;
@@ -40,6 +47,10 @@ public class TextManager : MonoBehaviour
     // 最初の更新関数(Updateメソッド)が呼ばれる時に最初に呼ばれる
     private void Start()
     {
+        // PlayerPrefsから現在の表示速度をロードします。
+        // もし保存された設定がなければ、normalSpeedをデフォルトとして使用します。
+        captionSpeed = PlayerPrefs.GetFloat(CAPTION_SPEED_KEY, normalSpeed);
+
         // 初期化処理を開始
         Init();
     }
@@ -84,8 +95,7 @@ public class TextManager : MonoBehaviour
     }
 
     /// <summary>
-    /// キューから1文字を取り出して表示する
-    /// キューが空になったらfalseを返す
+    /// キューから1文字を取り出して表示し、キューが空になったらfalseを返します。
     /// </summary>
     private bool OutputChar()
     {
@@ -98,61 +108,58 @@ public class TextManager : MonoBehaviour
     }
 
     /// <summary>
-    /// 文字送りするコルーチン
+    /// 文字送りを行うコルーチン
     /// </summary>
+    /// <param name="wait">次の文字を表示するまでの待機時間（秒）</param>
     private IEnumerator ShowChars(float wait)
     {
-        // OutputCharメソッドがfalseを返す(=キューが空になる)までループする
+        // OutputCharメソッドがfalseを返す（キューが空になる）までループします
         while (OutputChar())
         {
-            yield return new WaitForSeconds(wait); // wait秒だけ待機
+            yield return new WaitForSeconds(wait); // 指定された時間だけ待機
         }
-        _displayCoroutine = null; // コルーチンが終了したらnullにする
+        _displayCoroutine = null; // コルーチンが終了したらnullにします
         yield break;
     }
 
     /// <summary>
-    /// 1行のテキストを読み込み、キューに格納し、文字送りを開始する
+    /// 1行のテキストを読み込み、文字キューに格納して文字送りを開始します。
     /// </summary>
+    /// <param name="text">表示するテキスト行</param>
     private void ReadLine(string text)
     {
-        // 既存の文字送りコルーチンがあれば停止
+        // 既存の文字送りコルーチンがあれば停止します
         if (_displayCoroutine != null)
         {
             StopCoroutine(_displayCoroutine);
             _displayCoroutine = null;
         }
-
-        // 名前表示機能が不要になったため、名前の分割や設定に関する処理を削除します。
-        // もし以前の_fullStoryTextの形式を維持している場合、ここでの変更も考慮してください。
-        // （例えば、"ナレーター「セリフ」"のような形式から「ナレーター」と「」を削除する必要がある場合）
-        // 現在の_fullStoryTextのフォーマット（名前なし）に合わせて調整しました。
 
         mainText.text = ""; // メインテキストを一度クリア
         _charQueue = SeparateCharacters(text); // テキスト全体を文字キューに変換
 
-        // 新しい文字送りコルーチンを開始し、参照を保持
+        // 現在のcaptionSpeedを使って新しい文字送りコルーチンを開始し、参照を保持します
         _displayCoroutine = StartCoroutine(ShowChars(captionSpeed));
     }
 
     /// <summary>
-    /// 全文を瞬時に表示する
+    /// 全文を瞬時に表示します。
     /// </summary>
     private void OutputAllChar()
     {
-        // 文字送りコルーチンが実行中であれば停止
+        // 文字送りコルーチンが実行中であれば停止します
         if (_displayCoroutine != null)
         {
             StopCoroutine(_displayCoroutine);
             _displayCoroutine = null;
         }
 
-        // キューが空になるまで残りの文字を全て表示
+        // キューが空になるまで残りの文字を全て表示します
         while (OutputChar()) ;
     }
 
     /// <summary>
-    /// 初期化する（最初のページを読み込む）
+    /// 初期化処理（最初のページを読み込みます）
     /// </summary>
     private void Init()
     {
@@ -161,7 +168,7 @@ public class TextManager : MonoBehaviour
     }
 
     /// <summary>
-    /// 次のページ（行）を表示する
+    /// 次のページ（行）を表示します。すべてのページ表示が完了したらfalseを返します。
     /// </summary>
     private bool ShowNextPage()
     {
@@ -175,9 +182,9 @@ public class TextManager : MonoBehaviour
     }
 
     /// <summary>
-    /// クリックしたときの処理（全文表示または次のページへ進む）
+    /// クリックしたときの処理（文字送り中の場合は全文表示、完了していれば次のページへ進みます）
     /// </summary>
-    private void OnClick()
+    public void OnClick() // UIボタンから呼び出せるようにpublicにしています
     {
         // まだ文字送り中であれば全文表示
         if (_charQueue != null && _charQueue.Count > 0)
@@ -194,5 +201,36 @@ public class TextManager : MonoBehaviour
                 Debug.Log("物語が終了しました！");
             }
         }
+    }
+
+    // --- 速度設定メソッド ---
+    /// <summary>
+    /// 表示速度を「早い」に設定し、PlayerPrefsに保存します。
+    /// </summary>
+    public void SetSpeedFast()
+    {
+        captionSpeed = fastSpeed;
+        PlayerPrefs.SetFloat(CAPTION_SPEED_KEY, captionSpeed); // PlayerPrefsに速度を保存
+        Debug.Log("表示速度を「早い」に設定しました: " + captionSpeed);
+    }
+
+    /// <summary>
+    /// 表示速度を「普通」に設定し、PlayerPrefsに保存します。
+    /// </summary>
+    public void SetSpeedNormal()
+    {
+        captionSpeed = normalSpeed;
+        PlayerPrefs.SetFloat(CAPTION_SPEED_KEY, captionSpeed); // PlayerPrefsに速度を保存
+        Debug.Log("表示速度を「普通」に設定しました: " + captionSpeed);
+    }
+
+    /// <summary>
+    /// 表示速度を「遅い」に設定し、PlayerPrefsに保存します。
+    /// </summary>
+    public void SetSpeedSlow()
+    {
+        captionSpeed = slowSpeed;
+        PlayerPrefs.SetFloat(CAPTION_SPEED_KEY, captionSpeed); // PlayerPrefsに速度を保存
+        Debug.Log("表示速度を「遅い」に設定しました: " + captionSpeed);
     }
 }
