@@ -24,7 +24,7 @@ EditorBuildSettings:
     path: Assets/Scenes/Setting.unity
     guid: 67bf765706fb0b342bd448c92130e3d8
   - enabled: 1
-    path: Assets/Scenes/Scenario.unity
+    path: Assets/Scenes/ScenarioTest.unity
     guid: fc0bae33bc67a1442bfa824c7f795563
   - enabled: 1
     path: Assets/Scenes/Backnumber.unity
