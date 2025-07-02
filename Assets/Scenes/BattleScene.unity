@@ -217,6 +217,7 @@ GameObject:
   - component: {fileID: 703749138}
   - component: {fileID: 703749137}
   - component: {fileID: 703749139}
+  - component: {fileID: 703749140}
   m_Layer: 0
   m_Name: Hero
   m_TagString: Hero
@@ -331,6 +332,18 @@ CircleCollider2D:
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
   m_Radius: 0.5
+--- !u!114 &703749140
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 703749136}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2821960f42dff934e93b6665aaf3f1fd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &762615041
 GameObject:
   m_ObjectHideFlags: 0
@@ -1128,6 +1141,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1410577771}
   - component: {fileID: 1410577772}
+  - component: {fileID: 1410577773}
   m_Layer: 0
   m_Name: TriggerArea
   m_TagString: HeroTriggerArea
@@ -1186,6 +1200,19 @@ CircleCollider2D:
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
   m_Radius: 0.7
+--- !u!114 &1410577773
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1410577770}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 79900c2bab4056941b681304e16e59dd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hero: {fileID: 703749136}
 --- !u!1 &1422328793
 GameObject:
   m_ObjectHideFlags: 0
@@ -1354,7 +1381,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2685845e8f0ea9547962e7bfbd466a64, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enemySpeed: -1
 --- !u!58 &1630223129
 CircleCollider2D:
   m_ObjectHideFlags: 0
