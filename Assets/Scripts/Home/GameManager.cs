@@ -11,7 +11,6 @@ public class GameManager : MonoBehaviour
         SceneManager.LoadScene("home");
 
     }
-
     
 
     public void ShowconfigPanel()
