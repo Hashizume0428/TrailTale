@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel;
 
 namespace LocationLibrary
 {
@@ -59,5 +60,27 @@ namespace LocationLibrary
     {
         public double latitude;
         public double longitude;
+    }
+
+    /// <summary>
+    /// NearBySearchの結果を格納するクラス
+    /// </summary>
+    [Serializable]
+    public class ResponseData
+    {
+        public PlaceData[] places;
+    }
+
+    [Serializable]
+    public class PlaceData
+    {
+        public DisplayName displayName;
+    }
+
+    [Serializable]
+    public class DisplayName
+    {
+        public string text;
+        public string languageCode;
     }
 }

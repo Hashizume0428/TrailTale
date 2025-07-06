@@ -1,27 +1,47 @@
 using UnityEngine;
 using AILibrary;
+using LocationLibrary;
 
-/// <summary>
-/// AIからのレスポンスをJSON形式で解析してResponseContentに変換します。
-/// </summary>
-public class ResponseParser : MonoBehaviour
+namespace AILibrary
 {
-    public static ResponseContent ParseResponse(string json)
+    /// <summary>
+    /// AIからのレスポンスをJSON形式で解析してResponseContentに変換します。
+    /// </summary>
+    public class ResponseParser : MonoBehaviour
     {
-        ChatResponse response = JsonUtility.FromJson<ChatResponse>(json);
-
-        if (response.choices != null && response.choices.Length > 0)
+        public static ResponseContent ParseResponse(string json)
         {
-            string content = response.choices[0].message.content;
-            Debug.Log("contentの中身: " + content);
+            ChatResponse response = JsonUtility.FromJson<ChatResponse>(json);
 
-            ResponseContent responseContent = JsonUtility.FromJson<ResponseContent>(content);
-            return responseContent;
-        }
-        else
-        {
-            Debug.LogWarning("レスポンスのchoicesが空です");
-            return null;
+            if (response.choices != null && response.choices.Length > 0)
+            {
+                string content = response.choices[0].message.content;
+                Debug.Log("contentの中身: " + content);
+
+                ResponseContent responseContent = JsonUtility.FromJson<ResponseContent>(content);
+                return responseContent;
+            }
+            else
+            {
+                Debug.LogWarning("レスポンスのchoicesが空です");
+                return null;
+            }
         }
     }
 }
+
+namespace LocationLibrary
+{
+    /// <summary>
+    /// AIからのレスポンスをJSON形式で解析してResponseContentに変換します。
+    /// </summary>
+    public class ResponseParser : MonoBehaviour
+    {
+        public static ResponseData ParseResponse(string json)
+        {
+            ResponseData responseData = JsonUtility.FromJson<ResponseData>(json);
+            return responseData;
+        }
+    }
+}
+

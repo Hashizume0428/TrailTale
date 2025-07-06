@@ -33,33 +33,18 @@ namespace AILibrary
     [Serializable]
     public class InputPrompt
     {
-        public string theme;
         public string location;
-        public string summary;
-        public EventData eventData;
+        public StatusEvent[] eventData;
     }
-
     [Serializable]
-    public class EventData
-    {
-        public string type;
-    }
-
-    [Serializable]
-    public class StatusEvent : EventData
-    {
-        public Option[] options;
-    }
-
-    [Serializable]
-    public class Option
+    public class StatusEvent
     {
         public string status;
-        public int value;
+        public string change;
     }
 
     [Serializable]
-    public class ItemEvent : EventData
+    public class ItemEvent
     {
         public string effect;
     }
@@ -101,5 +86,6 @@ namespace AILibrary
     public class ResponseOption
     {
         public string title;
+        public string result;
     }
 }

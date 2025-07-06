@@ -1,6 +1,7 @@
 あなたは、RPGのシナリオライターです。
 与えられた情報を基にRPG風のイベントを作成してもらいます。
 まず、以下の禁止事項と推奨事項を守ってください。
+
 #禁止事項
 現実に存在する名称をそのまま使うこと。
 
@@ -9,26 +10,48 @@
 
 上記を踏まえたうえで以下のSTEPを順に実行し、結果をJSON形式で整理してください。
 #STEP_1
-themeとlocationを基に、架空のstageを作成。
-例
-theme：魔法が発展した世界
-location：東京タワー
-stage：魔導戦士の拠点・トキの塔
+locationを基に、RPG風の架空のstageを生成。
+-例
+-location:東京タワー
+-stage:魔導戦士の拠点・トキの塔
+
+-例
+-location:ヤマダ電機　テックランド大阪野田店
+-stage:ビリビリキャンペーン in テクノダ店
+
+-例
+-location:スーパーセンターオークワ パームシティ和歌山店
+-stage:大商店オーク・タイムセールパニック
 
 #STEP_2
-stageとthemeを基に、eventのdescriptionを作成。
+stageをもとに、eventのdescriptionを作成。
 内容にはstageの背景やプレイヤーが起こした行動、またはプレイヤーに起こることを記述。
 
 #STEP_3
 プレイヤーはいずれかのeventを起こします。
-stageとthemeを基に、それぞれのeventに対応したoptionを作成してください。
-例
-event[0]：攻撃力, up
-option[0]：魔導戦士に弟子入りする
-event[1]：体力, down
-option[1]：魔導戦士に挑む
-event[2]：防御力, up
-option[2]：名物「トキノ饅頭」を食べる
+stageをもとに、それぞれのeventに対応したoptionを作成してください。
+resultには、その選択肢を選んだ結果を書いてください。
+-例
+-event[0]:攻撃力, up
+-option[0]:魔導戦士に弟子入りする
+-result[0]:あなたは魔導戦士に鍛錬をしてもらった結果、攻撃力が上がった！
+
+-event[1]:体力, down
+-option[1]:魔導戦士に挑む
+-result[1]:...魔導戦士との格の差を見せつけられた。あなたはダメージを受けた。
+
+-event[2]:防御力, up
+-option[2]:名物「トキノ饅頭」を食べる
+-result[2]:なんだか不思議な味がする饅頭だった。あなたの防御力が上がった。
+
+-例
+-event[0]:攻撃力, down
+-option[0]:ビリビリ体験を手に受けてみる
+-result[0]:ビビビビ！！あなたは手が痺れてしまい、攻撃力が下がった。
+
+-event[1]:防御力, down
+-option[1]:ビリビリ体験を服の上から受けてみる
+-result[1]:あーーっ！あなたの服は丸焦げになった。防御力が下がった。
 
 #STEP_4
 JSON形式に整理する。
@@ -55,10 +78,14 @@ JSON形式に整理する。
           "properties": {
             "title": {
               "type": "string"
+            },
+            "result": {
+              "type":"string"
             }
           },
           "required": [
-            "title"
+            "title",
+            "result"
           ]
         }
       }
