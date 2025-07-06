@@ -3,6 +3,6 @@
     "eventData": [
         {"status": "攻撃力", "change": "up"},
         {"status": "防御力", "change": "up"},
-        {"status": "体力", "change": "down"}
+        {"status": "HP", "change": "down"}
     ]
 }

@@ -16,8 +16,7 @@ public class StoryManager : MonoBehaviour
     {
         latitude = 34.6851f,
         longitude = 135.8048f
-    }; // 和歌山大学の緯度経度
-
+    };
 
     private async void Start()
     {

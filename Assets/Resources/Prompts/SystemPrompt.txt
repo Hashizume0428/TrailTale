@@ -36,7 +36,7 @@ resultには、その選択肢を選んだ結果を書いてください。
 -option[0]:魔導戦士に弟子入りする
 -result[0]:あなたは魔導戦士に鍛錬をしてもらった結果、攻撃力が上がった！
 
--event[1]:体力, down
+-event[1]:HP, down
 -option[1]:魔導戦士に挑む
 -result[1]:...魔導戦士との格の差を見せつけられた。あなたはダメージを受けた。
 
@@ -53,47 +53,22 @@ resultには、その選択肢を選んだ結果を書いてください。
 -option[1]:ビリビリ体験を服の上から受けてみる
 -result[1]:あーーっ！あなたの服は丸焦げになった。防御力が下がった。
 
+-event[2]:HP, up
+-option[2]:ビリビリを足の裏に受けてみる
+-result[2]:ツボが刺激されて体が軽くなった！あなたのHPが回復した！
+
+-例
+-event[0]:HP, down
+-option[0]:人気商品に手を伸ばす
+-result[0]:タイムセールの人波にもみくちゃにされ、ダメージを受けた！
+
+-event[1]:攻撃力, up
+-option[1]:人波をかき分けて外に出る
+-result[1]:グイグイ...。なんとか外に出られた！攻撃力が上がった！
+
+-event[2]:防御力, up
+-option[2]:その場で立ち尽くす
+-result[2]:うおおおお！すごい勢いの人波だが、あなたは耐えきることに成功した！防御力が上がった！
+
 #STEP_4
 JSON形式に整理する。
-
-#出力のJsonSchema
-{
-  "name": "StatusEventOutPut",
-  "strict": false,
-  "schema": {
-    "type": "object",
-    "properties": {
-      "stage": {
-        "type": "string"
-      },
-      "description": {
-        "type": "string",
-        "minLength": 600
-      },
-      "options": {
-        "type": "array",
-        "minItems": 1,
-        "items": {
-          "type": "object",
-          "properties": {
-            "title": {
-              "type": "string"
-            },
-            "result": {
-              "type":"string"
-            }
-          },
-          "required": [
-            "title",
-            "result"
-          ]
-        }
-      }
-    },
-    "required": [
-      "stage",
-      "description",
-      "options"
-    ]
-  }
-}

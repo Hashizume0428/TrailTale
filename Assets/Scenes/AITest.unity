@@ -406,7 +406,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f840e2aa13e7d5c49be8f835bfa2035e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  OpenAIApiKey: 
   displayResponse: {fileID: 2038674431}
 --- !u!1 &670544020
 GameObject:
@@ -1126,8 +1125,8 @@ MonoBehaviour:
   aiManager: {fileID: 420059740}
   nearByLocation: {fileID: 2022537786}
   latLng:
-    latitude: 34.68510055541992
-    longitude: 135.80479431152344
+    latitude: 34.7622116
+    longitude: 135.4969214
 --- !u!4 &1777101967
 Transform:
   m_ObjectHideFlags: 0

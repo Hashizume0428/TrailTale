@@ -1,11 +1,7 @@
 using UnityEngine;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using TMPro;
 using UnityEngine.Networking;
-using AILibrary;
 using Cysharp.Threading.Tasks;
+using AILibrary;
 
 /// <summary>
 /// OpenAI APIを使用して、AIからの応答を取得し、UIに表示するクラスです。
@@ -20,27 +16,6 @@ public class AIManager : MonoBehaviour
 
     private string apiUrl = "https://api.openai.com/v1/chat/completions";
 
-    // private string CreateInputPromptJson()
-    // {
-    //     var prompt = new InputPrompt
-    //     {
-    //         theme = "未来都市",
-    //         location = "和歌山大学",
-    //         summary = "",
-    //         eventData = new StatusEvent
-    //         {
-    //             type = "status",
-    //             options = new Option[]
-    //             {
-    //                 new Option { status = "攻撃力", value = 10 },
-    //                 new Option { status = "防御力", value = 2 },
-    //                 new Option { status = "体力", value = 5}
-    //             }
-    //         }
-    //     };
-    //     return JsonUtility.ToJson(prompt);
-    // }
-
     /// <summary>
     /// OpenAI APIに送信するリクエストのJSONを作成します。
     /// </summary>
@@ -48,8 +23,6 @@ public class AIManager : MonoBehaviour
     private string CreateRequestJson(string locationName)
     {
         string systemPrompt = Resources.Load<TextAsset>("Prompts/SystemPrompt").text;
-        string inputPrompt = Resources.Load<TextAsset>("Prompts/InputPrompt").text;
-        Debug.Log("Input Prompt JSON: " + inputPrompt);
 
         InputPrompt inputPromptData = new InputPrompt
         {
@@ -58,7 +31,7 @@ public class AIManager : MonoBehaviour
             {
                 new StatusEvent { status = "攻撃力", change = "up" },
                 new StatusEvent { status = "防御力", change = "up" },
-                new StatusEvent { status = "体力", change = "down" }
+                new StatusEvent { status = "HP", change = "down" }
             }
         };
 
@@ -68,11 +41,56 @@ public class AIManager : MonoBehaviour
         var request = new RequestData
         {
             model = "gpt-4o-mini",
+            //model = "gpt-4o",
             response_format = new ResponseFormat { type = "json_object" },
             messages = new Messages[]
             {
                 new Messages { role = "system", content = systemPrompt },
                 new Messages { role = "user", content = _inputPrompt }
+            },
+            tool_choice = new ToolChoice
+            {
+                type = "function",
+                function = new ToolChoiceFunction
+                {
+                    name = "generate_status_event"
+                }
+            },
+            tools = new ToolRoot[]
+            {
+                new ToolRoot {
+                    type = "function",
+                    function = new ToolRootFunction
+                    {
+                        name = "generate_status_event",
+                        description = "RPGのステータスイベントを生成する",
+                        parameters = new Parameter
+                        {
+                            type = "object",
+                            properties = new ContentProperty
+                            {
+                                stage = new Stage { type = "string" },
+                                description = new Description { type = "string", minLength = 600 },
+                                options = new StatusOption
+                                {
+                                    type = "array",
+                                    minItems = 1,
+                                    items = new Item
+                                    {
+                                        type = "object",
+                                        properties = new StatusOptionProperty
+                                        {
+                                            title = new Title { type = "string" },
+                                            result = new Result { type = "string" }
+                                        },
+                                        required = new string[] { "title", "result" }
+                                    }
+                                }
+                            },
+                            required = new string[] { "stage", "description", "options" }
+                        }
+                    }
+                }
             },
             max_tokens = 2048
         };
