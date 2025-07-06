@@ -13,12 +13,9 @@ public class NearByLocation : MonoBehaviour
     [SerializeField]
     private string GoogleApiKey;
 
-    void Start()
-    {
-        StartCoroutine("SearchNearByLocation");
-    }
+    public ResponseData responseData { get; private set; }
 
-    private string CreateRequestJson()
+    private string CreateRequestJson(LatLng location)
     {
         var request = new RequestData
         {
@@ -28,11 +25,7 @@ public class NearByLocation : MonoBehaviour
             {
                 circle = new Circle
                 {
-                    center = new LatLng
-                    {
-                        latitude = 34.2679,
-                        longitude = 135.1512
-                    },
+                    center = location,
                     radius = 100.0f
                 }
             }
@@ -41,13 +34,18 @@ public class NearByLocation : MonoBehaviour
         return JsonUtility.ToJson(request);
     }
 
-    IEnumerator SearchNearByLocation()
+    /// <summary>
+    /// 指定した位置の近くの場所を検索します。
+    /// </summary>
+    /// <param name="location"></param>
+    public IEnumerator SearchNearByLocation(LatLng location)
     {
-        string url = "https://places.googleapis.com/v1/places:searchNearby";
-        string jsonBody = CreateRequestJson();
-        Debug.Log(jsonBody);
+        string requestJson = CreateRequestJson(location);
 
-        byte[] postData = Encoding.UTF8.GetBytes(jsonBody);
+        string url = "https://places.googleapis.com/v1/places:searchNearby";
+        Debug.Log(requestJson);
+
+        byte[] postData = Encoding.UTF8.GetBytes(requestJson);
 
         UnityWebRequest request = new UnityWebRequest(url, "POST");
         request.uploadHandler = new UploadHandlerRaw(postData);
@@ -61,6 +59,11 @@ public class NearByLocation : MonoBehaviour
         if (request.result == UnityWebRequest.Result.Success)
         {
             Debug.Log("Response:\n" + request.downloadHandler.text);
+            responseData = ResponseParser.ParseResponse(request.downloadHandler.text);
+            for (int i = 0; i< responseData.places.Length; i++)
+            {
+                Debug.Log($"Place {i + 1}: {responseData.places[i].displayName.text}");
+            }
         }
         else
         {
