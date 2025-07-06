@@ -7,6 +7,7 @@ using TMPro;
 using UnityEngine.Networking;
 using System.IO;
 using LocationLibrary;
+using Cysharp.Threading.Tasks;
 
 public class NearByLocation : MonoBehaviour
 {
@@ -38,7 +39,7 @@ public class NearByLocation : MonoBehaviour
     /// 指定した位置の近くの場所を検索します。
     /// </summary>
     /// <param name="location"></param>
-    public IEnumerator SearchNearByLocation(LatLng location)
+    public async UniTask<string> SearchNearByLocation(LatLng location)
     {
         string requestJson = CreateRequestJson(location);
 
@@ -54,21 +55,26 @@ public class NearByLocation : MonoBehaviour
         request.SetRequestHeader("X-Goog-Api-Key", GoogleApiKey);
         request.SetRequestHeader("X-Goog-FieldMask", "places.displayName");
 
-        yield return request.SendWebRequest();
+        await request.SendWebRequest();
 
         if (request.result == UnityWebRequest.Result.Success)
         {
             Debug.Log("Response:\n" + request.downloadHandler.text);
             responseData = ResponseParser.ParseResponse(request.downloadHandler.text);
-            for (int i = 0; i< responseData.places.Length; i++)
+            for (int i = 0; i < responseData.places.Length; i++)
             {
                 Debug.Log($"Place {i + 1}: {responseData.places[i].displayName.text}");
             }
+
+            // 見つかったランドマーク名をランダムで返す
+            int randomIndex = Random.Range(0, responseData.places.Length);
+            return responseData.places[randomIndex].displayName.text;
         }
         else
         {
             Debug.LogError("Error: " + request.error);
             Debug.LogError("Response: " + request.downloadHandler.text);
+            return null;
         }
     }
 }

@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine.Networking;
 using AILibrary;
+using Cysharp.Threading.Tasks;
 
 /// <summary>
 /// OpenAI APIを使用して、AIからの応答を取得し、UIに表示するクラスです。
@@ -71,7 +72,7 @@ public class AIManager : MonoBehaviour
             messages = new Messages[]
             {
                 new Messages { role = "system", content = systemPrompt },
-                new Messages { role = "user", content = inputPrompt }
+                new Messages { role = "user", content = _inputPrompt }
             },
             max_tokens = 2048
         };
@@ -84,7 +85,7 @@ public class AIManager : MonoBehaviour
     /// レスポンスを受け取り、ResponseContentに変換してUIに表示します。
     /// </summary>
     /// <returns></returns>
-    public IEnumerator SendPromptCoroutine(string locationName)
+    public async UniTask SendPromptCoroutine(string locationName)
     {
         string jsonData = CreateRequestJson(locationName);
 
@@ -95,7 +96,7 @@ public class AIManager : MonoBehaviour
         request.SetRequestHeader("Content-Type", "application/json");
         request.SetRequestHeader("Authorization", "Bearer " + OpenAIApiKey);
 
-        yield return request.SendWebRequest();
+        await request.SendWebRequest();
 
         if (request.result == UnityWebRequest.Result.Success)
         {

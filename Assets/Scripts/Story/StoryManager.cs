@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using LocationLibrary;
+using Cysharp.Threading.Tasks;
 
 public class StoryManager : MonoBehaviour
 {
@@ -18,12 +19,13 @@ public class StoryManager : MonoBehaviour
     }; // 和歌山大学の緯度経度
 
 
-    private IEnumerator Start()
+    private async void Start()
     {
         Debug.Log("近くのランドマークを検索しています...");
-        yield return StartCoroutine(nearByLocation.SearchNearByLocation(latLng));
+        string locationName = await nearByLocation.SearchNearByLocation(latLng);
         Debug.Log("ランドマークの検索が完了しました。AIにプロンプトを送信します...");
-        yield return StartCoroutine(aiManager.SendPromptCoroutine(nearByLocation.responseData.places[0].displayName.text));
+        await UniTask.Delay(100);
+        await aiManager.SendPromptCoroutine(locationName);
         Debug.Log("AIからの応答を受信しました。");
     }
 }
