@@ -1,13 +1,8 @@
 using UnityEngine;
-using UnityEngine.UI;
-using System.Text;
-using System.Collections;
-using System.Collections.Generic;
-using TMPro;
 using UnityEngine.Networking;
-using System.IO;
-using LocationLibrary;
+using System.Text;
 using Cysharp.Threading.Tasks;
+using LocationLibrary;
 
 public class NearByLocation : MonoBehaviour
 {
@@ -61,6 +56,13 @@ public class NearByLocation : MonoBehaviour
         {
             Debug.Log("Response:\n" + request.downloadHandler.text);
             responseData = ResponseParser.ParseResponse(request.downloadHandler.text);
+
+            if (responseData.places == null || responseData.places.Length == 0)
+            {
+                Debug.LogWarning("付近のランドマークを発見できませんでした。");
+                return null;
+            }
+
             for (int i = 0; i < responseData.places.Length; i++)
             {
                 Debug.Log($"Place {i + 1}: {responseData.places[i].displayName.text}");
