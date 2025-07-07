@@ -65,13 +65,7 @@ namespace AILibrary
         public string name;
         public string arguments;
     }
-
-    [Serializable]
-    public class Arguments
-    {
-
-    }
-
+    
     /// <summary>
     /// ResponseContent
     /// </summary>

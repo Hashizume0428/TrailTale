@@ -29,7 +29,8 @@ stageをもとに、eventのdescriptionを作成。
 
 #STEP_3
 プレイヤーはいずれかのeventを起こします。
-stageをもとに、それぞれのeventに対応したoptionを作成してください。
+stageをもとに、optionを生成してください。
+optionの個数はeventDataCountに従ってください。
 resultには、その選択肢を選んだ結果を書いてください。
 -例
 -event[0]:攻撃力, up

@@ -17,12 +17,18 @@ public class DisplayResponse : MonoBehaviour
     private Transform optionArea;
 
     [SerializeField]
+    private TextMeshProUGUI resultText;
+
+    [SerializeField]
     private OptionUI optionUIPrefab;
 
     private OptionUI[] optionUIs;
 
+    private ResponseContent responseContent;
+
     public void DisplayResponseContent(ResponseContent responseContent)
     {
+        this.responseContent = responseContent;
         stageText.text = responseContent.stage;
         descriptionText.text = responseContent.description;
 
@@ -31,6 +37,16 @@ public class DisplayResponse : MonoBehaviour
         {
             optionUIs[i] = Instantiate(optionUIPrefab, optionArea);
             optionUIs[i].SetText(responseContent.options[i].title);
+            optionUIs[i].SetOnClickListener(DisplayResult, i);
         }
+    }
+
+    public void DisplayResult(int index)
+    {
+        foreach (var optionUI in optionUIs)
+        {
+            optionUI.SetState(false);
+        }
+        resultText.text = responseContent.options[index].result;
     }
 }

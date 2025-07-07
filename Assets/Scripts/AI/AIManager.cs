@@ -11,30 +11,17 @@ public class AIManager : MonoBehaviour
     [SerializeField]
     private string OpenAIApiKey;
 
-    [SerializeField]
-    private DisplayResponse displayResponse;
-
     private string apiUrl = "https://api.openai.com/v1/chat/completions";
 
     /// <summary>
     /// OpenAI APIに送信するリクエストのJSONを作成します。
     /// </summary>
     /// <returns></returns>
-    private string CreateRequestJson(string locationName)
+    private string CreateRequestJson(string locationName, StatusEventData statusEventData)
     {
         string systemPrompt = Resources.Load<TextAsset>("Prompts/SystemPrompt").text;
 
-        InputPrompt inputPromptData = new InputPrompt
-        {
-            location = locationName,
-            eventData = new StatusEvent[]
-            {
-                new StatusEvent { status = "攻撃力", change = "up" },
-                new StatusEvent { status = "防御力", change = "up" },
-                new StatusEvent { status = "HP", change = "down" }
-            }
-        };
-
+        InputPrompt inputPromptData = InputPromptBuilder.Create(locationName, statusEventData);
         string _inputPrompt = JsonUtility.ToJson(inputPromptData);
         Debug.Log("_Input Prompt JSON: " + _inputPrompt);
 
@@ -103,9 +90,24 @@ public class AIManager : MonoBehaviour
     /// レスポンスを受け取り、ResponseContentに変換してUIに表示します。
     /// </summary>
     /// <returns></returns>
-    public async UniTask SendPromptCoroutine(string locationName)
+    public async UniTask<ResponseContent> SendPrompt(string locationName, EventData eventData)
     {
-        string jsonData = CreateRequestJson(locationName);
+        string jsonData;
+        if (eventData.GetEventType() == EventData.EventType.Status)
+        {
+            jsonData = CreateRequestJson(locationName, (StatusEventData)eventData);
+        }
+        else if (eventData.GetEventType() == EventData.EventType.Item)
+        {
+            // TODO: ItemEventDataの処理を実装する
+            Debug.LogWarning("ItemEventDataの処理は未実装です。");
+            return null;
+        }
+        else
+        {
+            Debug.LogError("Unsupported event type: " + eventData.GetEventType());
+            return null;
+        }
 
         UnityWebRequest request = new UnityWebRequest(apiUrl, "POST");
         byte[] bodyRaw = System.Text.Encoding.UTF8.GetBytes(jsonData);
@@ -124,13 +126,14 @@ public class AIManager : MonoBehaviour
             // レスポンスをResponseContentに変換
             var responseContent = ResponseParser.ParseResponse(request.downloadHandler.text);
 
-            // ResponseContentをUIに表示
-            displayResponse.DisplayResponseContent(responseContent);
+            return responseContent;
         }
         else
         {
             Debug.LogError("Error: " + request.error);
         }
+
+        return null;
     }
 }
 
