@@ -1,7 +1,7 @@
+using System;
+
 namespace LocationLibrary
 {
-    using System;
-
     public static class Constants
     {
         public const float MAP_SIZE = 5.5f;
@@ -28,5 +28,34 @@ namespace LocationLibrary
             MaxLat = float.MinValue;
             MaxLon = float.MinValue;
         }
+    }
+
+    // NearBy
+    [Serializable]
+    public class NearBySearchRequest
+    {
+        public int maxResultCount;
+        public string rankPreference;
+        public LocationRestriction locationRestriction;
+    }
+
+    [Serializable]
+    public class LocationRestriction
+    {
+        public Circle circle;
+    }
+
+    [Serializable]
+    public class Circle
+    {
+        public LatLng center;
+        public float radius;
+    }
+
+    [Serializable]
+    public class LatLng
+    {
+        public double latitude;
+        public double longitude;
     }
 }

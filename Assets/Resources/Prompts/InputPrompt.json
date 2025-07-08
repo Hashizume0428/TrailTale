@@ -1,8 +1,0 @@
-{
-    "location": "あべのハルカス",
-    "eventData": [
-        {"status": "攻撃力", "change": "up"},
-        {"status": "防御力", "change": "up"},
-        {"status": "HP", "change": "down"}
-    ]
-}
