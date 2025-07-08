@@ -12,13 +12,16 @@ public class TextManager : MonoBehaviour
     [SerializeField]
     private TextMeshProUGUI mainText; // メインのテキスト表示用
 
+    [SerializeField]
+    private TextMeshProUGUI speedDisplayText; // 現在の速度表示用
+
     [Header("Text Settings")] // インスペクターでの表示を分かりやすくする
     // captionSpeedはPlayerPrefsからロードするため、ここでは[SerializeField]を付けません。
     private float captionSpeed;
 
     // 新しく速度段階を定義する値。インスペクターから調整できるようにSerializeFieldも付けます。
     [SerializeField, Header("Caption Speeds (seconds per char)")]
-    private float fastSpeed = 0.02f;   // 早い速度（秒/文字）
+    private float fastSpeed = 0.02f;     // 早い速度（秒/文字）
     [SerializeField]
     private float normalSpeed = 0.05f; // 普通の速度（秒/文字）
     [SerializeField]
@@ -27,7 +30,7 @@ public class TextManager : MonoBehaviour
     // テキストのページ区切り文字
     private const char SEPARATE_PAGE = '&';
     // PlayerPrefsで使用するキー名（定数）
-    private const string CAPTION_SPEED_KEY = "CaptionSpeed";
+    private const string CAPTION_SPEED_KEY = "CaptionSpeed"; // 正しいキー名
 
     // 表示するテキスト全体。インスペクターで複数行入力できるようにします。
     [TextArea(3, 10)]
@@ -53,6 +56,30 @@ public class TextManager : MonoBehaviour
 
         // 初期化処理を開始
         Init();
+
+        // Start()でもUpdateSpeedDisplayText()を呼び出しておくことで、
+        // シーンロード時にオブジェクトがアクティブであればすぐに表示される。
+        // ただし、OnEnable()でも呼び出すため、設定画面が非アクティブからアクティブになる際にも対応できる。
+        UpdateSpeedDisplayText();
+    }
+
+    // ゲームオブジェクトがアクティブになるたびに呼び出される
+    private void OnEnable()
+    {
+        // オブジェクトがアクティブになったときに、現在の速度表示を更新
+        // これにより、設定画面が非アクティブからアクティブになった際にも表示が更新される
+        // ただし、Start()よりOnEnable()の方が早く実行されることがあるため、
+        // captionSpeedがまだロードされていない可能性も考慮する
+        if (captionSpeed == 0 && PlayerPrefs.HasKey(CAPTION_SPEED_KEY)) // まだロードされていない、かつキーが存在する場合
+        {
+            captionSpeed = PlayerPrefs.GetFloat(CAPTION_SPEED_KEY, normalSpeed);
+        }
+        else if (captionSpeed == 0) // キーも存在しない場合
+        {
+            captionSpeed = normalSpeed;
+        }
+
+        UpdateSpeedDisplayText();
     }
 
     // MonoBehaviourを継承している場合限定で
@@ -211,7 +238,8 @@ public class TextManager : MonoBehaviour
     {
         captionSpeed = fastSpeed;
         PlayerPrefs.SetFloat(CAPTION_SPEED_KEY, captionSpeed); // PlayerPrefsに速度を保存
-        Debug.Log("表示速度を「早い」に設定しました: " + captionSpeed);
+        UpdateSpeedDisplayText(); // 速度表示テキストを更新
+        Debug.Log("文字送り速度を「早い」に設定しました: " + captionSpeed);
     }
 
     /// <summary>
@@ -221,7 +249,8 @@ public class TextManager : MonoBehaviour
     {
         captionSpeed = normalSpeed;
         PlayerPrefs.SetFloat(CAPTION_SPEED_KEY, captionSpeed); // PlayerPrefsに速度を保存
-        Debug.Log("表示速度を「普通」に設定しました: " + captionSpeed);
+        UpdateSpeedDisplayText(); // 速度表示テキストを更新
+        Debug.Log("文字送り速度を「普通」に設定しました: " + captionSpeed);
     }
 
     /// <summary>
@@ -231,6 +260,40 @@ public class TextManager : MonoBehaviour
     {
         captionSpeed = slowSpeed;
         PlayerPrefs.SetFloat(CAPTION_SPEED_KEY, captionSpeed); // PlayerPrefsに速度を保存
-        Debug.Log("表示速度を「遅い」に設定しました: " + captionSpeed);
+        UpdateSpeedDisplayText(); // 速度表示テキストを更新
+        Debug.Log("文字送り速度を「遅い」に設定しました: " + captionSpeed);
+    }
+
+    /// <summary>
+    /// 現在の表示速度に応じて、速度表示テキストを更新します。
+    /// </summary>
+    private void UpdateSpeedDisplayText()
+    {
+        if (speedDisplayText == null)
+        {
+            Debug.LogWarning("Speed Display Text (TextMeshProUGUI) is not assigned in the Inspector.");
+            return;
+        }
+
+        string speedText = "";
+        // 浮動小数点数の比較には Mathf.Approximately を使用します
+        if (Mathf.Approximately(captionSpeed, fastSpeed))
+        {
+            speedText = "はやい";
+        }
+        else if (Mathf.Approximately(captionSpeed, normalSpeed))
+        {
+            speedText = "ふつう";
+        }
+        else if (Mathf.Approximately(captionSpeed, slowSpeed))
+        {
+            speedText = "ゆっくり";
+        }
+        else
+        {
+            speedText = "不明な速度"; // 予期しない値の場合
+        }
+
+        speedDisplayText.text = "現在の表示速度：" + speedText;
     }
 }
