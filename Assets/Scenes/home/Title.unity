@@ -536,7 +536,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1827211307}
         m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
-        m_MethodName: ShowconfigPanel
+        m_MethodName: ShowConfigPanel
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -692,7 +692,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1827211307}
         m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
-        m_MethodName: StartBotton
+        m_MethodName: StartButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1385,6 +1385,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   configPanel: {fileID: 1705102156}
+  sceneTransitionDelay: 0.2
 --- !u!4 &1827211308
 Transform:
   m_ObjectHideFlags: 0
