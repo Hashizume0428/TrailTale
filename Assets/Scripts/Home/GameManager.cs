@@ -1,19 +1,23 @@
 using UnityEngine;
+
 using UnityEngine.SceneManagement;
+
 using UnityEngine.UI;
-using System.Collections; // ƒRƒ‹[ƒ`ƒ“‚ğg—p‚·‚é‚½‚ß‚É•K—v‚Å‚·
+using System.Collections; // ï¿½Rï¿½ï¿½ï¿½[ï¿½`ï¿½ï¿½ï¿½ï¿½ï¿½gï¿½pï¿½ï¿½ï¿½é‚½ï¿½ß‚É•Kï¿½vï¿½Å‚ï¿½
 
 public class GameManager : MonoBehaviour
+
 {
+
     [SerializeField] GameObject configPanel;
 
-    // ƒV[ƒ“‘JˆÚ‚Ü‚Å‚Ìƒ‰ƒOŠÔi•bj
+    // ï¿½Vï¿½[ï¿½ï¿½ï¿½Jï¿½Ú‚Ü‚Å‚Ìƒï¿½ï¿½Oï¿½ï¿½ï¿½Ôiï¿½bï¿½j
     [Header("Scene Transition Settings")]
     [SerializeField] private float sceneTransitionDelay = 0.8f;
 
-    // --- ƒVƒ“ƒOƒ‹ƒgƒ“ƒpƒ^[ƒ“ (‚à‚µGameManager‚àDontDestroyOnLoad‚È‚ç) ---
-    // ‚à‚µ‚±‚ÌGameManager‚ªDontDestroyOnLoad‚Å‰i‘±‰»‚³‚ê‚Ä‚¢‚é‚È‚çA
-    // ˆÈ‰º‚ÌƒVƒ“ƒOƒ‹ƒgƒ“À‘•‚ğAwake‚É’Ç‰Á‚µ‚Ä‚­‚¾‚³‚¢B
+    // --- ï¿½Vï¿½ï¿½ï¿½Oï¿½ï¿½ï¿½gï¿½ï¿½ï¿½pï¿½^ï¿½[ï¿½ï¿½ (ï¿½ï¿½ï¿½ï¿½GameManagerï¿½ï¿½DontDestroyOnLoadï¿½È‚ï¿½) ---
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½GameManagerï¿½ï¿½DontDestroyOnLoadï¿½Å‰iï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä‚ï¿½ï¿½ï¿½È‚ï¿½A
+    // ï¿½È‰ï¿½ï¿½ÌƒVï¿½ï¿½ï¿½Oï¿½ï¿½ï¿½gï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Awakeï¿½É’Ç‰ï¿½ï¿½ï¿½ï¿½Ä‚ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½B
     // private static GameManager instance = null;
     // public static GameManager Instance { get { return instance; } }
     // void Awake() {
@@ -22,15 +26,15 @@ public class GameManager : MonoBehaviour
     //     DontDestroyOnLoad(this.gameObject);
     // }
 
-    // --- Šù‘¶‚Ìƒƒ\ƒbƒhiC³j ---
+    // --- ï¿½ï¿½ï¿½ï¿½ï¿½Ìƒï¿½ï¿½\ï¿½bï¿½hï¿½iï¿½Cï¿½ï¿½ï¿½j ---
 
-    public void StartButton() // ƒƒ\ƒbƒh–¼‚ğStartBotton‚©‚çStartButton‚ÉC³‚µ‚Ü‚µ‚½i„§j
+    public void StartButton() // ï¿½ï¿½ï¿½\ï¿½bï¿½hï¿½ï¿½ï¿½ï¿½StartBottonï¿½ï¿½ï¿½ï¿½StartButtonï¿½ÉCï¿½ï¿½ï¿½ï¿½ï¿½Ü‚ï¿½ï¿½ï¿½ï¿½iï¿½ï¿½ï¿½ï¿½ï¿½j
     {
         Debug.Log("Start Button clicked.");
-        StartCoroutine(LoadSceneWithDelay("home")); // ƒRƒ‹[ƒ`ƒ“‚ğŠJn
+        StartCoroutine(LoadSceneWithDelay("home")); // ï¿½Rï¿½ï¿½ï¿½[ï¿½`ï¿½ï¿½ï¿½ï¿½ï¿½Jï¿½n
     }
 
-    public void ShowConfigPanel() // ƒƒ\ƒbƒh–¼‚ğShowconfigPanel‚©‚çShowConfigPanel‚ÉC³‚µ‚Ü‚µ‚½i„§j
+    public void ShowConfigPanel() // ï¿½ï¿½ï¿½\ï¿½bï¿½hï¿½ï¿½ï¿½ï¿½ShowconfigPanelï¿½ï¿½ï¿½ï¿½ShowConfigPanelï¿½ÉCï¿½ï¿½ï¿½ï¿½ï¿½Ü‚ï¿½ï¿½ï¿½ï¿½iï¿½ï¿½ï¿½ï¿½ï¿½j
     {
         if (configPanel != null)
         {
@@ -43,7 +47,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void HideConfigPanel() // ƒƒ\ƒbƒh–¼‚ğHideConfigPanel‚©‚çHideConfigPanel‚ÉC³‚µ‚Ü‚µ‚½i„§j
+    public void HideConfigPanel() // ï¿½ï¿½ï¿½\ï¿½bï¿½hï¿½ï¿½ï¿½ï¿½HideConfigPanelï¿½ï¿½ï¿½ï¿½HideConfigPanelï¿½ÉCï¿½ï¿½ï¿½ï¿½ï¿½Ü‚ï¿½ï¿½ï¿½ï¿½iï¿½ï¿½ï¿½ï¿½ï¿½j
     {
         if (configPanel != null)
         {
@@ -56,63 +60,63 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void ItemPageButton() // ƒƒ\ƒbƒh–¼‚ğItemPageBotton‚©‚çItemPageButton‚ÉC³‚µ‚Ü‚µ‚½i„§j
+    public void ItemPageButton() // ï¿½ï¿½ï¿½\ï¿½bï¿½hï¿½ï¿½ï¿½ï¿½ItemPageBottonï¿½ï¿½ï¿½ï¿½ItemPageButtonï¿½ÉCï¿½ï¿½ï¿½ï¿½ï¿½Ü‚ï¿½ï¿½ï¿½ï¿½iï¿½ï¿½ï¿½ï¿½ï¿½j
     {
         Debug.Log("ItemPageButton clicked.");
-        StartCoroutine(LoadSceneWithDelay("Item")); // ƒRƒ‹[ƒ`ƒ“‚ğŠJn
+        StartCoroutine(LoadSceneWithDelay("Item")); // ï¿½Rï¿½ï¿½ï¿½[ï¿½`ï¿½ï¿½ï¿½ï¿½ï¿½Jï¿½n
     }
 
-    public void StatusPageButton() // ƒƒ\ƒbƒh–¼‚ğStatusPageBotton‚©‚çStatusPageButton‚ÉC³‚µ‚Ü‚µ‚½i„§j
+    public void StatusPageButton() // ï¿½ï¿½ï¿½\ï¿½bï¿½hï¿½ï¿½ï¿½ï¿½StatusPageBottonï¿½ï¿½ï¿½ï¿½StatusPageButtonï¿½ÉCï¿½ï¿½ï¿½ï¿½ï¿½Ü‚ï¿½ï¿½ï¿½ï¿½iï¿½ï¿½ï¿½ï¿½ï¿½j
     {
         Debug.Log("StatusPageButton clicked.");
-        StartCoroutine(LoadSceneWithDelay("Status")); // ƒRƒ‹[ƒ`ƒ“‚ğŠJn
+        StartCoroutine(LoadSceneWithDelay("Status")); // ï¿½Rï¿½ï¿½ï¿½[ï¿½`ï¿½ï¿½ï¿½ï¿½ï¿½Jï¿½n
     }
 
-    public void ScenarioPageButton() // ƒƒ\ƒbƒh–¼‚ğScenarioPageBotton‚©‚çScenarioPageButton‚ÉC³‚µ‚Ü‚µ‚½i„§j
+    public void ScenarioPageButton() // ï¿½ï¿½ï¿½\ï¿½bï¿½hï¿½ï¿½ï¿½ï¿½ScenarioPageBottonï¿½ï¿½ï¿½ï¿½ScenarioPageButtonï¿½ÉCï¿½ï¿½ï¿½ï¿½ï¿½Ü‚ï¿½ï¿½ï¿½ï¿½iï¿½ï¿½ï¿½ï¿½ï¿½j
     {
         Debug.Log("ScenarioPageButton clicked.");
-        StartCoroutine(LoadSceneWithDelay("ScenarioTest")); // ƒRƒ‹[ƒ`ƒ“‚ğŠJn
+        StartCoroutine(LoadSceneWithDelay("ScenarioTest")); // ï¿½Rï¿½ï¿½ï¿½[ï¿½`ï¿½ï¿½ï¿½ï¿½ï¿½Jï¿½n
     }
 
-    public void SettingButton() // ƒƒ\ƒbƒh–¼‚ğSettingBotton‚©‚çSettingButton‚ÉC³‚µ‚Ü‚µ‚½i„§j
+    public void SettingButton() // ï¿½ï¿½ï¿½\ï¿½bï¿½hï¿½ï¿½ï¿½ï¿½SettingBottonï¿½ï¿½ï¿½ï¿½SettingButtonï¿½ÉCï¿½ï¿½ï¿½ï¿½ï¿½Ü‚ï¿½ï¿½ï¿½ï¿½iï¿½ï¿½ï¿½ï¿½ï¿½j
     {
         Debug.Log("SettingButton clicked.");
-        StartCoroutine(LoadSceneWithDelay("Setting")); // ƒRƒ‹[ƒ`ƒ“‚ğŠJn
+        StartCoroutine(LoadSceneWithDelay("Setting")); // ï¿½Rï¿½ï¿½ï¿½[ï¿½`ï¿½ï¿½ï¿½ï¿½ï¿½Jï¿½n
     }
 
-    public void BacknumberButton() // ƒƒ\ƒbƒh–¼‚ğBackbumerBotton‚©‚çBacknumberButton‚ÉC³‚µ‚Ü‚µ‚½i„§j
+    public void BacknumberButton() // ï¿½ï¿½ï¿½\ï¿½bï¿½hï¿½ï¿½ï¿½ï¿½BackbumerBottonï¿½ï¿½ï¿½ï¿½BacknumberButtonï¿½ÉCï¿½ï¿½ï¿½ï¿½ï¿½Ü‚ï¿½ï¿½ï¿½ï¿½iï¿½ï¿½ï¿½ï¿½ï¿½j
     {
         Debug.Log("BacknumberButton clicked.");
-        StartCoroutine(LoadSceneWithDelay("Backnumber")); // ƒRƒ‹[ƒ`ƒ“‚ğŠJn
+        StartCoroutine(LoadSceneWithDelay("Backnumber")); // ï¿½Rï¿½ï¿½ï¿½[ï¿½`ï¿½ï¿½ï¿½ï¿½ï¿½Jï¿½n
     }
 
-    public void TitleButton() // ƒƒ\ƒbƒh–¼‚ğTitleBotton‚©‚çTitleButton‚ÉC³‚µ‚Ü‚µ‚½i„§j
+    public void TitleButton() // ï¿½ï¿½ï¿½\ï¿½bï¿½hï¿½ï¿½ï¿½ï¿½TitleBottonï¿½ï¿½ï¿½ï¿½TitleButtonï¿½ÉCï¿½ï¿½ï¿½ï¿½ï¿½Ü‚ï¿½ï¿½ï¿½ï¿½iï¿½ï¿½ï¿½ï¿½ï¿½j
     {
         Debug.Log("TitleButton clicked.");
-        StartCoroutine(LoadSceneWithDelay("Title")); // ƒRƒ‹[ƒ`ƒ“‚ğŠJn
+        StartCoroutine(LoadSceneWithDelay("Title")); // ï¿½Rï¿½ï¿½ï¿½[ï¿½`ï¿½ï¿½ï¿½ï¿½ï¿½Jï¿½n
     }
 
-    public void HomeButton() // ƒƒ\ƒbƒh–¼‚ğHomeBotton‚©‚çHomeButton‚ÉC³‚µ‚Ü‚µ‚½i„§j
+    public void HomeButton() // ï¿½ï¿½ï¿½\ï¿½bï¿½hï¿½ï¿½ï¿½ï¿½HomeBottonï¿½ï¿½ï¿½ï¿½HomeButtonï¿½ÉCï¿½ï¿½ï¿½ï¿½ï¿½Ü‚ï¿½ï¿½ï¿½ï¿½iï¿½ï¿½ï¿½ï¿½ï¿½j
     {
         Debug.Log("HomeButton clicked.");
-        StartCoroutine(LoadSceneWithDelay("home")); // ƒRƒ‹[ƒ`ƒ“‚ğŠJn
+        StartCoroutine(LoadSceneWithDelay("home")); // ï¿½Rï¿½ï¿½ï¿½[ï¿½`ï¿½ï¿½ï¿½ï¿½ï¿½Jï¿½n
     }
 
-    // --- V‹K’Ç‰Áƒƒ\ƒbƒh ---
+    // --- ï¿½Vï¿½Kï¿½Ç‰ï¿½ï¿½ï¿½ï¿½\ï¿½bï¿½h ---
 
     /// <summary>
-    /// w’è‚³‚ê‚½ŠÔ‘Ò‹@‚µ‚½ŒãAƒV[ƒ“‚ğƒ[ƒh‚·‚éƒRƒ‹[ƒ`ƒ“
+    /// ï¿½wï¿½è‚³ï¿½ê‚½ï¿½ï¿½ï¿½Ô‘Ò‹@ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Aï¿½Vï¿½[ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½[ï¿½hï¿½ï¿½ï¿½ï¿½Rï¿½ï¿½ï¿½[ï¿½`ï¿½ï¿½
     /// </summary>
-    /// <param name="sceneName">ƒ[ƒh‚·‚éƒV[ƒ“‚Ì–¼‘O</param>
+    /// <param name="sceneName">ï¿½ï¿½ï¿½[ï¿½hï¿½ï¿½ï¿½ï¿½Vï¿½[ï¿½ï¿½ï¿½Ì–ï¿½ï¿½O</param>
     private IEnumerator LoadSceneWithDelay(string sceneName)
     {
-        // ‚±‚±‚ÅAƒNƒŠƒbƒN‚³‚ê‚½ƒ{ƒ^ƒ“‚ğ–³Œø‰»‚·‚é‚È‚Ç‚ÌUIƒtƒB[ƒhƒoƒbƒN‚ğ“ü‚ê‚é‚Æ—Ç‚¢‚Å‚µ‚å‚¤
-        // —á: EventSystem.current.currentSelectedGameObject.GetComponent<Button>().interactable = false;
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ÅAï¿½Nï¿½ï¿½ï¿½bï¿½Nï¿½ï¿½ï¿½ê‚½ï¿½{ï¿½^ï¿½ï¿½ï¿½ğ–³Œï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È‚Ç‚ï¿½UIï¿½tï¿½Bï¿½[ï¿½hï¿½oï¿½bï¿½Nï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ—Ç‚ï¿½ï¿½Å‚ï¿½ï¿½å‚¤
+        // ï¿½ï¿½: EventSystem.current.currentSelectedGameObject.GetComponent<Button>().interactable = false;
 
         Debug.Log($"Waiting for {sceneTransitionDelay} seconds before loading scene: {sceneName}");
-        yield return new WaitForSeconds(sceneTransitionDelay); // w’è‚³‚ê‚½•b”‘Ò‹@
+        yield return new WaitForSeconds(sceneTransitionDelay); // ï¿½wï¿½è‚³ï¿½ê‚½ï¿½bï¿½ï¿½ï¿½Ò‹@
 
         Debug.Log($"Loading scene: {sceneName}");
-        SceneManager.LoadScene(sceneName); // ƒV[ƒ“‚ğƒ[ƒh
+        SceneManager.LoadScene(sceneName); // ï¿½Vï¿½[ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½[ï¿½h
     }
 }
