@@ -3055,6 +3055,18 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Arguments.m_ObjectArgumentAssemblyTypeName
       value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
+    - target: {fileID: 4596960669953540849, guid: 4236c88d6609add43a15951a9491f47f, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName
+      value: PlayClickSFX
+      objectReference: {fileID: 0}
+    - target: {fileID: 4596960669953540849, guid: 4236c88d6609add43a15951a9491f47f, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_TargetAssemblyTypeName
+      value: AudioConfig, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 4596960669953540849, guid: 4236c88d6609add43a15951a9491f47f, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
     - target: {fileID: 8762727460865336392, guid: 4236c88d6609add43a15951a9491f47f, type: 3}
       propertyPath: m_Name
       value: SETTING
