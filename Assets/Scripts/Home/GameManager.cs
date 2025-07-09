@@ -1,14 +1,10 @@
 using UnityEngine;
-
 using UnityEngine.SceneManagement;
-
 using UnityEngine.UI;
 using System.Collections; // �R���[�`�����g�p���邽�߂ɕK�v�ł�
 
 public class GameManager : MonoBehaviour
-
 {
-
     [SerializeField] GameObject configPanel;
 
     // �V�[���J�ڂ܂ł̃��O���ԁi�b�j
