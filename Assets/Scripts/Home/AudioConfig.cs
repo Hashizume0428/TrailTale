@@ -5,10 +5,15 @@ using UnityEngine.UI;
 public class AudioConfig : MonoBehaviour
 {
     [SerializeField] AudioMixer audioMixer;
-    [SerializeField] AudioSource bgmAudioSource; // BGMのAudioSourceはAudioMixerで制御されるため、直接の設定は不要かもしれません。
-    [SerializeField] AudioSource seAudioSource;   // 同上、SEのAudioSourceもAudioMixerで制御されるため、直接の設定は不要かもしれません。
+    // BGMのAudioSourceはAudioMixerで制御されるため、直接の設定は不要かもしれません。
+    [SerializeField] AudioSource bgmAudioSource;
+    // SEのAudioSourceをSE再生用として使用します。
+    [SerializeField] AudioSource seAudioSource;
     [SerializeField] Slider seSlider;
     [SerializeField] Slider bgmSlider;
+
+    // 追加: クリック時に鳴らしたいSEのAudioClip
+    [SerializeField] private AudioClip clickSFX;
 
     // PlayerPrefsのキー
     private const string BGM_VOLUME_KEY = "BGMVolume";
@@ -33,7 +38,6 @@ public class AudioConfig : MonoBehaviour
         // AudioMixerにも初期音量を適用
         SetSEVolume(savedSEVolume);
 
-
         // ----------------------------------------------------
         // 2. スライダーの値が変更されたときのリスナーを設定する
         // ----------------------------------------------------
@@ -49,6 +53,14 @@ public class AudioConfig : MonoBehaviour
         {
             SetSEVolume(value);
         });
+
+        // seAudioSourceの初期設定 (Inspectorで設定済みであれば不要ですが、念のため)
+        if (seAudioSource != null)
+        {
+            seAudioSource.loop = false; // SEは通常ループしない
+            seAudioSource.playOnAwake = false; // Awake時に自動再生しない
+            // seAudioSource.spatialBlend = 0f; // 2Dサウンドとして再生する場合
+        }
     }
 
     // BGMの音量を設定し、保存する関数
@@ -81,6 +93,22 @@ public class AudioConfig : MonoBehaviour
         // PlayerPrefsにスライダーの生の値 (0-1) を保存
         PlayerPrefs.SetFloat(SE_VOLUME_KEY, value);
         PlayerPrefs.Save(); // 変更をすぐに保存
+    }
+
+    /// <summary>
+    /// ボタンクリック時に呼び出すSE再生用関数
+    /// </summary>
+    public void PlayClickSFX()
+    {
+        if (seAudioSource != null && clickSFX != null)
+        {
+            // PlayOneShotを使用すると、既存の再生を中断せずに新しい音を重ねて再生できます。
+            seAudioSource.PlayOneShot(clickSFX);
+        }
+        else
+        {
+            Debug.LogWarning("SE用のAudioSourceまたはクリックSEが設定されていません。");
+        }
     }
 
     // スクリプトが破棄されるときにリスナーを解除 (メモリリーク対策)
