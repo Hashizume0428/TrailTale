@@ -228,6 +228,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   configPanel: {fileID: 4087805947933376796}
+  sceneTransitionDelay: 0.2
 --- !u!4 &1577014322
 Transform:
   m_ObjectHideFlags: 0
@@ -449,6 +450,7 @@ MonoBehaviour:
   seAudioSource: {fileID: 1778321078}
   seSlider: {fileID: 8197737309752889389}
   bgmSlider: {fileID: 6572110620486597020}
+  clickSFX: {fileID: 0}
 --- !u!82 &1778321078
 AudioSource:
   m_ObjectHideFlags: 0
@@ -1118,7 +1120,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1577014321}
         m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
-        m_MethodName: ShowconfigPanel
+        m_MethodName: ShowConfigPanel
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1792,7 +1794,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1577014321}
         m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
-        m_MethodName: HomeBotton
+        m_MethodName: HomeButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

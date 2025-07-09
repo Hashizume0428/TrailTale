@@ -764,6 +764,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   configPanel: {fileID: 0}
+  sceneTransitionDelay: 0.2
 --- !u!4 &2083156986
 Transform:
   m_ObjectHideFlags: 0
@@ -1075,7 +1076,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 2083156985}
         m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
-        m_MethodName: HomeBotton
+        m_MethodName: HomeButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1455,7 +1456,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 2083156985}
         m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
-        m_MethodName: SettingBotton
+        m_MethodName: ShowConfigPanel
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
