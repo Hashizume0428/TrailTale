@@ -9,7 +9,7 @@ using AILibrary;
 public class AIManager : MonoBehaviour
 {
     [SerializeField]
-    private string OpenAIApiKey;
+    private ApiKeyData apiKeyData;
 
     private string apiUrl = "https://api.openai.com/v1/chat/completions";
 
@@ -114,7 +114,7 @@ public class AIManager : MonoBehaviour
         request.uploadHandler = new UploadHandlerRaw(bodyRaw);
         request.downloadHandler = new DownloadHandlerBuffer();
         request.SetRequestHeader("Content-Type", "application/json");
-        request.SetRequestHeader("Authorization", "Bearer " + OpenAIApiKey);
+        request.SetRequestHeader("Authorization", "Bearer " + apiKeyData.APIKey);
 
         await request.SendWebRequest();
 
