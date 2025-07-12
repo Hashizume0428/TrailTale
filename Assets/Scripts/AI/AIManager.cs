@@ -57,7 +57,7 @@ public class AIManager : MonoBehaviour
                             properties = new ContentProperty
                             {
                                 stage = new Stage { type = "string" },
-                                description = new Description { type = "string", minLength = 600 },
+                                description = new Description { type = "string", minLength = 800 },
                                 options = new StatusOption
                                 {
                                     type = "array",
@@ -79,7 +79,7 @@ public class AIManager : MonoBehaviour
                     }
                 }
             },
-            max_tokens = 2048
+            max_tokens = 4096
         };
 
         return JsonUtility.ToJson(request);
