@@ -271,3 +271,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   optionText: {fileID: 584941261043865099}
+  selectedColor: {r: 0.37582767, g: 0.7948336, b: 0.9622642, a: 1}

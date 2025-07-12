@@ -9,6 +9,11 @@ public class OptionUI : MonoBehaviour
     [SerializeField]
     private TextMeshProUGUI optionText;
 
+    [SerializeField]
+    private Color selectedColor;
+
+    private Image image;
+
     private Button button;
 
     public void SetText(string text)
@@ -25,5 +30,11 @@ public class OptionUI : MonoBehaviour
     public void SetState(bool isActive)
     {
         button.interactable = isActive;
+    }
+
+    public void SetSelected(bool isSelected)
+    {
+        image = GetComponent<Image>();
+        image.color = isSelected ? selectedColor : Color.gray;
     }
 }
