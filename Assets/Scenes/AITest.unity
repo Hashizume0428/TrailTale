@@ -457,7 +457,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f840e2aa13e7d5c49be8f835bfa2035e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  OpenAIApiKey: 
+  apiKeyData: {fileID: 11400000, guid: fbd091e1458685e48ba4f9c5ba6b43f0, type: 2}
 --- !u!1 &670544020
 GameObject:
   m_ObjectHideFlags: 0

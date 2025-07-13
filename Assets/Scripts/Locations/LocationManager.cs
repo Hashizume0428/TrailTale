@@ -25,7 +25,7 @@ public class LocationManager : MonoBehaviour
 
     private LocationInfo prevLocation;
 
-    IEnumerator Start()
+    private async void Start()
     {
 #if UNITY_ANDROID && !UNITY_EDITOR
         Debug.Log("START : " + Time.time);
@@ -35,26 +35,26 @@ public class LocationManager : MonoBehaviour
         if (!Input.location.isEnabledByUser)
         {
             Debug.Log("Location services are not enabled by the user.");
-            yield return new WaitForSeconds(2);
+            await Task.Delay(2000);
         }
 
         // Locationサービスが開始されるまで待機
         Debug.Log("Waiting for location service to start...");
         while (Input.location.status != LocationServiceStatus.Running)
         {
-            yield return new WaitForSeconds(0.3f);
+            await Task.Delay(1000);
         }
 
         if (Input.location.status == LocationServiceStatus.Running)
         {
             Debug.Log("Generating map with current location...");
-            yield return new WaitForSeconds(0.5f);
-            StartCoroutine(GenerateMap(Input.location.lastData.latitude, Input.location.lastData.longitude));
+            await Task.Delay(500);
+            GenerateMap(Input.location.lastData.latitude, Input.location.lastData.longitude);
         }
-#else 
-        yield return null;
+#else
         Debug.Log("Using Mock Location");
-        StartCoroutine(GenerateMap(mockLocation.Latitude, mockLocation.Longitude));
+
+        GenerateMap(mockLocation.Latitude, mockLocation.Longitude);
 #endif
     }
 
@@ -87,7 +87,7 @@ public class LocationManager : MonoBehaviour
         return Vector3.Distance(cv, pv) * Lat2Meter;
     }
 
-    private IEnumerator GenerateMap(float lat, float lon)
+    private async void GenerateMap(float lat, float lon)
     {
         // ベース URL
         string url = @"https://maps.googleapis.com/maps/api/staticmap?";
@@ -106,23 +106,13 @@ public class LocationManager : MonoBehaviour
         url += "&style=feature:poi|element:labels|visibility:off";
         url += "&style=feature:administrative|element:labels|visibility:off";
         url += "&style=element:labels|visibility:off";
-        
-
 
         Debug.Log("Map URL: " + url);
 
-        url = UnityWebRequest.UnEscapeURL(url);
-        UnityWebRequest req = UnityWebRequestTexture.GetTexture(url);
-        yield return req.SendWebRequest();
+        MapLoader mapLoader = new MapLoader();
 
-        if (req.result == UnityWebRequest.Result.Success)
-        {
-            mapImage.texture = DownloadHandlerTexture.GetContent(req);
-        }
-        else
-        {
-            Debug.LogError("Map Download Failed: " + req.error);
-            yield break;
-        }
+        Texture2D mapTexture = await mapLoader.LoadMapAsync(url);
+
+        mapImage.texture = mapTexture;
     }
 }
