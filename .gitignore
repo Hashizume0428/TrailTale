@@ -73,3 +73,6 @@ crashlytics-build.properties
 
 # APIKey
 /[Aa]ssets/[Dd]ata/[Ss]ecure/*.asset
+
+# MapCashe
+/[Aa]ssets/[Dd]ata/[Mm]apChache/*.png
