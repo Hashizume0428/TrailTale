@@ -1,117 +1,117 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using UnityEngine.Audio;
 using UnityEngine.UI;
 
 public class AudioConfig : MonoBehaviour
 {
     [SerializeField] AudioMixer audioMixer;
-    // BGM‚ÌAudioSource‚ÍAudioMixer‚Å§Œä‚³‚ê‚é‚½‚ßA’¼Ú‚Ìİ’è‚Í•s—v‚©‚à‚µ‚ê‚Ü‚¹‚ñB
+    // BGMã®AudioSourceã¯AudioMixerã§åˆ¶å¾¡ã•ã‚Œã‚‹ãŸã‚ã€ç›´æ¥ã®è¨­å®šã¯ä¸è¦ã‹ã‚‚ã—ã‚Œã¾ã›ã‚“ã€‚
     [SerializeField] AudioSource bgmAudioSource;
-    // SE‚ÌAudioSource‚ğSEÄ¶—p‚Æ‚µ‚Äg—p‚µ‚Ü‚·B
+    // SEã®AudioSourceã‚’SEå†ç”Ÿç”¨ã¨ã—ã¦ä½¿ç”¨ã—ã¾ã™ã€‚
     [SerializeField] AudioSource seAudioSource;
     [SerializeField] Slider seSlider;
     [SerializeField] Slider bgmSlider;
 
-    // ’Ç‰Á: ƒNƒŠƒbƒN‚É–Â‚ç‚µ‚½‚¢SE‚ÌAudioClip
+    // è¿½åŠ : ã‚¯ãƒªãƒƒã‚¯æ™‚ã«é³´ã‚‰ã—ãŸã„SEã®AudioClip
     [SerializeField] private AudioClip clickSFX;
 
-    // PlayerPrefs‚ÌƒL[
+    // PlayerPrefsã®ã‚­ãƒ¼
     private const string BGM_VOLUME_KEY = "BGMVolume";
     private const string SE_VOLUME_KEY = "SEVolume";
 
     private void Start()
     {
         // ----------------------------------------------------
-        // 1. •Û‘¶‚³‚ê‚½‰¹—Êİ’è‚ğ“Ç‚İ‚İAƒXƒ‰ƒCƒ_[‚É“K—p‚·‚é
+        // 1. ä¿å­˜ã•ã‚ŒãŸéŸ³é‡è¨­å®šã‚’èª­ã¿è¾¼ã¿ã€ã‚¹ãƒ©ã‚¤ãƒ€ãƒ¼ã«é©ç”¨ã™ã‚‹
         // ----------------------------------------------------
 
-        // BGM‚Ì‰¹—Ê‚ğ“Ç‚İ‚İAƒXƒ‰ƒCƒ_[‚Éİ’è
-        // ƒfƒtƒHƒ‹ƒg‚Í0.75f (–ñ-2.5dB) ‚Æ‚µ‚Ü‚·‚ªA•K—v‚É‰‚¶‚Ä•ÏX‚µ‚Ä‚­‚¾‚³‚¢
+        // BGMã®éŸ³é‡ã‚’èª­ã¿è¾¼ã¿ã€ã‚¹ãƒ©ã‚¤ãƒ€ãƒ¼ã«è¨­å®š
+        // ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆã¯0.75f (ç´„-2.5dB) ã¨ã—ã¾ã™ãŒã€å¿…è¦ã«å¿œã˜ã¦å¤‰æ›´ã—ã¦ãã ã•ã„
         float savedBGMVolume = PlayerPrefs.GetFloat(BGM_VOLUME_KEY, 0.75f);
         bgmSlider.value = savedBGMVolume;
-        // AudioMixer‚É‚à‰Šú‰¹—Ê‚ğ“K—p
+        // AudioMixerã«ã‚‚åˆæœŸéŸ³é‡ã‚’é©ç”¨
         SetBGMVolume(savedBGMVolume);
 
-        // SE‚Ì‰¹—Ê‚ğ“Ç‚İ‚İAƒXƒ‰ƒCƒ_[‚Éİ’è
+        // SEã®éŸ³é‡ã‚’èª­ã¿è¾¼ã¿ã€ã‚¹ãƒ©ã‚¤ãƒ€ãƒ¼ã«è¨­å®š
         float savedSEVolume = PlayerPrefs.GetFloat(SE_VOLUME_KEY, 0.75f);
         seSlider.value = savedSEVolume;
-        // AudioMixer‚É‚à‰Šú‰¹—Ê‚ğ“K—p
+        // AudioMixerã«ã‚‚åˆæœŸéŸ³é‡ã‚’é©ç”¨
         SetSEVolume(savedSEVolume);
 
         // ----------------------------------------------------
-        // 2. ƒXƒ‰ƒCƒ_[‚Ì’l‚ª•ÏX‚³‚ê‚½‚Æ‚«‚ÌƒŠƒXƒi[‚ğİ’è‚·‚é
+        // 2. ã‚¹ãƒ©ã‚¤ãƒ€ãƒ¼ã®å€¤ãŒå¤‰æ›´ã•ã‚ŒãŸã¨ãã®ãƒªã‚¹ãƒŠãƒ¼ã‚’è¨­å®šã™ã‚‹
         // ----------------------------------------------------
 
-        // BGMƒXƒ‰ƒCƒ_[‚ÌƒŠƒXƒi[
+        // BGMã‚¹ãƒ©ã‚¤ãƒ€ãƒ¼ã®ãƒªã‚¹ãƒŠãƒ¼
         bgmSlider.onValueChanged.AddListener((value) =>
         {
             SetBGMVolume(value);
         });
 
-        // SEƒXƒ‰ƒCƒ_[‚ÌƒŠƒXƒi[
+        // SEã‚¹ãƒ©ã‚¤ãƒ€ãƒ¼ã®ãƒªã‚¹ãƒŠãƒ¼
         seSlider.onValueChanged.AddListener((value) =>
         {
             SetSEVolume(value);
         });
 
-        // seAudioSource‚Ì‰Šúİ’è (Inspector‚Åİ’èÏ‚İ‚Å‚ ‚ê‚Î•s—v‚Å‚·‚ªA”O‚Ì‚½‚ß)
+        // seAudioSourceã®åˆæœŸè¨­å®š (Inspectorã§è¨­å®šæ¸ˆã¿ã§ã‚ã‚Œã°ä¸è¦ã§ã™ãŒã€å¿µã®ãŸã‚)
         if (seAudioSource != null)
         {
-            seAudioSource.loop = false; // SE‚Í’Êíƒ‹[ƒv‚µ‚È‚¢
-            seAudioSource.playOnAwake = false; // Awake‚É©“®Ä¶‚µ‚È‚¢
-            // seAudioSource.spatialBlend = 0f; // 2DƒTƒEƒ“ƒh‚Æ‚µ‚ÄÄ¶‚·‚éê‡
+            seAudioSource.loop = false; // SEã¯é€šå¸¸ãƒ«ãƒ¼ãƒ—ã—ãªã„
+            seAudioSource.playOnAwake = false; // Awakeæ™‚ã«è‡ªå‹•å†ç”Ÿã—ãªã„
+            // seAudioSource.spatialBlend = 0f; // 2Dã‚µã‚¦ãƒ³ãƒ‰ã¨ã—ã¦å†ç”Ÿã™ã‚‹å ´åˆ
         }
     }
 
-    // BGM‚Ì‰¹—Ê‚ğİ’è‚µA•Û‘¶‚·‚éŠÖ”
+    // BGMã®éŸ³é‡ã‚’è¨­å®šã—ã€ä¿å­˜ã™ã‚‹é–¢æ•°
     private void SetBGMVolume(float value)
     {
-        // ƒXƒ‰ƒCƒ_[‚Ì’l (0-1) ‚ğƒfƒVƒxƒ‹‚É•ÏŠ·
+        // ã‚¹ãƒ©ã‚¤ãƒ€ãƒ¼ã®å€¤ (0-1) ã‚’ãƒ‡ã‚·ãƒ™ãƒ«ã«å¤‰æ›
         value = Mathf.Clamp01(value);
         float decibel = 20f * Mathf.Log10(value);
-        decibel = Mathf.Clamp(decibel, -80, 0f); // -80dBˆÈ‰º‚Í’Êíƒ~ƒ…[ƒgˆµ‚¢
+        decibel = Mathf.Clamp(decibel, -80, 0f); // -80dBä»¥ä¸‹ã¯é€šå¸¸ãƒŸãƒ¥ãƒ¼ãƒˆæ‰±ã„
 
-        // AudioMixer‚É“K—p
+        // AudioMixerã«é©ç”¨
         audioMixer.SetFloat("BGM", decibel);
 
-        // PlayerPrefs‚ÉƒXƒ‰ƒCƒ_[‚Ì¶‚Ì’l (0-1) ‚ğ•Û‘¶
+        // PlayerPrefsã«ã‚¹ãƒ©ã‚¤ãƒ€ãƒ¼ã®ç”Ÿã®å€¤ (0-1) ã‚’ä¿å­˜
         PlayerPrefs.SetFloat(BGM_VOLUME_KEY, value);
-        PlayerPrefs.Save(); // •ÏX‚ğ‚·‚®‚É•Û‘¶
+        PlayerPrefs.Save(); // å¤‰æ›´ã‚’ã™ãã«ä¿å­˜
     }
 
-    // SE‚Ì‰¹—Ê‚ğİ’è‚µA•Û‘¶‚·‚éŠÖ”
+    // SEã®éŸ³é‡ã‚’è¨­å®šã—ã€ä¿å­˜ã™ã‚‹é–¢æ•°
     private void SetSEVolume(float value)
     {
-        // ƒXƒ‰ƒCƒ_[‚Ì’l (0-1) ‚ğƒfƒVƒxƒ‹‚É•ÏŠ·
+        // ã‚¹ãƒ©ã‚¤ãƒ€ãƒ¼ã®å€¤ (0-1) ã‚’ãƒ‡ã‚·ãƒ™ãƒ«ã«å¤‰æ›
         value = Mathf.Clamp01(value);
         float decibel = 20f * Mathf.Log10(value);
-        decibel = Mathf.Clamp(decibel, -80, 0f); // -80dBˆÈ‰º‚Í’Êíƒ~ƒ…[ƒgˆµ‚¢
+        decibel = Mathf.Clamp(decibel, -80, 0f); // -80dBä»¥ä¸‹ã¯é€šå¸¸ãƒŸãƒ¥ãƒ¼ãƒˆæ‰±ã„
 
-        // AudioMixer‚É“K—p
+        // AudioMixerã«é©ç”¨
         audioMixer.SetFloat("SE", decibel);
 
-        // PlayerPrefs‚ÉƒXƒ‰ƒCƒ_[‚Ì¶‚Ì’l (0-1) ‚ğ•Û‘¶
+        // PlayerPrefsã«ã‚¹ãƒ©ã‚¤ãƒ€ãƒ¼ã®ç”Ÿã®å€¤ (0-1) ã‚’ä¿å­˜
         PlayerPrefs.SetFloat(SE_VOLUME_KEY, value);
-        PlayerPrefs.Save(); // •ÏX‚ğ‚·‚®‚É•Û‘¶
+        PlayerPrefs.Save(); // å¤‰æ›´ã‚’ã™ãã«ä¿å­˜
     }
 
     /// <summary>
-    /// ƒ{ƒ^ƒ“ƒNƒŠƒbƒN‚ÉŒÄ‚Ño‚·SEÄ¶—pŠÖ”
+    /// ãƒœã‚¿ãƒ³ã‚¯ãƒªãƒƒã‚¯æ™‚ã«å‘¼ã³å‡ºã™SEå†ç”Ÿç”¨é–¢æ•°
     /// </summary>
     public void PlayClickSFX()
     {
         if (seAudioSource != null && clickSFX != null)
         {
-            // PlayOneShot‚ğg—p‚·‚é‚ÆAŠù‘¶‚ÌÄ¶‚ğ’†’f‚¹‚¸‚ÉV‚µ‚¢‰¹‚ğd‚Ë‚ÄÄ¶‚Å‚«‚Ü‚·B
+            // PlayOneShotã‚’ä½¿ç”¨ã™ã‚‹ã¨ã€æ—¢å­˜ã®å†ç”Ÿã‚’ä¸­æ–­ã›ãšã«æ–°ã—ã„éŸ³ã‚’é‡ã­ã¦å†ç”Ÿã§ãã¾ã™ã€‚
             seAudioSource.PlayOneShot(clickSFX);
         }
         else
         {
-            Debug.LogWarning("SE—p‚ÌAudioSource‚Ü‚½‚ÍƒNƒŠƒbƒNSE‚ªİ’è‚³‚ê‚Ä‚¢‚Ü‚¹‚ñB");
+            Debug.LogWarning("SEç”¨ã®AudioSourceã¾ãŸã¯ã‚¯ãƒªãƒƒã‚¯SEãŒè¨­å®šã•ã‚Œã¦ã„ã¾ã›ã‚“ã€‚");
         }
     }
 
-    // ƒXƒNƒŠƒvƒg‚ª”jŠü‚³‚ê‚é‚Æ‚«‚ÉƒŠƒXƒi[‚ğ‰ğœ (ƒƒ‚ƒŠƒŠ[ƒN‘Îô)
+    // ã‚¹ã‚¯ãƒªãƒ—ãƒˆãŒç ´æ£„ã•ã‚Œã‚‹ã¨ãã«ãƒªã‚¹ãƒŠãƒ¼ã‚’è§£é™¤ (ãƒ¡ãƒ¢ãƒªãƒªãƒ¼ã‚¯å¯¾ç­–)
     private void OnDestroy()
     {
         if (bgmSlider != null)

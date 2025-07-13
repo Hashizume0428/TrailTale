@@ -1,19 +1,19 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using System.Collections; // �R���[�`�����g�p���邽�߂ɕK�v�ł�
+using System.Collections; // コルーチンを使用するために必要です
 
 public class GameManager : MonoBehaviour
 {
     [SerializeField] GameObject configPanel;
 
-    // �V�[���J�ڂ܂ł̃��O���ԁi�b�j
+    // シーン遷移までのラグ時間（秒）
     [Header("Scene Transition Settings")]
     [SerializeField] private float sceneTransitionDelay = 0.8f;
 
-    // --- �V���O���g���p�^�[�� (����GameManager��DontDestroyOnLoad�Ȃ�) ---
-    // ��������GameManager��DontDestroyOnLoad�ŉi��������Ă���Ȃ�A
-    // �ȉ��̃V���O���g��������Awake�ɒǉ����Ă��������B
+    // --- シングルトンパターン (もしGameManagerもDontDestroyOnLoadなら) ---
+    // もしこのGameManagerがDontDestroyOnLoadで永続化されているなら、
+    // 以下のシングルトン実装をAwakeに追加してください。
     // private static GameManager instance = null;
     // public static GameManager Instance { get { return instance; } }
     // void Awake() {
@@ -22,15 +22,15 @@ public class GameManager : MonoBehaviour
     //     DontDestroyOnLoad(this.gameObject);
     // }
 
-    // --- �����̃��\�b�h�i�C���j ---
+    // --- 既存のメソッド（修正） ---
 
-    public void StartButton() // ���\�b�h����StartBotton����StartButton�ɏC�����܂����i�����j
+    public void StartButton() // メソッド名をStartBottonからStartButtonに修正しました（推奨）
     {
         Debug.Log("Start Button clicked.");
-        StartCoroutine(LoadSceneWithDelay("home")); // �R���[�`�����J�n
+        StartCoroutine(LoadSceneWithDelay("home")); // コルーチンを開始
     }
 
-    public void ShowConfigPanel() // ���\�b�h����ShowconfigPanel����ShowConfigPanel�ɏC�����܂����i�����j
+    public void ShowConfigPanel() // メソッド名をShowconfigPanelからShowConfigPanelに修正しました（推奨）
     {
         if (configPanel != null)
         {
@@ -43,7 +43,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void HideConfigPanel() // ���\�b�h����HideConfigPanel����HideConfigPanel�ɏC�����܂����i�����j
+    public void HideConfigPanel() // メソッド名をHideConfigPanelからHideConfigPanelに修正しました（推奨）
     {
         if (configPanel != null)
         {
@@ -56,63 +56,63 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void ItemPageButton() // ���\�b�h����ItemPageBotton����ItemPageButton�ɏC�����܂����i�����j
+    public void ItemPageButton() // メソッド名をItemPageBottonからItemPageButtonに修正しました（推奨）
     {
         Debug.Log("ItemPageButton clicked.");
-        StartCoroutine(LoadSceneWithDelay("Item")); // �R���[�`�����J�n
+        StartCoroutine(LoadSceneWithDelay("Item")); // コルーチンを開始
     }
 
-    public void StatusPageButton() // ���\�b�h����StatusPageBotton����StatusPageButton�ɏC�����܂����i�����j
+    public void StatusPageButton() // メソッド名をStatusPageBottonからStatusPageButtonに修正しました（推奨）
     {
         Debug.Log("StatusPageButton clicked.");
-        StartCoroutine(LoadSceneWithDelay("Status")); // �R���[�`�����J�n
+        StartCoroutine(LoadSceneWithDelay("Status")); // コルーチンを開始
     }
 
-    public void ScenarioPageButton() // ���\�b�h����ScenarioPageBotton����ScenarioPageButton�ɏC�����܂����i�����j
+    public void ScenarioPageButton() // メソッド名をScenarioPageBottonからScenarioPageButtonに修正しました（推奨）
     {
         Debug.Log("ScenarioPageButton clicked.");
-        StartCoroutine(LoadSceneWithDelay("ScenarioTest")); // �R���[�`�����J�n
+        StartCoroutine(LoadSceneWithDelay("ScenarioTest")); // コルーチンを開始
     }
 
-    public void SettingButton() // ���\�b�h����SettingBotton����SettingButton�ɏC�����܂����i�����j
+    public void SettingButton() // メソッド名をSettingBottonからSettingButtonに修正しました（推奨）
     {
         Debug.Log("SettingButton clicked.");
-        StartCoroutine(LoadSceneWithDelay("Setting")); // �R���[�`�����J�n
+        StartCoroutine(LoadSceneWithDelay("Setting")); // コルーチンを開始
     }
 
-    public void BacknumberButton() // ���\�b�h����BackbumerBotton����BacknumberButton�ɏC�����܂����i�����j
+    public void BacknumberButton() // メソッド名をBackbumerBottonからBacknumberButtonに修正しました（推奨）
     {
         Debug.Log("BacknumberButton clicked.");
-        StartCoroutine(LoadSceneWithDelay("Backnumber")); // �R���[�`�����J�n
+        StartCoroutine(LoadSceneWithDelay("Backnumber")); // コルーチンを開始
     }
 
-    public void TitleButton() // ���\�b�h����TitleBotton����TitleButton�ɏC�����܂����i�����j
+    public void TitleButton() // メソッド名をTitleBottonからTitleButtonに修正しました（推奨）
     {
         Debug.Log("TitleButton clicked.");
-        StartCoroutine(LoadSceneWithDelay("Title")); // �R���[�`�����J�n
+        StartCoroutine(LoadSceneWithDelay("Title")); // コルーチンを開始
     }
 
-    public void HomeButton() // ���\�b�h����HomeBotton����HomeButton�ɏC�����܂����i�����j
+    public void HomeButton() // メソッド名をHomeBottonからHomeButtonに修正しました（推奨）
     {
         Debug.Log("HomeButton clicked.");
-        StartCoroutine(LoadSceneWithDelay("home")); // �R���[�`�����J�n
+        StartCoroutine(LoadSceneWithDelay("home")); // コルーチンを開始
     }
 
-    // --- �V�K�ǉ����\�b�h ---
+    // --- 新規追加メソッド ---
 
     /// <summary>
-    /// �w�肳�ꂽ���ԑҋ@������A�V�[�������[�h����R���[�`��
+    /// 指定された時間待機した後、シーンをロードするコルーチン
     /// </summary>
-    /// <param name="sceneName">���[�h����V�[���̖��O</param>
+    /// <param name="sceneName">ロードするシーンの名前</param>
     private IEnumerator LoadSceneWithDelay(string sceneName)
     {
-        // �����ŁA�N���b�N���ꂽ�{�^���𖳌�������Ȃǂ�UI�t�B�[�h�o�b�N������Ɨǂ��ł��傤
-        // ��: EventSystem.current.currentSelectedGameObject.GetComponent<Button>().interactable = false;
+        // ここで、クリックされたボタンを無効化するなどのUIフィードバックを入れると良いでしょう
+        // 例: EventSystem.current.currentSelectedGameObject.GetComponent<Button>().interactable = false;
 
         Debug.Log($"Waiting for {sceneTransitionDelay} seconds before loading scene: {sceneName}");
-        yield return new WaitForSeconds(sceneTransitionDelay); // �w�肳�ꂽ�b���ҋ@
+        yield return new WaitForSeconds(sceneTransitionDelay); // 指定された秒数待機
 
         Debug.Log($"Loading scene: {sceneName}");
-        SceneManager.LoadScene(sceneName); // �V�[�������[�h
+        SceneManager.LoadScene(sceneName); // シーンをロード
     }
 }
