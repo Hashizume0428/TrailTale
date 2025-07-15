@@ -15,6 +15,8 @@ public class LogPathRenderer : MonoBehaviour
 
     private List<GameObject> pointObjects = new List<GameObject>();
 
+    private List<Vector2> logPathPoints = new List<Vector2>();
+
     public void ClearLogPath()
     {
         // 既存のポイントオブジェクトを削除
@@ -27,30 +29,47 @@ public class LogPathRenderer : MonoBehaviour
         // CanvasLineRendererのラインを削除
         canvasLineRenderer.ClearLines();
     }
-
-    public void DrawLogPath()
+    
+    public List<Vector2> GetAllLogPath()
     {
-        Debug.Log("Drawing log path...");
-        
-        ClearLogPath();
-
         var logReader = new LocationLogReader();
         string log = logReader.Read();
         if (log == null)
         {
             Debug.LogWarning("ログが読み込めませんでした。");
-            return;
+            return null;
         }
         else
         {
             Debug.Log($"Log:{log}");
+
+            // 緯度経度形式のログをVector2のリストに変換
+            List<Vector2> points = ParseLogToVector(log);
+            return points;
+        }
+    }
+
+    // 現在地前後の3点のログパスを取得
+    public List<Vector2> GetThreeLogPath(int currentIndex)
+    {
+        if (logPathPoints.Count == 0)
+        {
+            logPathPoints = GetAllLogPath();
         }
 
-        // 緯度経度形式のログをVector2のリストに変換
-        List<Vector2> points = ParseLogToVector(log);
+        // 現在のインデックスから3つのログパスを取得
+        int startIndex = Mathf.Max(0, currentIndex - 1);
+        int endIndex = Mathf.Min(logPathPoints.Count - 1, currentIndex + 1);
+        List<Vector2> threeLogPath = logPathPoints.GetRange(startIndex, endIndex - startIndex + 1);
 
-        // マップの境界を計算
-        MapBounds bounds = CalculateBounds(points);
+        return threeLogPath;
+    }
+
+    public void DrawLogPath(MapBounds bounds, List<Vector2> points)
+    {
+        Debug.Log("Drawing log path...");
+
+        ClearLogPath();
 
         List<Vector2> canvasPositions = new List<Vector2>();
         foreach (var point in points)
@@ -111,7 +130,7 @@ public class LogPathRenderer : MonoBehaviour
     }
 
     // 地図の境界を計算
-    private MapBounds CalculateBounds(List<Vector2> points)
+    public MapBounds CalculateBounds(List<Vector2> points)
     {
         if (points.Count == 0)
         {
@@ -140,11 +159,49 @@ public class LogPathRenderer : MonoBehaviour
         return new MapBounds(minLat, minLon, maxLat, maxLon);
     }
 
+    // 地図の中心を計算
+    public LatLng CalculateCenter(List<Vector2> points)
+    {
+        LatLng center = new LatLng();
+        double totalLat = 0;
+        double totalLon = 0;
+        foreach (var point in points)
+        {
+            totalLat += point.y;
+            totalLon += point.x;
+        }
+        center.latitude = totalLat / points.Count;
+        center.longitude = totalLon / points.Count;
+        return center;
+    }
+
+    public int CalculateZoom(MapBounds bounds)
+    {
+        // 簡易的なズーム計算
+        float latRange = bounds.MaxLat - bounds.MinLat;
+        float lonRange = bounds.MaxLon - bounds.MinLon;
+        double maxDiff = Mathf.Max(latRange, lonRange);
+
+            int zoom = 1;
+
+        for (int z = 21; z >= 0; z--)
+        {
+            // 1ピクセルあたりの角度（概算）
+            double degreesPerPixel = 360.0 / (256 * Mathf.Pow(2, z));
+            if (maxDiff / degreesPerPixel <= 512 * 0.8)  // 余白を持たせる
+            {
+                zoom = z;
+                break;
+            }
+        }
+        return zoom;
+    }
+
     private Vector2 LatLonToMapPosition(Vector2 point, MapBounds bounds)
     {
         float x = Mathf.InverseLerp(bounds.MinLon, bounds.MaxLon, point.x) - 0.5f;
         float y = Mathf.InverseLerp(bounds.MinLat, bounds.MaxLat, point.y) - 0.5f;
 
-        return new Vector2(x * mapRect.rect.width/2, y * mapRect.rect.height/2);
+        return new Vector2(x * mapRect.rect.width / 2, y * mapRect.rect.height / 2);
     }
 }

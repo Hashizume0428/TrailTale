@@ -6,6 +6,7 @@ using TMPro;
 using UnityEngine.Networking;
 using System.IO;
 using LocationLibrary;
+using Cysharp.Threading.Tasks;
 
 public class LocationManager : MonoBehaviour
 {
@@ -17,13 +18,17 @@ public class LocationManager : MonoBehaviour
     [SerializeField]
     private string GoogleApiKey;
 
-    [SerializeField]
-    private LocationData mockLocation;
+    // [SerializeField]
+    // private LatLng mockLocation;
 
     [SerializeField]
     private RawImage mapImage;
 
     private LocationInfo prevLocation;
+
+    public int currentLogPointsIndex = 0;
+
+    public LogPathRenderer logPathRenderer;
 
     private async void Start()
     {
@@ -49,12 +54,13 @@ public class LocationManager : MonoBehaviour
         {
             Debug.Log("Generating map with current location...");
             await Task.Delay(500);
-            GenerateMap(Input.location.lastData.latitude, Input.location.lastData.longitude);
+            LatLng currentLocation = new LatLng(Input.location.lastData.latitude, Input.location.lastData.longitude);
+            //LoadMap(currentLocation, 14);
         }
 #else
         Debug.Log("Using Mock Location");
 
-        GenerateMap(mockLocation.Latitude, mockLocation.Longitude);
+        //LoadMap(mockLocation, 14);
 #endif
     }
 
@@ -87,32 +93,59 @@ public class LocationManager : MonoBehaviour
         return Vector3.Distance(cv, pv) * Lat2Meter;
     }
 
-    private async void GenerateMap(float lat, float lon)
-    {
-        // ベース URL
-        string url = @"https://maps.googleapis.com/maps/api/staticmap?";
-        // 中心座標
-        url += "center=" + lat + "," + lon;
-        // ズーム
-        url += "&zoom=" + 14; // デフォルトで 0 なので適当なサイズにしておく
-        // 画像サイズ（640x640まで）
-        url += "&size=" + 640 + "x" + 640;
-        // API Key（Google Maps Platform で発行されるキー）
-        url += "&key=" + GoogleApiKey;
+    // public void SetCurrentLogPointsIndex(int index)
+    // {
+    //     currentLogPointsIndex += index;
+    //     currentLogPointsIndex = Mathf.Clamp(currentLogPointsIndex, 0, logPathRenderer.GetAllLogPath().Count - 1);
+    //     GenerateMap();
+    // }
 
-        url += "&style=feature:all|element:geometry|color:0xe0e0e0";
-        url += "&style=feature:landscape|element:geometry.fill|color:0xdcd2c8";
-        url += "&style=feature:road|element:geometry|visibility:simplified";
-        url += "&style=feature:poi|element:labels|visibility:off";
-        url += "&style=feature:administrative|element:labels|visibility:off";
-        url += "&style=element:labels|visibility:off";
+    // public void GenerateMap()
+    // {
+    //     logPathRenderer.ClearLogPath();
+    //     List<Vector2> threeLogPath = logPathRenderer.GetThreeLogPath(currentLogPointsIndex);
+    //     if (threeLogPath == null || threeLogPath.Count == 0)
+    //     {
+    //         Debug.LogWarning("No log path available.");
+    //         return;
+    //     }
 
-        Debug.Log("Map URL: " + url);
+    //     MapBounds bounds = logPathRenderer.CalculateBounds(threeLogPath);
+    //     LatLng center = logPathRenderer.CalculateCenter(threeLogPath);
+    //     int zoom = logPathRenderer.CalculateZoom(bounds);
 
-        MapLoader mapLoader = new MapLoader();
+    //     LoadMap(center, zoom);
+    //     logPathRenderer.DrawLogPath(bounds, threeLogPath);
 
-        Texture2D mapTexture = await mapLoader.LoadMapAsync(url);
+    // }
 
-        mapImage.texture = mapTexture;
-    }
+    // public async void LoadMap(LatLng latLng, int zoom)
+    // {
+    //     // ベース URL
+    //     string url = @"https://maps.googleapis.com/maps/api/staticmap?";
+    //     // 中心座標
+    //     url += "center=" + latLng.latitude + "," + latLng.longitude;
+    //     // ズーム
+    //     url += "&zoom=" + zoom;
+    //     // 画像サイズ（640x640まで）
+    //     url += "&size=" + 512 + "x" + 512;
+    //     // API Key（Google Maps Platform で発行されるキー）
+    //     url += "&key=" + GoogleApiKey;
+
+    //     // url += "&style=feature:all|element:geometry|color:0xe0e0e0";
+    //     // url += "&style=feature:landscape|element:geometry.fill|color:0xdcd2c8";
+    //     url += "&style=feature:road|element:geometry|visibility:simplified";
+    //     url += "&style=feature:poi|element:labels|visibility:off";
+    //     url += "&style=feature:administrative|element:labels|visibility:off";
+    //     url += "&style=element:labels|visibility:off";
+    //     url += "&maptype=satellite";
+
+    //     Debug.Log("Map URL: " + url);
+
+    //     MapLoader mapLoader = new MapLoader();
+
+    //     Texture2D mapTexture = await mapLoader.LoadMapAsync(url);
+
+    //     mapImage.texture = mapTexture;
+    // }
 }
