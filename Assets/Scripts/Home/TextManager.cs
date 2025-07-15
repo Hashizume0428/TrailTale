@@ -2,6 +2,7 @@ using UnityEngine;
 using TMPro; // TextMeshProUGUIを使用する場合は必須です。
 using System.Collections; // コルーチンを使用する場合は必須です。
 using System.Collections.Generic; // Queueを使用する場合は必須です。
+using UnityEngine.UI; // Buttonコンポーネントを使用する場合に必要です。 // ★追加
 
 // MonoBehaviourを継承することでオブジェクトにコンポーネントとして
 // アタッチすることができるようになる
@@ -21,7 +22,7 @@ public class TextManager : MonoBehaviour
 
     // 新しく速度段階を定義する値。インスペクターから調整できるようにSerializeFieldも付けます。
     [SerializeField, Header("Caption Speeds (seconds per char)")]
-    private float fastSpeed = 0.02f;     // 早い速度（秒/文字）
+    private float fastSpeed = 0.02f;      // 早い速度（秒/文字）
     [SerializeField]
     private float normalSpeed = 0.05f; // 普通の速度（秒/文字）
     [SerializeField]
@@ -63,7 +64,7 @@ public class TextManager : MonoBehaviour
         UpdateSpeedDisplayText();
     }
 
-    // �Q�[���I�u�W�F�N�g���A�N�e�B�u�ɂȂ邽�тɌĂяo�����
+    // ゲームオブジェクトがアクティブになったときに呼び出される
     private void OnEnable()
     {
         // オブジェクトがアクティブになったときに、現在の速度表示を更新
@@ -86,11 +87,11 @@ public class TextManager : MonoBehaviour
     // 毎フレーム呼ばれる
     private void Update()
     {
-        // 左(=0)クリックされたらOnClickメソッドを呼び出し
-        if (Input.GetMouseButtonDown(0))
-        {
-            OnClick();
-        }
+        // ★★★ このUpdate()内のクリック検出コードを削除します ★★★
+        // if (Input.GetMouseButtonDown(0))
+        // {
+        //     OnClick();
+        // }
     }
 
     /// <summary>

@@ -11,7 +11,7 @@ public class AIManager : MonoBehaviour
     [SerializeField]
     private ApiKeyData apiKeyData;
 
-    private string apiUrl = "https://api.openai.com/v1/chat/completions";
+    private string apiUrl = "https://api.openai.com/v1/chat/completion";
 
     /// <summary>
     /// OpenAI APIに送信するリクエストのJSONを作成します。

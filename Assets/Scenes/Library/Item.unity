@@ -1755,7 +1755,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 1778635811}
         m_TargetAssemblyTypeName: TextManager, Assembly-CSharp
         m_MethodName: SetSpeedNormal
         m_Mode: 1
@@ -1891,7 +1891,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 1778635811}
         m_TargetAssemblyTypeName: TextManager, Assembly-CSharp
         m_MethodName: SetSpeedFast
         m_Mode: 1
@@ -2937,7 +2937,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 1778635811}
         m_TargetAssemblyTypeName: TextManager, Assembly-CSharp
         m_MethodName: SetSpeedSlow
         m_Mode: 1
