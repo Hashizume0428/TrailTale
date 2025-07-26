@@ -3,6 +3,8 @@ using UnityEngine.Networking;
 using System.Collections;
 using System.Text;
 using System;
+using System.Linq;
+using LocationLibrary;
 using System.Collections.Generic; // Dictionary を使うために必要
 using Cysharp.Threading.Tasks;
 
@@ -29,7 +31,7 @@ public class MapLoader : MonoBehaviour
     private static readonly DateTime UnixEpoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 
     // --- タイルグリッド管理用の変数 ---
-    private int currentZoom = 15; // 現在のズームレベル
+    private int currentZoom = 17; // 現在のズームレベル
     public int centerTileX = 6294; // 中心タイルのX座標
     public int centerTileY = 13288; // 中心タイルのY座標
 
@@ -39,7 +41,8 @@ public class MapLoader : MonoBehaviour
     private Dictionary<string, MapTile> loadedTiles = new Dictionary<string, MapTile>();
 
     // タイルオブジェクトをまとめる親オブジェクト
-    private GameObject mapContainer;
+    [HideInInspector]
+    public GameObject mapContainer;
 
     // --- カメラの参照とスクロール速度 ---
     public Camera mainCamera; // シーンのメインカメラ
@@ -47,6 +50,8 @@ public class MapLoader : MonoBehaviour
     [SerializeField] private float zoomSpeed = 10f; // ズーム速度
     [SerializeField] private float minZoomSize = 0.75f; // カメラの最小ズームサイズ
     [SerializeField] private float maxZoomSize = 50f; // カメラの最大ズームサイズ
+
+    public LogPathRenderer logPathRenderer; // ログパスレンダラーの参照
 
     // Unityワールド座標における1タイルのサイズ (PPUをテクスチャ幅に設定した場合、1ユニットとなる)
     private float tileSizeInUnityUnits = 1f; // ★Sprite.CreateのPPU設定により変わる可能性あり
@@ -57,18 +62,9 @@ public class MapLoader : MonoBehaviour
         mapContainer = new GameObject("MapContainer");
         mapContainer.transform.position = Vector3.zero; // 原点に配置
         mapContainer.transform.rotation = Quaternion.Euler(90, 0, 0); // 2D表示のためX軸90度回転 (オプション)
-
-        if (mainCamera == null)
-        {
-            mainCamera = Camera.main;
-            if (mainCamera == null)
-            {
-                Debug.LogError("メインカメラが見つかりません。手動で割り当てるか、シーンにMainCameraタグのカメラを作成してください。");
-            }
-        }
     }
 
-    void Start()
+    public void Init(double initialLat, double initialLon)
     {
         if (string.IsNullOrEmpty(apiKey) || apiKey == "YOUR_YOUR_Maps_API_KEY_HERE")
         {
@@ -86,10 +82,6 @@ public class MapLoader : MonoBehaviour
             Debug.LogError("カメラが設定されていないため、スクロールできません。");
             // enabled = false; // デバッグのために続行するが、注意を促す
         }
-
-        // 初期表示の中心座標 (例: 大阪駅周辺の緯度経度)
-        double initialLat = 34.7022; // 大阪駅の緯度
-        double initialLon = 135.4958; // 大阪駅の経度
 
         // 初期ズームレベルでの中心タイルXYZ座標を計算
         // これが初期のcenterTileX, centerTileYになります
@@ -114,16 +106,33 @@ public class MapLoader : MonoBehaviour
         await GetSessionToken();
 
         // 初期タイルのロード
-        await LoadSurroundingTiles(centerTileX, centerTileY, currentZoom, gridRadius);
+        //await LoadSurroundingTiles(centerTileX, centerTileY, currentZoom, gridRadius);
+
+        LoadLogPathTiles().Forget(); // ログパスタイルのロードを開始
 
         // マップのスクロールを監視するメインループ
-        ManageTilesContinuously().Forget();
+        //ManageTilesContinuously().Forget();
+    }
+
+    private async UniTask LoadLogPathTiles()
+    {
+        List<Vector2Int> logPathTiles = logPathRenderer.GetLogPathTiles();
+
+        await UniTask.Delay(100);
+
+        // 10タイルずつロードする
+        foreach (var chunk in logPathTiles.Chunk(10))
+        {
+            await UniTask.WhenAll(chunk.Select(tile => FetchAndDisplayTile(currentZoom, tile.x, -tile.y)));
+            await UniTask.Delay(100);
+        }
+
+        Debug.Log($"<color=green>ログパスのタイルを{logPathTiles.Count}個ロードしました。</color>");
     }
 
     private async UniTask GetSessionToken()
     {
         // セッション作成リクエストのボディ
-        // 2Dタイルなので、mapTypeは'2d'
         string jsonBody = "{\"mapType\": \"satellite\"}";
         byte[] bodyRaw = Encoding.UTF8.GetBytes(jsonBody);
 
@@ -239,6 +248,32 @@ public class MapLoader : MonoBehaviour
             mainCamera.transform.position -= mainCamera.transform.up * mouseY * scrollSpeed * 0.1f * Time.deltaTime; // Orthographicカメラならupが上下
         }
 
+        // --- ★タッチ入力でのスクロール (モバイル向け) ---
+        if (Input.touchCount == 1) // 指1本でのタッチの場合
+        {
+            Touch touch = Input.GetTouch(0); // 1本目の指の情報を取得
+
+            // 指が移動した場合
+            if (touch.phase == TouchPhase.Moved)
+            {
+                // touch.deltaPosition は、前フレームからのタッチ位置の差分（ピクセル単位）
+                Vector2 touchDelta = touch.deltaPosition;
+
+                // カメラのorthographicSizeに応じて移動量をスケール
+                // カメラのorthographicSize * 2f はワールド空間でのカメラの高さ
+                // Screen.height は画面のピクセル高さ
+                float cameraWorldHeight = mainCamera.orthographicSize * 2f;
+                float worldUnitsPerPixel = cameraWorldHeight / Screen.height;
+
+                // タッチの移動ピクセルをワールド単位に変換し、カメラを移動
+                // マウスドラッグと同様に、地図を「引っ張る」動きなので、移動方向を反転
+                Vector3 touchMoveDelta = new Vector3(-touchDelta.x * worldUnitsPerPixel, -touchDelta.y * worldUnitsPerPixel, 0);
+
+                // カメラのローカル軸に変換して移動
+                mainCamera.transform.position += mainCamera.transform.TransformDirection(touchMoveDelta);
+            }
+        }
+
         // ズーム（マウスホイール）
         float scroll = Input.GetAxis("Mouse ScrollWheel");
         if (scroll != 0)
@@ -254,6 +289,32 @@ public class MapLoader : MonoBehaviour
             else
             {
                 mainCamera.transform.position += mainCamera.transform.forward * scroll * 10f; // ズーム速度調整
+            }
+        }
+
+        // --- ★ピンチジェスチャーでのズーム (モバイル向け) ---
+        if (Input.touchCount == 2) // 指2本でのタッチの場合 (ピンチイン/アウト)
+        {
+            // 最初の2本の指の情報を取得
+            Touch touchZero = Input.GetTouch(0);
+            Touch touchOne = Input.GetTouch(1);
+
+            // 前フレームでのそれぞれの指の位置を計算
+            Vector2 touchZeroPrevPos = touchZero.position - touchZero.deltaPosition;
+            Vector2 touchOnePrevPos = touchOne.position - touchOne.deltaPosition;
+
+            // 前フレームと現フレームでの指の間の距離を計算
+            float prevTouchDeltaMag = (touchZeroPrevPos - touchOnePrevPos).magnitude;
+            float touchDeltaMag = (touchZero.position - touchOne.position).magnitude;
+
+            // ズームの変化量
+            float deltaMagnitudeDiff = prevTouchDeltaMag - touchDeltaMag;
+
+            // orthographicSize を更新
+            if (mainCamera.orthographic)
+            {
+                float newSize = mainCamera.orthographicSize + deltaMagnitudeDiff * zoomSpeed * 0.1f * Time.deltaTime; // ズーム感度調整
+                mainCamera.orthographicSize = Mathf.Clamp(newSize, minZoomSize, maxZoomSize);
             }
         }
     }
@@ -283,7 +344,7 @@ public class MapLoader : MonoBehaviour
                 }
 
                 // 新しいタイルをロード
-                await FetchAndDisplayTile(zoom, tileX, tileY);
+                FetchAndDisplayTile(zoom, tileX, tileY).Forget();
             }
         }
 
@@ -306,6 +367,8 @@ public class MapLoader : MonoBehaviour
                 Debug.Log($"Tile {key} unloaded.");
             }
         }
+
+        await UniTask.Yield();
     }
 
     // --- 緯度経度 <-> タイル座標 変換ヘルパーメソッド ---
@@ -343,11 +406,11 @@ public class MapLoader : MonoBehaviour
 
     // Unityワールド座標への変換 (このロジックは、Unityでのタイルの表示スケールに強く依存します)
     // MapContainerのローカル座標系における緯度経度の位置を返します
-    public Vector3 LatLonToUnityLocalPosition(double lat, double lon, int zoom)
+    public Vector3 LatLonToUnityLocalPosition(double lat, double lon)
     {
         // 緯度経度からピクセル座標に変換 (Webメルカトル基準)
         // ズームレベル0で256x256ピクセルと仮定
-        double n = Math.Pow(2, zoom);
+        double n = Math.Pow(2, currentZoom);
         double tileWorldSizePx = n * 256; // 世界全体でのピクセルサイズ (ズームレベル0で256)
 
         // 経度からXピクセル
@@ -355,31 +418,39 @@ public class MapLoader : MonoBehaviour
 
         // 緯度からYピクセル (メルカトル投影)
         double latRad = lat * Mathf.Deg2Rad;
+        Debug.Log($"latRad: {latRad}");
         double pixelY = (1.0 - Math.Log(Math.Tan(latRad) + 1 / Math.Cos(latRad)) / Math.PI) / 2.0 * tileWorldSizePx;
 
         // ここで、現在の中心タイルの原点からのオフセットを考慮
         // 現在の中心タイル (centerTileX, centerTileY) が Unity のワールド原点に相当すると仮定
         // pixelX, pixelY は絶対ピクセル座標なので、そこから中心タイルのピクセル座標を引く
         // centerTileX, centerTileY は現在のズームレベルでの中心タイル座標
-        double centerTilePixelX = centerTileX * 256; // 中心タイルの左上ピクセルX座標
-        double centerTilePixelY = centerTileY * 256; // 中心タイルの左上ピクセルY座標
-
-        // 中心タイル基準の相対ピクセル座標
-        float relativePixelX = (float)(pixelX - centerTilePixelX);
-        float relativePixelY = (float)(pixelY - centerTilePixelY);
+        // double centerTilePixelX = centerTileX * 256; // 中心タイルの左上ピクセルX座標
+        // double centerTilePixelY = centerTileY * 256; // 中心タイルの左上ピクセルY座標
 
         // ピクセル座標をUnityユニットに変換 (PPU=256の場合、1タイル=1ユニットなので、1ピクセル=1/256ユニット)
         // newSprite の PPU を 256 に設定したと仮定 (texture.width)
-        float unityX = relativePixelX / 256f * tileSizeInUnityUnits; // 256はデフォルトのタイルサイズ
-        float unityY = relativePixelY / 256f * tileSizeInUnityUnits;
+        // タイルのピボットを中央に設定しているため、-0.5f で中心を調整
+        double unityX = pixelX / 256f * tileSizeInUnityUnits - 0.5f;
+        double unityY = pixelY / 256f * tileSizeInUnityUnits - 0.5f;
 
         // mapContainer が X軸90度回転している場合、地図のY軸がUnityのZ軸に対応
-        return new Vector3(unityX, unityY, 0); // X, Y平面に配置
+        return new Vector3((float)unityX, (float)-unityY, 0); // X, Y平面に配置
+    }
+
+    private float GetTileScaleForZoom(int zoomLevel)
+    {
+        // 例えば、ズームレベル18が1ユニット（基準）
+        // ズームレベル17は2ユニット
+        // ズームレベル16は4ユニット
+        // ズームレベルNのタイルは、基準となるズームレベルに対する2の冪乗倍のスケールを持つ
+        return tileSizeInUnityUnits * Mathf.Pow(2, 18 - zoomLevel);
     }
 
     // --- 個々のタイルをフェッチして表示するコルーチン ---
     private async UniTask FetchAndDisplayTile(int z, int x, int y)
     {
+        //Debug.Log($"Fetching tile: {z}/{x}/{y}");
         string tileUrl = string.Format(tileBaseUrl, z, x, y, sessionToken, apiKey);
 
         using (UnityWebRequest request = UnityWebRequestTexture.GetTexture(tileUrl))
@@ -393,10 +464,15 @@ public class MapLoader : MonoBehaviour
             }
             else
             {
+                Debug.Log(request.downloadHandler.text); // レスポンスの内容をデバッグログに出力
                 Texture2D texture = DownloadHandlerTexture.GetContent(request);
+
 
                 // タイルオブジェクトを生成
                 SpriteRenderer newTileSpriteRenderer = Instantiate(tilePrefab, mapContainer.transform);
+
+                //float currentTileScale = GetTileScaleForZoom(z); // そのタイルのズームレベルに応じたスケールを取得
+                //newTileSpriteRenderer.transform.localScale = Vector3.one * currentTileScale; // スケールを適用
 
                 // Texture2D から Sprite を作成
                 Sprite newSprite = Sprite.Create(texture,

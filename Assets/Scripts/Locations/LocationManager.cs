@@ -21,14 +21,16 @@ public class LocationManager : MonoBehaviour
     // [SerializeField]
     // private LatLng mockLocation;
 
-    [SerializeField]
-    private RawImage mapImage;
+    // [SerializeField]
+    // private RawImage mapImage;
 
     private LocationInfo prevLocation;
 
     public int currentLogPointsIndex = 0;
 
     public LogPathRenderer logPathRenderer;
+    
+    public MapLoader mapLoader;
 
     private async void Start()
     {
@@ -40,27 +42,32 @@ public class LocationManager : MonoBehaviour
         if (!Input.location.isEnabledByUser)
         {
             Debug.Log("Location services are not enabled by the user.");
-            await Task.Delay(2000);
+            await UniTask.Delay(2000);
         }
 
         // Locationサービスが開始されるまで待機
         Debug.Log("Waiting for location service to start...");
         while (Input.location.status != LocationServiceStatus.Running)
         {
-            await Task.Delay(1000);
+            await UniTask.Delay(1000);
         }
 
         if (Input.location.status == LocationServiceStatus.Running)
         {
             Debug.Log("Generating map with current location...");
-            await Task.Delay(500);
-            LatLng currentLocation = new LatLng(Input.location.lastData.latitude, Input.location.lastData.longitude);
+            await UniTask.Delay(500);
+            LatLng currentLocation = new LatLng{latitude = Input.location.lastData.latitude, longitude = Input.location.lastData.longitude};
             //LoadMap(currentLocation, 14);
         }
 #else
         Debug.Log("Using Mock Location");
+        var logReader = new LocationLogReader();
+        string log = logReader.Read();
+        var firstLogPoint = log.Split('\n')[0];
+        var firstLatLng = firstLogPoint.Split(',');
+        mapLoader.Init(double.Parse(firstLatLng[0]), double.Parse(firstLatLng[1]));
 
-        //LoadMap(mockLocation, 14);
+        logPathRenderer.DrawLogPath(log);
 #endif
     }
 
