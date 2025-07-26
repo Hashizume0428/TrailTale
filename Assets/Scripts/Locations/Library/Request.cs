@@ -31,5 +31,11 @@ namespace LocationLibrary
     {
         public double latitude;
         public double longitude;
+
+        public LatLng(double lat, double lon)
+        {
+            latitude = lat;
+            longitude = lon;
+        }
     }
 }
