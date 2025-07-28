@@ -1457,6 +1457,14 @@ PrefabInstance:
       propertyPath: m_text
       value: "\u3075\u3064\u3046"
       objectReference: {fileID: 0}
+    - target: {fileID: 2080438510154945076, guid: d4cd1d1f96fd4844db46bb459221a9dd, type: 3}
+      propertyPath: m_Type
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2080438510154945076, guid: d4cd1d1f96fd4844db46bb459221a9dd, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 3981584927551253434, guid: 9ff8469a2f780ec4a963ad66bff163bf, type: 3}
     - target: {fileID: 2333719336196587221, guid: d4cd1d1f96fd4844db46bb459221a9dd, type: 3}
       propertyPath: m_SizeDelta.x
       value: 198.39
@@ -1476,6 +1484,10 @@ PrefabInstance:
     - target: {fileID: 3464911645397738891, guid: d4cd1d1f96fd4844db46bb459221a9dd, type: 3}
       propertyPath: m_Name
       value: Speedbuttons
+      objectReference: {fileID: 0}
+    - target: {fileID: 3464911645397738891, guid: d4cd1d1f96fd4844db46bb459221a9dd, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3656804819644266753, guid: d4cd1d1f96fd4844db46bb459221a9dd, type: 3}
       propertyPath: m_text
@@ -1529,6 +1541,14 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Arguments.m_ObjectArgumentAssemblyTypeName
       value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
+    - target: {fileID: 5892765388873247742, guid: d4cd1d1f96fd4844db46bb459221a9dd, type: 3}
+      propertyPath: m_Type
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5892765388873247742, guid: d4cd1d1f96fd4844db46bb459221a9dd, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 3981584927551253434, guid: 9ff8469a2f780ec4a963ad66bff163bf, type: 3}
     - target: {fileID: 7157247621619935289, guid: d4cd1d1f96fd4844db46bb459221a9dd, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
       value: 2
@@ -1581,6 +1601,14 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 30
       objectReference: {fileID: 0}
+    - target: {fileID: 8178418259791617919, guid: d4cd1d1f96fd4844db46bb459221a9dd, type: 3}
+      propertyPath: m_Type
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8178418259791617919, guid: d4cd1d1f96fd4844db46bb459221a9dd, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 3981584927551253434, guid: 9ff8469a2f780ec4a963ad66bff163bf, type: 3}
     - target: {fileID: 8421076044440496393, guid: d4cd1d1f96fd4844db46bb459221a9dd, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 3
@@ -2985,8 +3013,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
-  m_Type: 1
+  m_Sprite: {fileID: 3981584927551253434, guid: 9ff8469a2f780ec4a963ad66bff163bf, type: 3}
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
