@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
 using LocationLibrary;
@@ -43,6 +44,9 @@ public class StoryManager : MonoBehaviour
 
     [SerializeField]
     private Loading loadingUI;
+
+    [SerializeField]
+    private Button startStoryButton;
 
     public string bookName = "MyStoryBook";
 
@@ -112,15 +116,16 @@ public class StoryManager : MonoBehaviour
 
     public async void Next()
     {
+        startStoryButton.interactable = false;
         // 選択されたオプションに基づいてステータスを更新
-        if (currentEventData.GetEventType() == EventData.EventType.Status)
+        if (currentEventData.GetEventType() == EventLibrary.EventType.Status)
         {
             Debug.Log("ステータスがアップデートされます");
             StatusEventData statusEventData = (StatusEventData)currentEventData;
             playerData.UpdateStatus(statusEventData.GetOption(displayResponse.SelectedOptionIndex).statusType,
                                     (int)statusEventData.GetOption(displayResponse.SelectedOptionIndex).statusChange);
         }
-        else if (currentEventData.GetEventType() == EventData.EventType.Item)
+        else if (currentEventData.GetEventType() == EventLibrary.EventType.Item)
         {
 
         }
@@ -133,8 +138,9 @@ public class StoryManager : MonoBehaviour
         {
             mapUI.SetActive(true);
             storyUI.SetActive(false);
-            await UniTask.Delay(1000); // 少し待機してから次のストーリーを開始
-            mapCameraController.NextIndex();
+            await UniTask.Delay(500); // 少し待機してから次のストーリーを開始
+            await mapCameraController.NextIndex();
+            startStoryButton.interactable = true;
         }
         else
         {

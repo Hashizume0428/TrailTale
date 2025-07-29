@@ -93,11 +93,11 @@ public class AIManager : MonoBehaviour
     public async UniTask<ResponseContent> SendPrompt(string locationName, EventData eventData)
     {
         string jsonData;
-        if (eventData.GetEventType() == EventData.EventType.Status)
+        if (eventData.GetEventType() == EventLibrary.EventType.Status)
         {
             jsonData = CreateRequestJson(locationName, (StatusEventData)eventData);
         }
-        else if (eventData.GetEventType() == EventData.EventType.Item)
+        else if (eventData.GetEventType() == EventLibrary.EventType.Item)
         {
             // TODO: ItemEventDataの処理を実装する
             Debug.LogWarning("ItemEventDataの処理は未実装です。");

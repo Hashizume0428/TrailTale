@@ -1,12 +1,7 @@
 using UnityEngine;
+using EventLibrary;
 
 public abstract class EventData : ScriptableObject
 {
-    public enum EventType
-    {
-        Status,
-        Item,
-    }
-
-    public abstract EventType GetEventType();
+    public abstract EventLibrary.EventType GetEventType();
 }
