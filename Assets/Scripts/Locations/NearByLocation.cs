@@ -69,8 +69,9 @@ public class NearByLocation : MonoBehaviour
             }
 
             // 見つかったランドマーク名をランダムで返す
-            int randomIndex = Random.Range(0, responseData.places.Length);
-            return responseData.places[randomIndex].displayName.text;
+            //int randomIndex = Random.Range(0, responseData.places.Length);
+            //return responseData.places[randomIndex].displayName.text;
+            return responseData.places[0].displayName.text; // 一番近くのランドマーク名を返す
         }
         else
         {

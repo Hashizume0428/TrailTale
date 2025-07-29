@@ -12,8 +12,8 @@ namespace EventLibrary
 
     public enum StatusChange
     {
-        Up,
-        Down,
-        None
+        Up = 1,
+        Down = -1,
+        None = 0
     }
 }

@@ -26,9 +26,6 @@ public class DisplayResponse : MonoBehaviour
     private Button nextButton;
 
     [SerializeField]
-    private Loading loadingUI;
-
-    [SerializeField]
     private OptionUI optionUIPrefab;
 
     private OptionUI[] optionUIs;
@@ -47,22 +44,6 @@ public class DisplayResponse : MonoBehaviour
     public void RegisterNextButtonListener(Action listener)
     {
         nextButton.onClick.AddListener(() => listener());
-    }
-
-    /// <summary>
-    /// ローディングUIを表示します。
-    /// </summary>
-    public void ShowLoading()
-    {
-        loadingUI.ShowLoading();
-    }
-
-    /// <summary>
-    /// ローディングUIを非表示にします。
-    /// </summary>
-    public void HideLoading()
-    {
-        loadingUI.HideLoading();
     }
 
     /// <summary>

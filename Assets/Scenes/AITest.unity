@@ -1336,6 +1336,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 491b53d54288c8b4ca4c6a1dfbb17809, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playerData: {fileID: 11400000, guid: 284b54170ae143f42bcc21acf4d70cf3, type: 2}
   aiManager: {fileID: 420059740}
   nearByLocation: {fileID: 2022537786}
   displayResponse: {fileID: 2038674431}
@@ -1346,7 +1347,7 @@ MonoBehaviour:
     longitude: 135.50113609445393
   - latitude: 34.75803351476688
     longitude: 135.4967726665218
-  _eventData: {fileID: 11400000, guid: c8b98156e3431d94e9f6d29a7f522c62, type: 2}
+  mockEventData: {fileID: 11400000, guid: c8b98156e3431d94e9f6d29a7f522c62, type: 2}
   bookName: MyStoryBook
 --- !u!4 &1777101967
 Transform:
