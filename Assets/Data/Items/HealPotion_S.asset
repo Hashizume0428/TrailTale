@@ -9,17 +9,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1a1b63ff90fe5d94187ac7e82dcb90f0, type: 3}
-  m_Name: PlayerData
+  m_Script: {fileID: 11500000, guid: 1e4859d639e4b8f4ea9ffd8fe71013b3, type: 3}
+  m_Name: HealPotion_S
   m_EditorClassIdentifier: 
-  atk: 1
-  def: 1
-  hp: 1
-  spd: 1
-  mp: 1
-  latLngList:
-    latLngs: []
-    eventOccurred: 
-  healPotion_S: 0
-  healPotion_M: 0
-  healPotion_L: 0
+  itemName: "\u56DE\u5FA9\u85AC(S)"
+  icon: {fileID: 21300000, guid: 166172b8fa9b98949bfcededa3a3e783, type: 3}
+  itemType: 0
+  healAmount: 1

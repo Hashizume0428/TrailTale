@@ -1,6 +1,7 @@
 namespace LocationLibrary
 {
     using System;
+    using System.Collections.Generic;
 
     /// <summary>
     /// NearBySearchを行うときに、このクラスをJSONに変換して使う

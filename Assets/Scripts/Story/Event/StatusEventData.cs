@@ -23,9 +23,9 @@ public class StatusEventData : EventData
     /// ステータスイベントの種類を取得します。
     /// </summary>
     /// <returns></returns>
-    public override EventType GetEventType()
+    public override EventLibrary.EventType GetEventType()
     {
-        return EventType.Status;
+        return EventLibrary.EventType.Status;
     }
 
     /// <summary>

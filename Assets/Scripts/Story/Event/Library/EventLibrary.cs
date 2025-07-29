@@ -1,12 +1,18 @@
 namespace EventLibrary
 {
+    public enum EventType
+    {
+        Status,
+        Item,
+    }
+
     public enum StatusType
     {
         ATK,
         DEF,
         HP,
         SPD,
-        LUCK,
+        MP,
         None
     }
 
@@ -16,4 +22,13 @@ namespace EventLibrary
         Down = -1,
         None = 0
     }
+
+    public enum ItemType
+    {
+        HealPotion_S = 0,
+        HealPotion_M = 1,
+        HealPotion_L = 2,     
+    }
+
+    
 }
