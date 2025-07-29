@@ -59,15 +59,6 @@ public class LocationManager : MonoBehaviour
             LatLng currentLocation = new LatLng{latitude = Input.location.lastData.latitude, longitude = Input.location.lastData.longitude};
             //LoadMap(currentLocation, 14);
         }
-#else
-        Debug.Log("Using Mock Location");
-        var logReader = new LocationLogReader();
-        string log = logReader.Read();
-        var firstLogPoint = log.Split('\n')[0];
-        var firstLatLng = firstLogPoint.Split(',');
-        mapLoader.Init(double.Parse(firstLatLng[0]), double.Parse(firstLatLng[1]));
-
-        logPathRenderer.DrawLogPath(log);
 #endif
     }
 

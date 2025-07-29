@@ -67,18 +67,13 @@ public class LogPathRenderer : MonoBehaviour
     //     return threeLogPath;
     // }
 
-    public void DrawLogPath(string log)
+    public void DrawLogPath(List<LatLng> latLngList)
     {
-        List<LatLng> logVecList = ParseLogToLatLng(log);
-        if (logVecList == null || logVecList.Count == 0)
-        {
-            Debug.LogWarning("ログパスが空です。");
-            return;
-        }
+        ClearLogPath(); // 既存のポイントオブジェクトを削除
 
         List<Vector3> mapPositions = new List<Vector3>();
 
-        foreach (var logVec in logVecList)
+        foreach (var logVec in latLngList)
         {
             Debug.Log($"Log Vector: {logVec}");
             Vector3 mapPos = mapLoader.LatLonToUnityLocalPosition(logVec.latitude, logVec.longitude);
@@ -212,34 +207,6 @@ public class LogPathRenderer : MonoBehaviour
     //         pointObjects.Add(pointObj);
     //     }
     // }
-
-    private List<LatLng> ParseLogToLatLng(string log)
-    {
-        List<LatLng> points = new List<LatLng>();
-
-        var lines = log.Split('\n');
-
-        foreach (var line in lines)
-        {
-            if (string.IsNullOrWhiteSpace(line)) continue;
-
-            var parts = line.Split(',');
-            if (parts.Length < 2) continue;
-
-            double lat = double.Parse(parts[0]);
-            double lon = double.Parse(parts[1]);
-
-            // 地球1度あたりの距離からおおよそメートル換算
-            //float x = (lon - baseLon);
-            //float y = (lat - baseLat);
-            double x = lat;
-            double y = lon;
-
-            points.Add(new LatLng(x, y));
-        }
-
-        return points;
-    }
 
     // // 地図の境界を計算
     // public MapBounds CalculateBounds(List<Vector2> points)

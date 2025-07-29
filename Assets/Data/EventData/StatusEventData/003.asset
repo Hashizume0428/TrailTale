@@ -14,6 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   options:
   - statusType: 2
-    statusChange: 0
+    statusChange: 1
   - statusType: 0
-    statusChange: 0
+    statusChange: 1

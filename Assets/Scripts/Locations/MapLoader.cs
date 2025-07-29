@@ -64,8 +64,9 @@ public class MapLoader : MonoBehaviour
         mapContainer.transform.rotation = Quaternion.Euler(90, 0, 0); // 2D表示のためX軸90度回転 (オプション)
     }
 
-    public void Init(double initialLat, double initialLon)
+    public async UniTask Init(LatLng initialLatLng)
     {
+
         if (string.IsNullOrEmpty(apiKey) || apiKey == "YOUR_YOUR_Maps_API_KEY_HERE")
         {
             Debug.LogError("APIキーが設定されていません。Inspectorで設定してください。");
@@ -85,7 +86,7 @@ public class MapLoader : MonoBehaviour
 
         // 初期ズームレベルでの中心タイルXYZ座標を計算
         // これが初期のcenterTileX, centerTileYになります
-        Vector2Int initialTileXY = LatLonToTileXY(initialLat, initialLon, currentZoom);
+        Vector2Int initialTileXY = LatLonToTileXY(initialLatLng.latitude, initialLatLng.longitude, currentZoom);
         centerTileX = initialTileXY.x;
         centerTileY = initialTileXY.y;
 
@@ -97,7 +98,7 @@ public class MapLoader : MonoBehaviour
         mainCamera.orthographic = true;
         mainCamera.orthographicSize = 1f; // 初期ズームサイズ
 
-        InitializeMap().Forget(); // 非同期初期化を開始
+        await InitializeMap(); // 非同期初期化を開始
     }
 
     // 地図の初期化とメインループ
@@ -108,7 +109,7 @@ public class MapLoader : MonoBehaviour
         // 初期タイルのロード
         //await LoadSurroundingTiles(centerTileX, centerTileY, currentZoom, gridRadius);
 
-        LoadLogPathTiles().Forget(); // ログパスタイルのロードを開始
+        await LoadLogPathTiles(); // ログパスタイルのロードを開始
 
         // マップのスクロールを監視するメインループ
         //ManageTilesContinuously().Forget();
