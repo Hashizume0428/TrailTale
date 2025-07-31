@@ -381,9 +381,9 @@ public class BGMSoundData
     public enum BGM
     {
         None,
-        Title,
-        Home,
-        Battle,
+        Title, //タイトル画面のBGM
+        Home,　//ホーム画面のBGM
+        Battle,//バトル画面のBGM
     }
 
     public BGM bgm;
@@ -399,10 +399,12 @@ public class SESoundData
     public enum SE
     {
         None,
-        Attack,
-        Damage,
-        Magic,
-        Click,
+        Attack, //攻撃SE
+        Damage, //ダメージSE
+        Magic, //魔法SE
+        Click, //ボタンクリックSE
+        Dragon //ドラゴン（ボス）SE
+
     }
 
     public SE se;
