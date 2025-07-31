@@ -1,8 +1,9 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.UI;
-using System.Collections; // コルーチンを使用するために必要です
-using System.Collections.Generic; // List<Button> を使用するために必要
+using UnityEngine.UI; // Button を使用するために必要です
+using System.Collections;
+using System.Collections.Generic;
+using TMPro; // TextMeshProUGUI を使用するために必要です
 
 public class GameManager : MonoBehaviour
 {
@@ -12,27 +13,52 @@ public class GameManager : MonoBehaviour
     [Header("Scene Transition Settings")]
     [SerializeField] private float sceneTransitionDelay = 0.8f;
 
-    // ★★★ここからGameManagerのシングルトンパターンを削除★★★
+    // ★★★GameManagerのシングルトンパターンは削除されたままです★★★
     // private static GameManager instance = null;
     // public static GameManager Instance { get { return instance; } }
     //
     // void Awake()
     // {
-    //     if (instance != null && instance != this)
-    //     {
-    //         Destroy(this.gameObject);
-    //         return;
-    //     }
-    //     instance = this;
-    //     DontDestroyOnLoad(this.gameObject);
+    //      if (instance != null && instance != this)
+    //      {
+    //          Destroy(this.gameObject);
+    //          return;
+    //      }
+    //      instance = this;
+    //      DontDestroyOnLoad(this.gameObject);
     // }
-    // ★★★ここまでGameManagerのシングルトンパターンを削除★★★
+    // ★★★GameManagerのシングルトンパターンは削除されたままです★★★
 
 
     // UIボタンのリスナーを保持するリスト (このロジックはGameManagerをシングルトン化しない場合は通常不要ですが、
     // 以前のOnSceneLoadedForSEメソッドの残骸なので、もし使わないなら削除できます。)
     private List<Button> registeredButtons = new List<Button>();
 
+    // --- 新規追加部分 ---
+    [Header("Route Info Text Toggle")]
+    [SerializeField] private TextMeshProUGUI routeInfoDisplayTextBox; // 経路情報を表示するUIテキストボックス（TextMeshProUGUI型）
+    private bool isRouteInfoAcquiring = false; // 経路情報が取得中かどうかの状態
+
+    // PlayerPrefsで使用するキー
+    private const string ROUTE_INFO_STATUS_KEY = "IsRouteInfoAcquiring";
+
+    void Start()
+    {
+        // アプリケーション起動時やシーンロード時にPlayerPrefsから状態を読み込む
+        // PlayerPrefs.GetIntは、キーが存在しない場合に指定したデフォルト値（ここでは0）を返します。
+        // 0をfalse、1をtrueとして扱います。
+        isRouteInfoAcquiring = (PlayerPrefs.GetInt(ROUTE_INFO_STATUS_KEY, 0) == 1);
+
+        // UIテキストボックスが設定されていれば、初期表示を更新
+        if (routeInfoDisplayTextBox != null)
+        {
+            UpdateRouteInfoDisplayText();
+        }
+        else
+        {
+            Debug.LogWarning("[GameManager] Start: routeInfoDisplayTextBoxが設定されていません。Inspectorで設定してください。");
+        }
+    }
 
     // --- 既存のメソッド（変更なし） ---
 
@@ -110,8 +136,6 @@ public class GameManager : MonoBehaviour
         StartCoroutine(LoadSceneWithDelay("home")); // コルーチンを開始
     }
 
-    // --- 新規追加メソッド ---
-
     /// <summary>
     /// 指定された時間待機した後、シーンをロードするコルーチン
     /// </summary>
@@ -143,70 +167,45 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    // ★★★ここから、以前の「GameManagerで自動的にボタンにリスナーを登録する」ロジック。
-    // GameManagerをシングルトン化しない場合、このOnEnable/OnDisable/OnDestroyおよび関連メソッドは通常不要です。
-    // もしGameManagerがシーンごとに配置されるなら、これらのメソッドは削除しても構いません。
-    // (ただし、その場合はGameManagerのGameObjectを各シーンに配置し、
-    //  configPanelなどの[SerializeField]をInspectorで各シーンで割り当て直す必要があります)
-    /*
-    void OnEnable()
+    /// <summary>
+    /// UIボタンクリックで経路情報表示テキストを切り替えるメソッド。
+    /// このメソッドは、UIボタンのOnClickイベントに設定します。
+    /// </summary>
+    public void ToggleRouteInfoText()
     {
-        // GameManagerがシングルトンでない場合、このイベント購読は推奨されません。
-        // シーンごとにGameManagerがある場合、各GameManagerがシーンロードイベントを購読してしまいます。
-        SceneManager.sceneLoaded += OnSceneLoadedForSE;
-    }
-
-    void OnDisable()
-    {
-        SceneManager.sceneLoaded -= OnSceneLoadedForSE;
-        RemoveAllButtonListeners();
-    }
-
-    void OnDestroy()
-    {
-        RemoveAllButtonListeners();
-    }
-
-    private void OnSceneLoadedForSE(Scene scene, LoadSceneMode mode)
-    {
-        Debug.Log($"[GameManager] Scene Loaded: {scene.name} for SE registration.");
-        RemoveAllButtonListeners();
-
-        Button[] allButtonsInScene = Resources.FindObjectsOfTypeAll<Button>();
-        
-        foreach (Button button in allButtonsInScene)
+        if (routeInfoDisplayTextBox == null)
         {
-            if (button.gameObject.scene != scene) continue; 
-            
-            button.onClick.AddListener(PlayClickSFXForButton);
-            registeredButtons.Add(button); 
+            Debug.LogWarning("[GameManager] ToggleRouteInfoText: routeInfoDisplayTextBoxが設定されていません。Inspectorで設定してください。");
+            return;
         }
-        Debug.Log($"[GameManager] {registeredButtons.Count} 個のボタンにSEリスナーを登録しました。");
+
+        isRouteInfoAcquiring = !isRouteInfoAcquiring; // 状態を反転させる
+
+        // PlayerPrefsに状態を保存
+        PlayerPrefs.SetInt(ROUTE_INFO_STATUS_KEY, isRouteInfoAcquiring ? 1 : 0);
+        PlayerPrefs.Save(); // 変更を保存 (即座に保存する場合。通常はアプリケーション終了時に自動保存されますが、明示的に呼ぶことも可能です)
+
+        UpdateRouteInfoDisplayText(); // 表示を更新
     }
 
-    private void PlayClickSFXForButton()
+    /// <summary>
+    /// 現在のisRouteInfoAcquiringの状態に基づいてテキスト表示を更新するヘルパーメソッド
+    /// </summary>
+    private void UpdateRouteInfoDisplayText()
     {
-        if (SoundManager.Instance != null)
+        if (routeInfoDisplayTextBox == null) return; // 念のためnullチェック
+
+        if (isRouteInfoAcquiring)
         {
-            SoundManager.Instance.PlayClickSFX();
+            routeInfoDisplayTextBox.text = "【経路情報取得中】";
+            Debug.Log("[GameManager] 経路情報表示: 取得中");
         }
         else
         {
-            Debug.LogWarning("[GameManager] SoundManagerのインスタンスが見つからないため、ボタンクリックSEを再生できません。");
+            routeInfoDisplayTextBox.text = "【経路情報取得停止中】";
+            Debug.Log("[GameManager] 経路情報表示: 取得停止中");
         }
     }
-
-    private void RemoveAllButtonListeners()
-    {
-        foreach (Button button in registeredButtons)
-        {
-            if (button != null)
-            {
-                button.onClick.RemoveListener(PlayClickSFXForButton);
-            }
-        }
-        registeredButtons.Clear();
-        Debug.Log("[GameManager] 全てのボタンからSEリスナーを解除しました。");
-    }
-    */
 }
+
+  
