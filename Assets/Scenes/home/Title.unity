@@ -481,14 +481,29 @@ MonoBehaviour:
     audioClip: {fileID: 0}
     volume: 1
   - bgm: 3
-    audioClip: {fileID: 0}
+    audioClip: {fileID: 8300000, guid: 6509cf88a0d258e40a5024c475bcf1c8, type: 3}
     volume: 1
   seSoundDatas:
-  - se: 4
+  - se: 6
     audioClip: {fileID: 8300000, guid: dfa5977937015444eaf9e49a21f841f8, type: 3}
     volume: 1
+  - se: 1
+    audioClip: {fileID: 8300000, guid: e3494d5574aeff44ba9713d7a03a88d2, type: 3}
+    volume: 1
+  - se: 2
+    audioClip: {fileID: 8300000, guid: 61a6fc1d483111d4aa6be98955b376e1, type: 3}
+    volume: 1
+  - se: 3
+    audioClip: {fileID: 8300000, guid: 2f8ca5aa94a5c1b4bbd73c3c0c784c6b, type: 3}
+    volume: 1
+  - se: 5
+    audioClip: {fileID: 8300000, guid: 0e1a26bc5b992bf4faaab5033bc2dc2b, type: 3}
+    volume: 1
+  - se: 7
+    audioClip: {fileID: 8300000, guid: 421405cdd1a64f442a8d6077c6d8eb4a, type: 3}
+    volume: 1
   - se: 4
-    audioClip: {fileID: 0}
+    audioClip: {fileID: 8300000, guid: afe781a27da7885439f528102c1a6ba8, type: 3}
     volume: 1
 --- !u!4 &318604526
 Transform:
@@ -1527,6 +1542,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   configPanel: {fileID: 1689658279}
   sceneTransitionDelay: 0.2
+  routeInfoDisplayTextBox: {fileID: 0}
 --- !u!4 &1827211308
 Transform:
   m_ObjectHideFlags: 0

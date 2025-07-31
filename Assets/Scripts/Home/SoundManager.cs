@@ -383,7 +383,8 @@ public class BGMSoundData
         None,
         Title, //タイトル画面のBGM
         Home,　//ホーム画面のBGM
-        Battle,//バトル画面のBGM
+        Battle01,//バトル画面のBGM
+        Battle02,//バトル画面のBGM
     }
 
     public BGM bgm;
@@ -402,8 +403,10 @@ public class SESoundData
         Attack, //攻撃SE
         Damage, //ダメージSE
         Magic, //魔法SE
+        Defense, //防御SE
+        HP_Item, //ポーション回復音
         Click, //ボタンクリックSE
-        Dragon //ドラゴン（ボス）SE
+        Dragon, //ドラゴン（ボス）SE
 
     }
 
