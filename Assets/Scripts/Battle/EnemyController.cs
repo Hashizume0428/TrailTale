@@ -1,8 +1,9 @@
 using UnityEngine;
 
-public struct Status
+public struct EnemyStatus
 {
     public int hp;
+    public int MaxHP; // 最大HPを追加
     public int attack;
     public int defense;
     public float attackSpeed;
@@ -14,25 +15,28 @@ public class EnemyController : MonoBehaviour
 {
     Rigidbody2D rd;
     private GameObject hero;
+    private GameObject magicTriggerArea;
 
-    public Status eStatus;
+    public EnemyStatus eStatus;
     private float timer = 0f;//攻撃タイマー
 
     [SerializeField] private const float attackSpeedMax = 10f; //攻撃間隔の最大値
 
     void Start()
     {
-        hero = GameObject.FindGameObjectWithTag("Hero");
+        rd = gameObject.GetComponent<Rigidbody2D>();
+
+        hero = GameObject.Find("Hero");
+        magicTriggerArea = GameObject.Find("MagicTriggerArea");
         //エネミーの初期ステータス
         eStatus.hp = 50;
         eStatus.attack = 10;
         eStatus.defense = 0;
-        eStatus.attackSpeed = 1f;
-        eStatus.transferSpeed = -1f;
+        eStatus.attackSpeed = 5f;
+        eStatus.transferSpeed = 0.025f;
         eStatus.isDead = false;
         eStatus.isEncountered = false;
     }
-
     void Update()
     {
         // print("Update");
@@ -48,7 +52,7 @@ public class EnemyController : MonoBehaviour
                 if (timer >= waitTime)
                 {
                     Attack();
-                    // print("timer: " + timer);
+                    print("timer: " + timer);
                     timer -= waitTime;
                 }
             }
@@ -60,8 +64,8 @@ public class EnemyController : MonoBehaviour
         if (!eStatus.isEncountered)
         {
             // print("move");
-            rd = gameObject.GetComponent<Rigidbody2D>();
-            rd.AddForce(new Vector2(eStatus.transferSpeed, 0));
+            transform.position = new Vector2(transform.position.x - eStatus.transferSpeed, transform.position.y);
+            //rd.AddForce(new Vector2(eStatus.transferSpeed, 0));
         }
     }
     void OnCollisionEnter2D(Collision2D other)
@@ -70,16 +74,16 @@ public class EnemyController : MonoBehaviour
         if (other.gameObject.tag == "HeroTriggerArea")
         {
             eStatus.isEncountered = true;
-            //print("Enemy encountered Hero!");
+            print("Enemy encountered Hero!");
         }
     }
     void Attack()
     {
         HeroController heroController = hero.GetComponent<HeroController>();
 
-        // print("Hero's HP: " + heroController.hStatus.hp);
+        print("Hero's HP: " + heroController.hStatus.hp);
         heroController.OnDamege(eStatus.attack);
-        // print("Enemy attacks Hero! Hero's HP: " + heroController.hStatus.hp);
+        print("Enemy attacks Hero! Hero's HP: " + heroController.hStatus.hp);
     }
     public void OnDamege(int damage)
     {
@@ -88,6 +92,19 @@ public class EnemyController : MonoBehaviour
         {
             eStatus.isDead = true;
             Destroy(gameObject);
+            //敵のGameObjectをHeroControllerから削除
+            HeroController heroController = hero.GetComponent<HeroController>();
+            MagicTriggerAreaController magicTriggerAreaController = magicTriggerArea.GetComponent<MagicTriggerAreaController>();
+            if (heroController.Enemies.Contains(gameObject))
+            {
+                heroController.Enemies.Remove(gameObject);
+            }
+            if (magicTriggerAreaController.MagicAreaEnemies.Contains(gameObject))
+            {
+                magicTriggerAreaController.MagicAreaEnemies.Remove(gameObject);
+            }
+            GameObject.Find("ScneneDirector").GetComponent<EnemyGenerator>().OnEnemyDestroyed();
+            print("Enemy is dead!");
         }
     }
 
