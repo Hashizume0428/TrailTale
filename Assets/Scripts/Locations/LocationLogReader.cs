@@ -56,7 +56,7 @@ public class LocationLogReader
             }
         }
     }
-    
+
     public List<LatLng> ParseLogToLatLng(string log)
     {
         List<LatLng> points = new List<LatLng>();
@@ -77,5 +77,20 @@ public class LocationLogReader
         }
 
         return points;
+    }
+
+    // 指定された範囲内でインデックスを選択
+    public List<int> SelectClampIndex(List<LatLng> latLngList, int min, int max)
+    {
+        HashSet<int> indices = new HashSet<int>();
+        float step = Mathf.Max(1.0f, (float)latLngList.Count / (max - min + 1));
+
+        for (float i = 0; i < latLngList.Count; i += step)
+        {
+            int index = Mathf.Clamp(Mathf.RoundToInt(i), 0, latLngList.Count - 1);
+            indices.Add(index);
+        }
+
+        return new List<int>(indices);
     }
 }
