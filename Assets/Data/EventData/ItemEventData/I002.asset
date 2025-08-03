@@ -9,15 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ad95f86fc23776c468a077adaa4f7c1e, type: 3}
-  m_Name: 002
+  m_Script: {fileID: 11500000, guid: 8d10becb372d28e4ca9eace6b66eb8bf, type: 3}
+  m_Name: I002
   m_EditorClassIdentifier: 
   options:
-  - statusType: 3
-    statusChange: 1
-  - statusType: 4
-    statusChange: 1
-  - statusType: 0
-    statusChange: 1
-  - statusType: 1
-    statusChange: 1
+  - itemType: 1

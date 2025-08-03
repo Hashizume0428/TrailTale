@@ -34,7 +34,7 @@ public class NearByLocation : MonoBehaviour
     /// 指定した位置の近くの場所を検索します。
     /// </summary>
     /// <param name="location"></param>
-    public async UniTask<string> SearchNearByLocation(LatLng location)
+    public async UniTask<PlaceData> SearchNearByLocation(LatLng location)
     {
         string requestJson = CreateRequestJson(location);
 
@@ -48,7 +48,7 @@ public class NearByLocation : MonoBehaviour
         request.downloadHandler = new DownloadHandlerBuffer();
         request.SetRequestHeader("Content-Type", "application/json");
         request.SetRequestHeader("X-Goog-Api-Key", GoogleApiKey);
-        request.SetRequestHeader("X-Goog-FieldMask", "places.displayName");
+        request.SetRequestHeader("X-Goog-FieldMask", "places.displayName,places.location");
 
         await request.SendWebRequest();
 
@@ -69,9 +69,8 @@ public class NearByLocation : MonoBehaviour
             }
 
             // 見つかったランドマーク名をランダムで返す
-            //int randomIndex = Random.Range(0, responseData.places.Length);
-            //return responseData.places[randomIndex].displayName.text;
-            return responseData.places[0].displayName.text; // 一番近くのランドマーク名を返す
+            int randomIndex = Random.Range(0, Mathf.Min(responseData.places.Length, 3)); // 最初の3つのランドマークからランダムに選択
+            return responseData.places[randomIndex];    // ランダムに選ばれたランドマークを返す
         }
         else
         {

@@ -12,12 +12,17 @@ public class LogPathRenderer : MonoBehaviour
     public LineRenderer lineRenderer;
 
     [SerializeField]
-    private GameObject pointObject;
+    private GameObject[] pointObject;
+
+    [SerializeField]
+    private PlaceObject placeObject;
 
     [SerializeField]
     private MapLoader mapLoader;
 
-    private List<GameObject> pointObjects = new List<GameObject>();
+    public List<GameObject> pointObjects = new List<GameObject>();
+    public List<int> eventPointList = new List<int>();
+    public List<PlaceObject> placeObjects = new List<PlaceObject>();
 
     private List<Vector2> logPathPoints = new List<Vector2>();
 
@@ -28,6 +33,9 @@ public class LogPathRenderer : MonoBehaviour
         {
             pointObjects.ForEach(obj => Destroy(obj));
             pointObjects.Clear();
+            eventPointList.Clear();
+            placeObjects.ForEach(obj => Destroy(obj));
+            placeObjects.Clear();
         }
 
         // // CanvasLineRendererのラインを削除
@@ -67,7 +75,7 @@ public class LogPathRenderer : MonoBehaviour
     //     return threeLogPath;
     // }
 
-    public void DrawLogPath(List<LatLng> latLngList)
+    public void DrawLogPath(List<LatLng> latLngList, List<int> storyIndexList)
     {
         ClearLogPath(); // 既存のポイントオブジェクトを削除
 
@@ -80,10 +88,19 @@ public class LogPathRenderer : MonoBehaviour
             mapPositions.Add(mapPos);
         }
 
-        foreach (var mapPos in mapPositions)
+        for (int i = 0; i < mapPositions.Count; i++)
         {
-            GameObject pointObj = Instantiate(pointObject, mapLoader.mapContainer.transform);
-            pointObj.transform.localPosition = mapPos;
+            int pointIndex = 0;
+
+            // Eventが発生する地点の場合ポイントの見た目を変更
+            if (storyIndexList.Contains(i))
+            {
+                pointIndex = 1;
+                eventPointList.Add(i);
+            }
+
+            GameObject pointObj = Instantiate(pointObject[pointIndex], mapLoader.mapContainer.transform);
+            pointObj.transform.localPosition = mapPositions[i];
             pointObjects.Add(pointObj);
         }
 
@@ -117,6 +134,14 @@ public class LogPathRenderer : MonoBehaviour
                     float d = dy / dx; // Yの変化量をXの変化量で割る
                     for (int x = Mathf.RoundToInt(curPos.x); x <= nextPos.x; x++)
                     {
+                        // dxが15以上の場合、はじめと最後の10タイル以外スキップ
+                        if (dx >= 15)
+                        {
+                            if (x > 10 && x < nextPos.x - 10)
+                            {
+                                continue;
+                            }
+                        }
                         float y = curPos.y + (x - curPos.x) * d;
                         uniqueTiles.Add(new Vector2Int(x, Mathf.RoundToInt(y)));
                         Debug.Log($"Tile: ({x}, {y})");
@@ -128,6 +153,13 @@ public class LogPathRenderer : MonoBehaviour
                     float d = dy / dx; // Yの変化量をXの変化量で割る
                     for (int x = Mathf.RoundToInt(nextPos.x); x <= curPos.x; x++)
                     {
+                        if (dx <= -15)
+                        {
+                            if (x < curPos.x - 10 && x > nextPos.x + 10)
+                            {
+                                continue;
+                            }
+                        }
                         float y = nextPos.y + (x - nextPos.x) * d;
                         uniqueTiles.Add(new Vector2Int(x, Mathf.RoundToInt(y)));
                         Debug.Log($"Tile: ({x}, {y})");
@@ -142,6 +174,14 @@ public class LogPathRenderer : MonoBehaviour
                     float d = dx / dy; // Xの変化量をYの変化量で割る
                     for (int y = Mathf.RoundToInt(curPos.y); y <= nextPos.y; y++)
                     {
+                        // dyが15以上の場合、はじめと最後の10タイル以外スキップ
+                        if (dy >= 15)
+                        {
+                            if (y > 10 && y < nextPos.y - 10)
+                            {
+                                continue;
+                            }
+                        }
                         float x = curPos.x + (y - curPos.y) * d;
                         uniqueTiles.Add(new Vector2Int(Mathf.RoundToInt(x), y));
                         Debug.Log($"Tile: ({x}, {y})");
@@ -153,6 +193,13 @@ public class LogPathRenderer : MonoBehaviour
                     float d = dx / dy; // Xの変化量をYの変化量で割る
                     for (int y = Mathf.RoundToInt(nextPos.y); y <= curPos.y; y++)
                     {
+                        if (dy <= -15)
+                        {
+                            if (y < curPos.y - 10 && y > nextPos.y + 10)
+                            {
+                                continue;
+                            }
+                        }
                         float x = nextPos.x + (y - nextPos.y) * d;
                         uniqueTiles.Add(new Vector2Int(Mathf.RoundToInt(x), y));
                         Debug.Log($"Tile: ({x}, {y})");
@@ -180,6 +227,24 @@ public class LogPathRenderer : MonoBehaviour
         List<Vector2Int> tileList = new List<Vector2Int>(uniqueTiles);
         Debug.Log($"<color=red>Total unique tiles: {tileList.Count}</color>");
         return tileList;
+    }
+
+    public void SetPlaceObjects(PlaceData placeData)
+    {
+        if (placeData == null)
+        {
+            Debug.LogWarning("PlaceData is null. Cannot set place objects.");
+            return;
+        }
+        else
+        {
+            Debug.Log($"Setting place LatLng: {placeData.location.latitude}, {placeData.location.longitude}");
+        }
+        Vector3 position = mapLoader.LatLonToUnityLocalPosition(placeData.location.latitude, placeData.location.longitude);
+        PlaceObject placeObj = Instantiate(placeObject, mapLoader.mapContainer.transform);
+        placeObj.transform.localPosition = position;
+        placeObj.SetText(placeData.displayName.text);
+        placeObjects.Add(placeObj);
     }
 
     // public void DrawLogPath(MapBounds bounds, List<Vector2> points)

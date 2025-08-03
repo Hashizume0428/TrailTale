@@ -30,7 +30,7 @@ namespace AILibrary
     {
         public Stage stage;
         public Description description;
-        public StatusOption options;
+        public Option options;
     }
 
     [Serializable]
@@ -47,7 +47,7 @@ namespace AILibrary
     }
 
     [Serializable]
-    public class StatusOption
+    public class Option
     {
         public string type;
         public int minItems;
@@ -58,12 +58,12 @@ namespace AILibrary
     public class Item
     {
         public string type;
-        public StatusOptionProperty properties;
+        public OptionProperty properties;
         public string[] required;
     }
 
     [Serializable]
-    public class StatusOptionProperty
+    public class OptionProperty
     {
         public Title title;
         public Result result;

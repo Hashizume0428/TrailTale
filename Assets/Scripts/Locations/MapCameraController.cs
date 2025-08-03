@@ -10,27 +10,42 @@ public class MapCameraController : MonoBehaviour
 
     public LogPathRenderer logPathRenderer;
 
-    private int currentIndex = 0;
+    public int currentIndex = 0;
 
     public async UniTask MoveCameraToPosition(Vector3 targetPosition, float duration)
     {
+        targetPosition.y = 10;
         await mapCamera.transform.DOMove(targetPosition, duration);
     }
 
     public async UniTask NextIndex()
     {
-        if (currentIndex < logPathRenderer.lineRenderer.positionCount - 1)
+        bool isEventPoint = false;
+
+        while (!isEventPoint)
         {
-            currentIndex++;
-            Vector3 nextPosition = logPathRenderer.lineRenderer.GetPosition(currentIndex);
-            nextPosition.y = 10;
+            if (currentIndex < logPathRenderer.lineRenderer.positionCount - 1)
+            {
+                currentIndex++;
+                Vector3 nextPosition = logPathRenderer.lineRenderer.GetPosition(currentIndex);
 
-            float duration = 1.0f;
+                float duration = 1.0f;
 
-            float distance = Vector3.Distance(mapCamera.transform.position, nextPosition);
-            print($"<color=blue>{distance}</color>");
-            await MoveCameraToPosition(nextPosition, 1.0f);
+                float distance = Vector3.Distance(mapCamera.transform.position, nextPosition);
+                print($"<color=blue>{distance}</color>");
+                await MoveCameraToPosition(nextPosition, 1.0f);
+
+                if (logPathRenderer.eventPointList.Contains(currentIndex))
+                {
+                    isEventPoint = true;
+                }
+            }
+            else
+            {
+                break;
+            }
         }
+
     }
 
     public async UniTask PreviousIndex()

@@ -22,6 +22,9 @@ public class PlayerData : ScriptableObject
     public int healPotion_M;
     public int healPotion_L;
 
+    public int currentStoryIndex = 0; // 現在のマップインデックス
+    public string currentLog = ""; // 現在のログ
+
     // ステータスを更新する
     public void UpdateStatus(StatusType statusType, int value)
     {
@@ -95,6 +98,32 @@ public class PlayerData : ScriptableObject
                 return 0;
         }
     }
+
+    public int GetCurrentStoryIndex()
+    {
+        Load();
+        return currentStoryIndex;
+    }
+
+    public void SetCurrentStoryIndex(int index)
+    {
+        currentStoryIndex = index;
+        Save();
+    }
+
+    public string GetCurrentLog()
+    {
+        Load();
+        return currentLog;
+    }
+
+    public void SetCurrentLog(string log)
+    {
+        currentLog = log;
+        Save();
+    }
+
+
 
     public void Load()
     {

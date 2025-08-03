@@ -2,6 +2,7 @@ namespace LocationLibrary
 {
     using System;
     using UnityEngine;
+    using LocationLibrary;
 
     /// <summary>
     /// AIからのレスポンスをJSON形式で解析してResponseContentに変換します。
@@ -28,6 +29,7 @@ namespace LocationLibrary
     public class PlaceData
     {
         public DisplayName displayName;
+        public LatLng location;
     }
 
     [Serializable]

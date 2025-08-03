@@ -4,6 +4,7 @@ namespace EventLibrary
     {
         Status,
         Item,
+        Battle,
     }
 
     public enum StatusType
@@ -30,5 +31,9 @@ namespace EventLibrary
         HealPotion_L = 2,     
     }
 
-    
+    public enum BattleType
+    {
+        Normal = 0,
+        Boss = 1,
+    }
 }

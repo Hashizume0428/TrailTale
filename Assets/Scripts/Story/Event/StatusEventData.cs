@@ -10,14 +10,9 @@ public class StatusEventData : EventData
     [System.Serializable]
     public class Option
     {
-        public StatusType statusType;
-        public StatusChange statusChange;
+        public StatusType statusType; // ステータスの種類
+        public StatusChange statusChange; // ステータスの変更量
     }
-
-    private const int MAX_OPTIONS = 4;
-
-    [SerializeField, Header("最大4つの選択肢を設定可能")]
-    private Option[] options;
 
     /// <summary>
     /// ステータスイベントの種類を取得します。
@@ -26,6 +21,20 @@ public class StatusEventData : EventData
     public override EventLibrary.EventType GetEventType()
     {
         return EventLibrary.EventType.Status;
+    }
+
+    protected const int MAX_OPTIONS = 4;
+
+    [SerializeField, Header("最大4つの選択肢を設定可能")]
+    protected Option[] options;
+
+    /// <summary>
+    /// オプションの数を取得します。
+    /// </summary>
+    /// <returns></returns>
+    public int GetOptionCount()
+    {
+        return options.Length;
     }
 
     /// <summary>
@@ -41,15 +50,6 @@ public class StatusEventData : EventData
             return default;
         }
         return options[index];
-    }
-
-    /// <summary>
-    /// オプションの数を取得します。
-    /// </summary>
-    /// <returns></returns>
-    public int GetOptionCount()
-    {
-        return options.Length;
     }
 
     /// <summary>

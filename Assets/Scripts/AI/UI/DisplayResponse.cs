@@ -65,6 +65,7 @@ public class DisplayResponse : MonoBehaviour
         stageText.text = responseContent.stage;
         descriptionText.text = responseContent.description;
         resultText.text = string.Empty; // 結果テキストを初期化
+        nextButton.interactable = false; // 次へボタンを無効にする
 
         optionUIs = new OptionUI[responseContent.options.Length];
         for (int i = 0; i < optionUIs.Length && i < responseContent.options.Length; i++)
