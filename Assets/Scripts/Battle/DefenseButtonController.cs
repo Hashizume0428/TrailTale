@@ -9,6 +9,7 @@ public class DefenseButtonController : MonoBehaviour
     [SerializeField] int defenseCooldown = 2; // クールダウン時間
     [SerializeField] private GameObject hero; // 主人公のGameObject
 
+
     HeroController heroController; // HeroControllerの参照を保存
 
     private float cooldownTimer = 0f; //クールダウンタイマー
@@ -29,6 +30,15 @@ public class DefenseButtonController : MonoBehaviour
         if (cooldownTimer < defenseCooldown)
         {
             cooldownTimer += Time.deltaTime;
+            // クールダウン中は灰色に
+            gameObject.GetComponent<UnityEngine.UI.Button>().interactable = false; // ボタンを無効化
+            gameObject.GetComponent<UnityEngine.UI.Image>().color = new Color32(128, 128, 128, 255); // 灰色に変更
+        }
+        // クールダウンが終了したらタイマーをリセット
+        else
+        {
+            gameObject.GetComponent<UnityEngine.UI.Button>().interactable = true; // ボタンを有効化
+            gameObject.GetComponent<UnityEngine.UI.Image>().color = new Color32(255, 255, 255, 255); // 元の色に戻す
         }
     }
 

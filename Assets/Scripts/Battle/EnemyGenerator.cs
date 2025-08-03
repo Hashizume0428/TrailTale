@@ -4,7 +4,8 @@ public class EnemyGenerator : MonoBehaviour
 {
     [Header("敵の設定")]
     [SerializeField] private GameObject[] enemyPrefab; // 生成する敵のプレハブ
-    [SerializeField] private int enemyTypeCount  = 3; // 敵の種類数（外部から設定）
+    [SerializeField] private GameObject[] bossPrefab; // ボスのプレハブ
+    [SerializeField] private int enemyTypeCount = 3; // 敵の種類数（外部から設定）
     [SerializeField] private float[] generateIntervals = { 10.0f, 20.0f, 4.0f }; // 各敵の生成間隔
     [SerializeField] private int maxEnemies = 10; // 最大同時出現敵数
 
@@ -71,10 +72,12 @@ public class EnemyGenerator : MonoBehaviour
         }
         else
         {
+            // print("Maximum enemy count reached: " + EnemySumCount);
             // 最大敵数に達した場合は生成を停止
             StopAllGeneration();
+            GenerateBoss(); // ボスを生成
         }
-        
+
     }
 
     // 敵生成の更新処理
@@ -135,7 +138,7 @@ public class EnemyGenerator : MonoBehaviour
             currentEnemyCount = 0;
         }
     }
-    
+
     // 特定の敵タイプの生成間隔を動的に変更
     public void SetEnemyGenerationInterval(int enemyType, float newInterval)
     {
@@ -153,5 +156,17 @@ public class EnemyGenerator : MonoBehaviour
         {
             generateTimers[i] = 0f;
         }
+    }
+    // ボスを生成するメソッド
+    public void GenerateBoss()
+    {
+        if (bossPrefab.Length > 0)
+        {
+            // ボスの生成位置を設定
+            Vector3 spawnPosition = new Vector3(4.0f, 0.1f, 0.0f);
+            GameObject boss = Instantiate(bossPrefab[0], spawnPosition, Quaternion.identity); // 0番目のプレハブをボスとして使用
+        }
+        bossPrefab = new GameObject[0]; // ボス生成後はプレハブを空にする
+        Debug.Log("Boss generated!");
     }
 }

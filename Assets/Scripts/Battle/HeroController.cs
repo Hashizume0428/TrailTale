@@ -32,6 +32,7 @@ public class HeroController : MonoBehaviour
 
     public HeroStatus hStatus;
     [SerializeField] private GameObject enemy; //敵のGameObject
+    [SerializeField] private GameObject shield; //シールドのGameObject
     public List<GameObject> Enemies = new List<GameObject>(); //敵のGameObjectリスト
     private const float attackSpeedMax = 2f; //攻撃間隔の最大値
     private float timer = 0f; //攻撃タイマー
@@ -105,7 +106,7 @@ public class HeroController : MonoBehaviour
         foreach (EnemyController enemyController in enemyControllers)
         {
             // print("Enemy's HP: " + enemyController.eStatus.hp);
-            enemyController.OnDamege(hStatus.attack);
+            enemyController.OnDamage(hStatus.attack);
             // print("Hero attacks Enemy! Enemy's HP: " + enemyController.eStatus.hp);
         }
     }
@@ -134,14 +135,22 @@ public class HeroController : MonoBehaviour
         }
     }
 
-    public void OnDamege(int damage)
+    public void OnDamage(int damage)
     {
         hStatus.hp -= damage * (100 - hStatus.defense) / 100;
+        gameObject.GetComponent<SpriteRenderer>().color = new Color32(255, 0, 0, 255); //　主人公を赤色に
+        shield.GetComponent<SpriteRenderer>().color = new Color32(255, 0, 0, 255); //　盾を赤色に
+        Invoke("back", 0.2f); // 0.2秒後に元の色に戻す
         if (hStatus.hp <= 0)
         {
             hStatus.isDead = true;
             Destroy(gameObject);
         }
+    }
+    void back()
+    {
+        gameObject.GetComponent<SpriteRenderer>().color = new Color32(255, 255, 255, 255); // 元の色に戻す
+        shield.GetComponent<SpriteRenderer>().color = new Color32(255, 255, 255, 255); // 盾を元の色に戻す
     }
 
     //防御力アビリティ起動時のメソッド
@@ -150,6 +159,7 @@ public class HeroController : MonoBehaviour
     public void ActivateDefense(int defense, int duration)
     {
         print($"<color=red>Defense activated! Previous defense: {hStatus.defense}%");
+        shield.SetActive(true);
         tempPreviousDefense = hStatus.defense;
         hStatus.defense = (int)((1f - (1f - (hStatus.defense / 100f)) * (1f - (defense / 100f))) * 100f); // 防御力を上げる（カット率が乗算で軽減されていく）
         print($"<color=red>Defense activated! New defense: {hStatus.defense}%");
@@ -160,6 +170,7 @@ public class HeroController : MonoBehaviour
     private void DeactivateDefense()
     {
         print($"<color=red>Defense deactivated! Previous defense: {hStatus.defense}%");
+        shield.SetActive(false);
         hStatus.defense = tempPreviousDefense; // 防御力を元に戻す
         print($"<color=red>Defense deactivated! New defense: {hStatus.defense}%");
     }

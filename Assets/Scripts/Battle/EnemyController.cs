@@ -19,7 +19,12 @@ public class EnemyController : MonoBehaviour
 
     public EnemyStatus eStatus;
     private float timer = 0f;//攻撃タイマー
-
+    [Header("Enemy Settings")]
+    [SerializeField] private int maxHP = 50; // 最大HP
+    [SerializeField] private int attack = 10; // 攻撃力
+    [SerializeField] private int defense = 0; // 防御力
+    [SerializeField] private float attackSpeed = 5f; // 攻撃速度
+    [SerializeField] private float transferSpeed = 0.025f; // 横移動速度
     [SerializeField] private const float attackSpeedMax = 10f; //攻撃間隔の最大値
 
     void Start()
@@ -29,11 +34,12 @@ public class EnemyController : MonoBehaviour
         hero = GameObject.Find("Hero");
         magicTriggerArea = GameObject.Find("MagicTriggerArea");
         //エネミーの初期ステータス
-        eStatus.hp = 50;
-        eStatus.attack = 10;
-        eStatus.defense = 0;
-        eStatus.attackSpeed = 5f;
-        eStatus.transferSpeed = 0.025f;
+        eStatus.hp = maxHP; // 初期HPを設定
+        eStatus.MaxHP = maxHP; // 最大HPを設定
+        eStatus.attack = attack;
+        eStatus.defense = defense;
+        eStatus.attackSpeed = attackSpeed;
+        eStatus.transferSpeed = transferSpeed;
         eStatus.isDead = false;
         eStatus.isEncountered = false;
     }
@@ -82,12 +88,14 @@ public class EnemyController : MonoBehaviour
         HeroController heroController = hero.GetComponent<HeroController>();
 
         print("Hero's HP: " + heroController.hStatus.hp);
-        heroController.OnDamege(eStatus.attack);
+        heroController.OnDamage(eStatus.attack);
         print("Enemy attacks Hero! Hero's HP: " + heroController.hStatus.hp);
     }
-    public void OnDamege(int damage)
+    public void OnDamage(int damage)
     {
         eStatus.hp -= damage * (100 - eStatus.defense) / 100;
+        gameObject.GetComponent<SpriteRenderer>().color = new Color32(255, 0, 0, 255); // ヒットアニメーションを再生
+        Invoke("back", 0.2f); // 0.2秒後に元の色に戻す
         if (eStatus.hp <= 0)
         {
             eStatus.isDead = true;
@@ -106,6 +114,10 @@ public class EnemyController : MonoBehaviour
             GameObject.Find("ScneneDirector").GetComponent<EnemyGenerator>().OnEnemyDestroyed();
             print("Enemy is dead!");
         }
+    }
+    void back()
+    {
+        gameObject.GetComponent<SpriteRenderer>().color = new Color32(255, 255, 255, 255); // 元の色に戻す
     }
 
 }

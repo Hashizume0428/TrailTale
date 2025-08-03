@@ -28,6 +28,15 @@ public class AttackButtonController : MonoBehaviour
         if (cooldownTimer < attackCooldown)
         {
             cooldownTimer += Time.deltaTime;
+            // クールダウン中は灰色に
+            gameObject.GetComponent<UnityEngine.UI.Button>().interactable = false; // ボタンを無効化
+            gameObject.GetComponent<UnityEngine.UI.Image>().color = new Color32(128, 128, 128, 255); // 灰色に変更
+        }
+        // クールダウンが終了したらタイマーをリセット
+        else
+        {
+            gameObject.GetComponent<UnityEngine.UI.Button>().interactable = true; // ボタンを有効化
+            gameObject.GetComponent<UnityEngine.UI.Image>().color = new Color32(255, 255, 255, 255); // 元の色に戻す
         }
     }
     
@@ -51,8 +60,8 @@ public class AttackButtonController : MonoBehaviour
         
         // 攻撃実行
         cooldownTimer = 0f; // クールダウンをリセット
-        OnClickAttack();
         heroController.hStatus.cost -= attackCost;
+        OnClickAttack();
         print($"Attack executed! Cooldown started ({attackCooldown}s)");
     }
     void OnClickAttack()
@@ -68,7 +77,7 @@ public class AttackButtonController : MonoBehaviour
         foreach (EnemyController enemyController in enemyControllers)
         {
             print("Enemy's HP: " + enemyController.eStatus.hp);
-            enemyController.OnDamege(attackDamage);
+            enemyController.OnDamage(attackDamage);
             print("Hero attacks Enemy !!!!! Enemy's HP: " + enemyController.eStatus.hp);
         }
     }
