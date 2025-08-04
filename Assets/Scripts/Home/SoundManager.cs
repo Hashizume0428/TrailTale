@@ -419,6 +419,7 @@ public class SESoundData
         Click, //ボタンクリックSE
         Dragon, //ドラゴン（ボス）SE
         Page,
+        Get,
     }
 
     public SE se;
