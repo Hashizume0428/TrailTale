@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e4859d639e4b8f4ea9ffd8fe71013b3, type: 3}
+  m_Name: HealPotion_S
+  m_EditorClassIdentifier: 
+  itemName: "\u56DE\u5FA9\u85AC(S)"
+  icon: {fileID: 21300000, guid: 166172b8fa9b98949bfcededa3a3e783, type: 3}
+  itemType: 0
+  healAmount: 1

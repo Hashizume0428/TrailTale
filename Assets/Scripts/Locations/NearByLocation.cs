@@ -1,11 +1,7 @@
 using UnityEngine;
-using UnityEngine.UI;
-using System.Text;
-using System.Collections;
-using System.Collections.Generic;
-using TMPro;
 using UnityEngine.Networking;
-using System.IO;
+using System.Text;
+using Cysharp.Threading.Tasks;
 using LocationLibrary;
 
 public class NearByLocation : MonoBehaviour
@@ -13,14 +9,11 @@ public class NearByLocation : MonoBehaviour
     [SerializeField]
     private string GoogleApiKey;
 
-    void Start()
-    {
-        StartCoroutine("SearchNearByLocation");
-    }
+    public ResponseData responseData { get; private set; }
 
-    private string CreateRequestJson()
+    private string CreateRequestJson(LatLng location)
     {
-        var request = new NearBySearchRequest
+        var request = new RequestData
         {
             maxResultCount = 10,
             rankPreference = "DISTANCE",
@@ -28,11 +21,7 @@ public class NearByLocation : MonoBehaviour
             {
                 circle = new Circle
                 {
-                    center = new LatLng
-                    {
-                        latitude = 34.7633,
-                        longitude = 135.5011
-                    },
+                    center = location,
                     radius = 100.0f
                 }
             }
@@ -41,31 +30,53 @@ public class NearByLocation : MonoBehaviour
         return JsonUtility.ToJson(request);
     }
 
-    IEnumerator SearchNearByLocation()
+    /// <summary>
+    /// 指定した位置の近くの場所を検索します。
+    /// </summary>
+    /// <param name="location"></param>
+    public async UniTask<PlaceData> SearchNearByLocation(LatLng location)
     {
-        string url = "https://places.googleapis.com/v1/places:searchNearby";
-        string jsonBody = CreateRequestJson();
-        Debug.Log(jsonBody);
+        string requestJson = CreateRequestJson(location);
 
-        byte[] postData = Encoding.UTF8.GetBytes(jsonBody);
+        string url = "https://places.googleapis.com/v1/places:searchNearby";
+        Debug.Log(requestJson);
+
+        byte[] postData = Encoding.UTF8.GetBytes(requestJson);
 
         UnityWebRequest request = new UnityWebRequest(url, "POST");
         request.uploadHandler = new UploadHandlerRaw(postData);
         request.downloadHandler = new DownloadHandlerBuffer();
         request.SetRequestHeader("Content-Type", "application/json");
         request.SetRequestHeader("X-Goog-Api-Key", GoogleApiKey);
-        request.SetRequestHeader("X-Goog-FieldMask", "places.displayName");
+        request.SetRequestHeader("X-Goog-FieldMask", "places.displayName,places.location");
 
-        yield return request.SendWebRequest();
+        await request.SendWebRequest();
 
         if (request.result == UnityWebRequest.Result.Success)
         {
             Debug.Log("Response:\n" + request.downloadHandler.text);
+            responseData = ResponseParser.ParseResponse(request.downloadHandler.text);
+
+            if (responseData.places == null || responseData.places.Length == 0)
+            {
+                Debug.LogWarning("付近のランドマークを発見できませんでした。");
+                return null;
+            }
+
+            for (int i = 0; i < responseData.places.Length; i++)
+            {
+                Debug.Log($"Place {i + 1}: {responseData.places[i].displayName.text}");
+            }
+
+            // 見つかったランドマーク名をランダムで返す
+            int randomIndex = Random.Range(0, Mathf.Min(responseData.places.Length, 3)); // 最初の3つのランドマークからランダムに選択
+            return responseData.places[randomIndex];    // ランダムに選ばれたランドマークを返す
         }
         else
         {
             Debug.LogError("Error: " + request.error);
             Debug.LogError("Response: " + request.downloadHandler.text);
+            return null;
         }
     }
 }

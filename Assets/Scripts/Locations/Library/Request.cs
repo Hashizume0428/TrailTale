@@ -1,0 +1,42 @@
+namespace LocationLibrary
+{
+    using System;
+    using System.Collections.Generic;
+
+    /// <summary>
+    /// NearBySearchを行うときに、このクラスをJSONに変換して使う
+    /// </summary>
+    [Serializable]
+    public class RequestData
+    {
+        public int maxResultCount;
+        public string rankPreference;
+        public LocationRestriction locationRestriction;
+    }
+
+    [Serializable]
+    public class LocationRestriction
+    {
+        public Circle circle;
+    }
+
+    [Serializable]
+    public class Circle
+    {
+        public LatLng center;
+        public float radius;
+    }
+
+    [Serializable]
+    public class LatLng
+    {
+        public double latitude;
+        public double longitude;
+
+        public LatLng(double lat, double lon)
+        {
+            latitude = lat;
+            longitude = lon;
+        }
+    }
+}
