@@ -82,6 +82,7 @@ public class DisplayResponse : MonoBehaviour
     /// <param name="index"></param>
     public void DisplayResult(int index)
     {
+        SoundManager.Instance.PlaySE(SESoundData.SE.Click);
         selectedOptionIndex = index;
         for (int i = 0; i < optionUIs.Length; i++)
         {
