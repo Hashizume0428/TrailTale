@@ -44,6 +44,7 @@ public class DefenseButtonController : MonoBehaviour
 
     public void OnClick()
     {
+        SoundManager.Instance.PlaySE(SESoundData.SE.Click);
         print("Defense button clicked!");
 
         // クールダウン中の場合は処理を停止
@@ -68,6 +69,7 @@ public class DefenseButtonController : MonoBehaviour
     }
     void OnClickDefense()
     {
+        SoundManager.Instance.PlaySE(SESoundData.SE.Defense);
         print("Defense activated!");
         HeroController heroController = hero.GetComponent<HeroController>();
         heroController.ActivateDefense(defense, defenseTimer);

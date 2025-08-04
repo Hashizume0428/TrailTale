@@ -178,6 +178,7 @@ public class EnemyGenerator : MonoBehaviour
     // ボスを生成するメソッド
     public void GenerateBoss()
     {
+        SoundManager.Instance.PlaySE(SESoundData.SE.Dragon);
         if (bossPrefab.Length > 0)
         {
             // ボスの生成位置を設定
