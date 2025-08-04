@@ -1,4 +1,5 @@
 using UnityEngine;
+using System;
 using System.Collections.Generic;
 
 public struct HeroStatus
@@ -16,6 +17,7 @@ public struct HeroStatus
     public int autoCostValue; // 自動コスト回復の値
     public bool isDead; // 死亡フラグ
     public bool isEncountered; // 接触フラグ
+    public int killCount; // 敵を倒した数
 }
 public class HeroController : MonoBehaviour
 {
@@ -40,6 +42,9 @@ public class HeroController : MonoBehaviour
 
     private float autoHealTimer = 0f; // 自動回復タイマー
     private float autoCostTimer = 0f; // 自動コスト回復タイマー
+
+    public event Action<int > OnEnemyKilled; // 敵を倒したときのイベント
+
     void Start()
     {
         hStatus.hp = maxHP; //初期HPを設定
@@ -55,6 +60,7 @@ public class HeroController : MonoBehaviour
         hStatus.autoCostValue = autoCostValue; // 自動コスト回復の値を設定
         hStatus.isDead = false;
         hStatus.isEncountered = false;
+        hStatus.killCount = 0; // 初期化
     }
 
     void Update()
@@ -70,7 +76,7 @@ public class HeroController : MonoBehaviour
                 float waitTime = attackSpeedMax * (1f / hStatus.attackSpeed); // 攻撃間隔を計算
                 if (timer >= waitTime)
                 {
-                    Attack();
+                    Attack(Enemies, hStatus.attack);
                     // print("timer: " + timer);
                     timer -= waitTime;
                 }
@@ -92,21 +98,29 @@ public class HeroController : MonoBehaviour
             }
         }
     }
-    // 主人公の衝突判定はHeroTriggerArea.csで行う
 
-    void Attack()
+    // 主人公の衝突判定はHeroTriggerArea.csで行う
+    public void Attack(List<GameObject> target, int damage)
     {
         //attackArea内の敵のEnemyControllerを取得
         List<EnemyController> enemyControllers = new List<EnemyController>();
-        foreach (GameObject enemy in Enemies)
+        foreach (GameObject enemy in target)
         {
             EnemyController enemyController = enemy.GetComponent<EnemyController>();
             enemyControllers.Add(enemyController);
         }
         foreach (EnemyController enemyController in enemyControllers)
         {
+
+            Debug.Log("ダメージを与えました");
             // print("Enemy's HP: " + enemyController.eStatus.hp);
-            enemyController.OnDamage(hStatus.attack);
+
+            if (enemyController.OnDamage(damage))
+            {
+                Debug.Log("敵を倒しました");
+                hStatus.killCount++;
+                OnEnemyKilled?.Invoke(hStatus.killCount); // 敵を倒した数を通知
+            }
             // print("Hero attacks Enemy! Enemy's HP: " + enemyController.eStatus.hp);
         }
     }
@@ -149,10 +163,12 @@ public class HeroController : MonoBehaviour
         }
         return false; // 死亡フラグを返さない
     }
+
     void DeathAnim()
-        {
-        Destroy(this.gameObject);
-        }
+    {
+        gameObject.SetActive(false); // 主人公を非表示にする
+    }
+
     void back()
     {
         gameObject.GetComponent<SpriteRenderer>().color = new Color32(255, 255, 255, 255); // 元の色に戻す

@@ -183,11 +183,13 @@ public class StoryManager : MonoBehaviour
 
     private void StartBattleEvent(BattleEventData battleEventData)
     {
+        playerData.battleType = (int)battleEventData.battleType;
         // バトルイベントの処理をここに実装
         Debug.Log("バトルイベントの種類: " + battleEventData.battleType);
         // TODO : Scene遷移処理
         SceneLoader.Instance.LoadMainScene("BattleScene");
 
+        currentStoryIndex++;
     }
 
     // ストーリーの次へボタンが押されたとき

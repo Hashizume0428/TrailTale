@@ -91,7 +91,7 @@ public class EnemyController : MonoBehaviour
         heroController.OnDamage(eStatus.attack);
         print("Enemy attacks Hero! Hero's HP: " + heroController.hStatus.hp);
     }
-    public void OnDamage(int damage)
+    public bool OnDamage(int damage)
     {
         eStatus.hp -= damage * (100 - eStatus.defense) / 100;
         gameObject.GetComponent<SpriteRenderer>().color = new Color32(255, 0, 0, 255); // ヒットアニメーションを再生
@@ -99,7 +99,8 @@ public class EnemyController : MonoBehaviour
         if (eStatus.hp <= 0)
         {
             eStatus.isDead = true;
-            Destroy(gameObject);
+            
+            Invoke("DestroyEnemy", 0.1f); // 0.1秒後に敵を削除
             //敵のGameObjectをHeroControllerから削除
             HeroController heroController = hero.GetComponent<HeroController>();
             MagicTriggerAreaController magicTriggerAreaController = magicTriggerArea.GetComponent<MagicTriggerAreaController>();
@@ -113,8 +114,18 @@ public class EnemyController : MonoBehaviour
             }
             GameObject.Find("ScneneDirector").GetComponent<EnemyGenerator>().OnEnemyDestroyed();
             print("Enemy is dead!");
+            
+            return true;
         }
+
+        return false;
     }
+
+    void DestroyEnemy()
+    {
+        Destroy(gameObject); // 敵のGameObjectを削除
+    }
+
     void back()
     {
         gameObject.GetComponent<SpriteRenderer>().color = new Color32(255, 255, 255, 255); // 元の色に戻す

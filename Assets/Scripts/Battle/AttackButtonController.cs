@@ -67,18 +67,7 @@ public class AttackButtonController : MonoBehaviour
     void OnClickAttack()
     {
         List<GameObject> heroControllerEnemies = hero.GetComponent<HeroController>().Enemies;
-        //attackArea内の敵のEnemyControllerを取得
-        List<EnemyController> enemyControllers = new List<EnemyController>();
-        foreach (GameObject enemy in heroControllerEnemies)
-        {
-            EnemyController enemyController = enemy.GetComponent<EnemyController>();
-            enemyControllers.Add(enemyController);
-        }
-        foreach (EnemyController enemyController in enemyControllers)
-        {
-            print("Enemy's HP: " + enemyController.eStatus.hp);
-            enemyController.OnDamage(attackDamage);
-            print("Hero attacks Enemy !!!!! Enemy's HP: " + enemyController.eStatus.hp);
-        }
+
+        heroController.Attack(heroControllerEnemies, attackDamage);
     }
 }

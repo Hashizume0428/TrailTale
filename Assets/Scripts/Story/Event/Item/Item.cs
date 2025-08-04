@@ -10,6 +10,6 @@ namespace EventLibrary
         public ItemType itemType;
 
         // アイテム使用時の効果を適用するメソッド
-        public abstract void Use( /* Player player */ );
+        public abstract void Use(HeroController hero);
     }
 }

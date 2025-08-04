@@ -17,4 +17,15 @@ public class StatusDataBase : ScriptableObject
     {
         return statuses.Find(status => status.statusType == statusType);
     }
+
+    public Status GetRandomStatus()
+    {
+        if (statuses.Count == 0)
+        {
+            Debug.LogWarning("No statuses available in the database.");
+            return null;
+        }
+        int randomIndex = Random.Range(0, statuses.Count);
+        return statuses[randomIndex];
+    }
 }

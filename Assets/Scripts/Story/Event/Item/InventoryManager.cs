@@ -8,10 +8,8 @@ public class InventoryManager : MonoBehaviour
     [SerializeField]
     private PlayerData playerData;
 
-    /* ここにプレイヤーの参照を加える
     [SerializeField]
-    private Player player;
-    */
+    private HeroController hero;
 
     [SerializeField]
     private InventoryUI[] inventoryUI;
@@ -35,8 +33,13 @@ public class InventoryManager : MonoBehaviour
         Item item = GetItemByType(itemType);
         if (item != null)
         {
+            if (hero == null)
+            {
+                Debug.LogWarning("HeroController is null. Cannot apply item effect.");
+                return;
+            }
             // アイテムの使用処理
-            item.Use(/* player */);
+            item.Use(hero);
             playerData.UpdateInventory(itemType, -1);
         }
         else

@@ -107,58 +107,7 @@ public class MagicButonContoroller : MonoBehaviour
         
         // 3. MagicAreaEnemiesリスト自体のnullチェック
         List<GameObject> magicTriggerAreaEnemies = magicTriggerAreaComponent.MagicAreaEnemies;
-        if (magicTriggerAreaEnemies == null)
-        {
-            print("MagicAreaEnemies list is null!");
-            return;
-        }
-        
-        // 4. リストが空の場合のチェック
-        if (magicTriggerAreaEnemies.Count == 0)
-        {
-            print("No enemies in magic area!");
-            return;
-        }
-        
-        // 5. 各敵オブジェクトとコンポーネントの安全な処理
-        List<EnemyController> enemyControllers = new List<EnemyController>();
-        foreach (GameObject enemy in magicTriggerAreaEnemies)
-        {
-            // 各enemyオブジェクトのnullチェック
-            if (enemy == null)
-            {
-                print("Found null enemy in list, skipping...");
-                continue;
-            }
-            
-            // EnemyControllerコンポーネントのnullチェック
-            EnemyController enemyController = enemy.GetComponent<EnemyController>();
-            if (enemyController == null)
-            {
-                print($"EnemyController component not found on {enemy.name}, skipping...");
-                continue;
-            }
-            
-            enemyControllers.Add(enemyController);
-        }
-        
-        // 6. 有効な敵コントローラーが存在するかチェック
-        if (enemyControllers.Count == 0)
-        {
-            print("No valid enemy controllers found!");
-            return;
-        }
-        
-        // 7. 安全に攻撃処理を実行
-        foreach (EnemyController enemyController in enemyControllers)
-        {
-            // さらに安全性を高めるため、実行時にも再チェック
-            if (enemyController != null && enemyController.gameObject != null)
-            {
-                print("Enemy's HP: " + enemyController.eStatus.hp);
-                enemyController.OnDamage(magicDamage);
-                print("Hero attacks Enemy !!!!! Enemy's HP: " + enemyController.eStatus.hp);
-            }
-        }
+
+        heroController.Attack(magicTriggerAreaEnemies, magicDamage);
     }
 }

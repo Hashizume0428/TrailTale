@@ -25,6 +25,8 @@ public class PlayerData : ScriptableObject
     public int currentStoryIndex = 0; // 現在のマップインデックス
     public string currentLog = ""; // 現在のログ
 
+    public int battleType = 0;
+
     // ステータスを更新する
     public void UpdateStatus(StatusType statusType, int value)
     {
@@ -54,6 +56,28 @@ public class PlayerData : ScriptableObject
         }
 
         Save();
+    }
+
+    public int GetStatus(StatusType statusType)
+    {
+        Load();
+
+        switch (statusType)
+        {
+            case StatusType.ATK:
+                return atk;
+            case StatusType.DEF:
+                return def;
+            case StatusType.HP:
+                return hp;
+            case StatusType.SPD:
+                return spd;
+            case StatusType.MP:
+                return mp;
+            default:
+                Debug.LogWarning("Unknown status type: " + statusType);
+                return 0;
+        }
     }
 
     // インベントリを更新する

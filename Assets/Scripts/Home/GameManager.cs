@@ -109,7 +109,7 @@ public class GameManager : MonoBehaviour
     public void ScenarioPageButton()
     {
         Debug.Log("ScenarioPageButton clicked.");
-        StartCoroutine(LoadSceneWithDelay("ScenarioTest")); // コルーチンを開始
+        StartCoroutine(LoadSceneWithDelay("Story")); // コルーチンを開始
     }
 
     public void SettingButton()

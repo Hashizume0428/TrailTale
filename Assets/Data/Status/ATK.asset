@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c566c229a50f875458bc60cc2efcc376, type: 3}
   m_Name: ATK
   m_EditorClassIdentifier: 
-  icon: {fileID: 21300000, guid: 17e071cc077c8934ab65ff58036d6e8a, type: 3}
+  icon: {fileID: 21300000, guid: 70e461ad2f2dac04c9c91bdcd60eb645, type: 3}
   statusType: 0

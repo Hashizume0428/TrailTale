@@ -8,10 +8,15 @@ namespace EventLibrary
     {
         public int healAmount;
 
-        public override void Use(/* Player player */)
+        public override void Use(HeroController hero)
         {
+            if (hero == null)
+            {
+                Debug.LogWarning("HeroController is null. Cannot apply heal effect.");
+                return;
+            }
             // 回復効果を適用する処理
-            // player.Heal(healAmount);
+            hero.Heal(healAmount);
         }
     }
 }
