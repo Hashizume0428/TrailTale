@@ -5,7 +5,10 @@ using LocationLibrary;
 public class LogPathRenderer : MonoBehaviour
 {
     [SerializeField]
-    private LineRenderer lineRenderer;
+    private CanvasLineRenderer canvasLineRenderer;
+
+    [SerializeField]
+    private RectTransform mapRect;
 
     [SerializeField]
     private GameObject pointObject;
@@ -21,23 +24,15 @@ public class LogPathRenderer : MonoBehaviour
             pointObjects.Clear();
         }
 
-        // LineRendererの設定をクリア
-        lineRenderer.positionCount = 0;
-        Debug.Log("Log path cleared.");
-
-        var logReader = new LocationLogReader();
-        logReader.Clear();
+        // CanvasLineRendererのラインを削除
+        canvasLineRenderer.ClearLines();
     }
 
     public void DrawLogPath()
     {
-        // 既存のポイントオブジェクトを削除
-        if (pointObjects.Count > 0)
-        {
-            pointObjects.ForEach(obj => Destroy(obj));
-            pointObjects.Clear();
-        }
-
+        Debug.Log("Drawing log path...");
+        
+        ClearLogPath();
 
         var logReader = new LocationLogReader();
         string log = logReader.Read();
@@ -51,28 +46,30 @@ public class LogPathRenderer : MonoBehaviour
             Debug.Log($"Log:{log}");
         }
 
+        // 緯度経度形式のログをVector2のリストに変換
         List<Vector2> points = ParseLogToVector(log);
-        MapBounds bounds = CalculateBounds(points);
-        Debug.Log($"Bounds: {bounds.MinLat}, {bounds.MinLon} - {bounds.MaxLat}, {bounds.MaxLon}");
 
-        List<Vector3> worldPositions = new List<Vector3>();
+        // マップの境界を計算
+        MapBounds bounds = CalculateBounds(points);
+
+        List<Vector2> canvasPositions = new List<Vector2>();
         foreach (var point in points)
         {
-            Vector3 worldPos = LatLonToMapPosition(point, bounds);
-            worldPositions.Add(worldPos);
+            Vector2 canvasPos = LatLonToMapPosition(point, bounds);
+            Debug.Log($"canvasPosition: {canvasPos}");
+            canvasPositions.Add(canvasPos);
         }
+
+        // CanvasLineRendererを使用してラインを描画
+        canvasLineRenderer.WriteLine(canvasPositions, mapRect.transform);
 
         // ポイントオブジェクトを生成
-        foreach (var pos in worldPositions)
+        foreach (var pos in canvasPositions)
         {
-            GameObject pointObj = Instantiate(pointObject, pos, Quaternion.identity);
+            GameObject pointObj = Instantiate(pointObject, mapRect.anchoredPosition, Quaternion.identity, mapRect.transform);
+            pointObj.GetComponent<RectTransform>().anchoredPosition = pos;
             pointObjects.Add(pointObj);
         }
-
-        // LineRendererの設定
-        lineRenderer.positionCount = worldPositions.Count;
-        lineRenderer.SetPositions(worldPositions.ToArray());
-        Debug.Log($"LineRenderer: {lineRenderer.positionCount} points set.");
     }
 
     private List<Vector2> ParseLogToVector(string log)
@@ -128,6 +125,7 @@ public class LogPathRenderer : MonoBehaviour
 
         foreach (var point in points)
         {
+            Debug.Log($"Point: {point}");
             float lat = point.y;
             float lon = point.x;
 
@@ -137,14 +135,16 @@ public class LogPathRenderer : MonoBehaviour
             if (lon > maxLon) maxLon = lon;
         }
 
+        Debug.Log($"Updated Bounds: {minLat}, {minLon} - {maxLat}, {maxLon}");
+
         return new MapBounds(minLat, minLon, maxLat, maxLon);
     }
 
-    private Vector3 LatLonToMapPosition(Vector2 point, MapBounds bounds)
+    private Vector2 LatLonToMapPosition(Vector2 point, MapBounds bounds)
     {
         float x = Mathf.InverseLerp(bounds.MinLon, bounds.MaxLon, point.x) - 0.5f;
         float y = Mathf.InverseLerp(bounds.MinLat, bounds.MaxLat, point.y) - 0.5f;
 
-        return new Vector3(x * Constants.MAP_SIZE, y * Constants.MAP_SIZE, 0);
+        return new Vector2(x * mapRect.rect.width/2, y * mapRect.rect.height/2);
     }
 }

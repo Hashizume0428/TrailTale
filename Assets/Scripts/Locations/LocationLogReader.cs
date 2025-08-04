@@ -5,8 +5,19 @@ public class LocationLogReader
 {
     public string Read()
     {
-    #if UNITY_ANDROID && !UNITY_EDITOR
+#if UNITY_ANDROID && !UNITY_EDITOR
         string path = GetAndroidLogPath();
+        if (File.Exists(path))
+        {
+            string line = File.ReadAllText(path);
+            return line;
+        }
+        else
+        {
+            Debug.LogWarning("ログファイルが存在しません: " + path);
+        }
+#elif UNITY_EDITOR
+        string path = Path.Combine(Application.dataPath, "Data/Logs/LocationLog.txt");
         if (File.Exists(path))
         {
             string line = File.ReadAllText(path);

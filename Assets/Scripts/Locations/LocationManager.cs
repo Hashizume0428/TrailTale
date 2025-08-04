@@ -21,17 +21,11 @@ public class LocationManager : MonoBehaviour
     private LocationData mockLocation;
 
     [SerializeField]
-    private TextMeshProUGUI locationText;
-
-    [SerializeField]
     private RawImage mapImage;
-
-    [SerializeField]
-    private TextMeshProUGUI debugText;
 
     private LocationInfo prevLocation;
 
-    IEnumerator Start()
+    private async void Start()
     {
 #if UNITY_ANDROID && !UNITY_EDITOR
         Debug.Log("START : " + Time.time);
@@ -40,30 +34,27 @@ public class LocationManager : MonoBehaviour
 
         if (!Input.location.isEnabledByUser)
         {
-            locationText.text = "Location services are not enabled by the user.";
-            yield return new WaitForSeconds(2);
+            Debug.Log("Location services are not enabled by the user.");
+            await Task.Delay(2000);
         }
 
+        // Locationサービスが開始されるまで待機
+        Debug.Log("Waiting for location service to start...");
         while (Input.location.status != LocationServiceStatus.Running)
         {
-            yield return new WaitForSeconds(0.3f);
-            locationText.text = "Waiting for location services to initialize.";
-            yield return new WaitForSeconds(0.3f);
-            locationText.text = "Waiting for location services to initialize..";
-            yield return new WaitForSeconds(0.3f);
-            locationText.text = "Waiting for location services to initialize...";
+            await Task.Delay(1000);
         }
 
         if (Input.location.status == LocationServiceStatus.Running)
         {
-            debugText.text = "Generate Map";
-            yield return new WaitForSeconds(0.5f);
-            StartCoroutine(GenerateMap(Input.location.lastData.latitude, Input.location.lastData.longitude));
+            Debug.Log("Generating map with current location...");
+            await Task.Delay(500);
+            GenerateMap(Input.location.lastData.latitude, Input.location.lastData.longitude);
         }
-#else 
-        yield return null;
-        debugText.text = "Using Mock Location";
-        StartCoroutine(GenerateMap(mockLocation.Latitude, mockLocation.Longitude));
+#else
+        Debug.Log("Using Mock Location");
+
+        GenerateMap(mockLocation.Latitude, mockLocation.Longitude);
 #endif
     }
 
@@ -71,7 +62,7 @@ public class LocationManager : MonoBehaviour
     {
         if (Input.location.status == LocationServiceStatus.Running)
         {
-            locationText.text = "Latitude: " + Input.location.lastData.latitude.ToString() + "\n" +
+            string locationInfo = "Latitude: " + Input.location.lastData.latitude.ToString() + "\n" +
                 "Longitude: " + Input.location.lastData.longitude.ToString() + "\n" +
                 "Altitude: " + Input.location.lastData.altitude.ToString() + "\n" +
                 "Horizontal Accuracy: " + Input.location.lastData.horizontalAccuracy.ToString() + "\n" +
@@ -82,7 +73,7 @@ public class LocationManager : MonoBehaviour
 
             if (getDistanceFromLocation(Input.location.lastData, prevLocation) > 2f)
             {
-                debugText.text = "Distance: " + getDistanceFromLocation(Input.location.lastData, prevLocation).ToString() + "m\n" +
+                string distanceInfo = "Distance: " + getDistanceFromLocation(Input.location.lastData, prevLocation).ToString() + "m\n" +
                     "Heading: " + Input.compass.trueHeading.ToString() + "\n" +
                     "Timestamp: " + Input.location.lastData.timestamp.ToString();
             }
@@ -96,7 +87,7 @@ public class LocationManager : MonoBehaviour
         return Vector3.Distance(cv, pv) * Lat2Meter;
     }
 
-    private IEnumerator GenerateMap(float lat, float lon)
+    private async void GenerateMap(float lat, float lon)
     {
         // ベース URL
         string url = @"https://maps.googleapis.com/maps/api/staticmap?";
@@ -109,21 +100,19 @@ public class LocationManager : MonoBehaviour
         // API Key（Google Maps Platform で発行されるキー）
         url += "&key=" + GoogleApiKey;
 
+        url += "&style=feature:all|element:geometry|color:0xe0e0e0";
+        url += "&style=feature:landscape|element:geometry.fill|color:0xdcd2c8";
+        url += "&style=feature:road|element:geometry|visibility:simplified";
+        url += "&style=feature:poi|element:labels|visibility:off";
+        url += "&style=feature:administrative|element:labels|visibility:off";
+        url += "&style=element:labels|visibility:off";
+
         Debug.Log("Map URL: " + url);
 
-        url = UnityWebRequest.UnEscapeURL(url);
-        UnityWebRequest req = UnityWebRequestTexture.GetTexture(url);
-        yield return req.SendWebRequest();
+        MapLoader mapLoader = new MapLoader();
 
-        if (req.result == UnityWebRequest.Result.Success)
-        {
-            debugText.text = "Map Downloaded";
-            mapImage.texture = DownloadHandlerTexture.GetContent(req);
-        }
-        else
-        {
-            debugText.text = "Map Download Failed: " + req.error;
-            yield break;
-        }
+        Texture2D mapTexture = await mapLoader.LoadMapAsync(url);
+
+        mapImage.texture = mapTexture;
     }
 }

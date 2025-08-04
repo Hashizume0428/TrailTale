@@ -1,100 +1,70 @@
 using UnityEngine;
-using TMPro; // TextMeshProUGUI‚ğg—p‚·‚éê‡‚Í•K{‚Å‚·B
-using System.Collections; // ƒRƒ‹[ƒ`ƒ“‚ğg—p‚·‚éê‡‚Í•K{‚Å‚·B
-using System.Collections.Generic; // Queue‚ğg—p‚·‚éê‡‚Í•K{‚Å‚·B
+using TMPro; // TextMeshProUGUIã‚’ä½¿ç”¨ã™ã‚‹å ´åˆã¯å¿…é ˆã§ã™ã€‚
+using System.Collections; // ã‚³ãƒ«ãƒ¼ãƒãƒ³ã‚’ä½¿ç”¨ã™ã‚‹å ´åˆã¯å¿…é ˆã§ã™ã€‚
+using System.Collections.Generic; // Queueã‚’ä½¿ç”¨ã™ã‚‹å ´åˆã¯å¿…é ˆã§ã™ã€‚
+using UnityEngine.UI; // Buttonã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆã‚’ä½¿ç”¨ã™ã‚‹å ´åˆã«å¿…è¦ã§ã™ã€‚ 
 
-// MonoBehaviour‚ğŒp³‚·‚é‚±‚Æ‚ÅƒIƒuƒWƒFƒNƒg‚ÉƒRƒ“ƒ|[ƒlƒ“ƒg‚Æ‚µ‚Ä
-// ƒAƒ^ƒbƒ`‚·‚é‚±‚Æ‚ª‚Å‚«‚é‚æ‚¤‚É‚È‚é
 public class TextManager : MonoBehaviour
 {
-    // SerializeField‚Æ‘‚­‚Æprivate‚Èƒpƒ‰ƒ[ƒ^[‚Å‚à
-    // ƒCƒ“ƒXƒyƒNƒ^[ã‚Å’l‚ğ•ÏX‚Å‚«‚é
     [SerializeField]
-    private TextMeshProUGUI mainText; // ƒƒCƒ“‚ÌƒeƒLƒXƒg•\¦—p
+    private TextMeshProUGUI mainText; // ãƒ¡ã‚¤ãƒ³ã®ãƒ†ã‚­ã‚¹ãƒˆè¡¨ç¤ºç”¨ (Inspectorã§è¨­å®šå¿…é ˆ)
 
     [SerializeField]
-    private TextMeshProUGUI speedDisplayText; // Œ»İ‚Ì‘¬“x•\¦—p
+    private TextMeshProUGUI speedDisplayText; // ç¾åœ¨ã®é€Ÿåº¦è¡¨ç¤ºç”¨ (Inspectorã§è¨­å®šå¿…é ˆ)
 
-    [Header("Text Settings")] // ƒCƒ“ƒXƒyƒNƒ^[‚Å‚Ì•\¦‚ğ•ª‚©‚è‚â‚·‚­‚·‚é
-    // captionSpeed‚ÍPlayerPrefs‚©‚çƒ[ƒh‚·‚é‚½‚ßA‚±‚±‚Å‚Í[SerializeField]‚ğ•t‚¯‚Ü‚¹‚ñB
+    [Header("Text Settings")]
     private float captionSpeed;
 
-    // V‚µ‚­‘¬“x’iŠK‚ğ’è‹`‚·‚é’lBƒCƒ“ƒXƒyƒNƒ^[‚©‚ç’²®‚Å‚«‚é‚æ‚¤‚ÉSerializeField‚à•t‚¯‚Ü‚·B
     [SerializeField, Header("Caption Speeds (seconds per char)")]
-    private float fastSpeed = 0.02f;     // ‘‚¢‘¬“xi•b/•¶šj
+    private float fastSpeed = 0.02f;     // æ—©ã„é€Ÿåº¦ï¼ˆç§’/æ–‡å­—ï¼‰
     [SerializeField]
-    private float normalSpeed = 0.05f; // •’Ê‚Ì‘¬“xi•b/•¶šj
+    private float normalSpeed = 0.05f; // æ™®é€šã®é€Ÿåº¦ï¼ˆç§’/æ–‡å­—ï¼‰
     [SerializeField]
-    private float slowSpeed = 0.1f;    // ’x‚¢‘¬“xi•b/•¶šj
+    private float slowSpeed = 0.1f;    // é…ã„é€Ÿåº¦ï¼ˆç§’/æ–‡å­—ï¼‰
 
-    // ƒeƒLƒXƒg‚Ìƒy[ƒW‹æØ‚è•¶š
     private const char SEPARATE_PAGE = '&';
-    // PlayerPrefs‚Åg—p‚·‚éƒL[–¼i’è”j
-    private const string CAPTION_SPEED_KEY = "CaptionSpeed"; // ³‚µ‚¢ƒL[–¼
+    private const string CAPTION_SPEED_KEY = "CaptionSpeed";
 
-    // •\¦‚·‚éƒeƒLƒXƒg‘S‘ÌBƒCƒ“ƒXƒyƒNƒ^[‚Å•¡”s“ü—Í‚Å‚«‚é‚æ‚¤‚É‚µ‚Ü‚·B
     [TextArea(3, 10)]
     [SerializeField]
     private string _fullStoryText =
-        "Hello,World!&‚±‚ê‚ÍƒeƒLƒXƒg•\¦‚ÌƒTƒ“ƒvƒ‹‚Å‚·&‚±‚ñ‚É‚¿‚ÍI&Ÿ‚Ìƒy[ƒW‚Í‚±‚ê‚ÅI‚í‚è‚¾‚æB";
+        "Hello,World!&ã“ã‚Œã¯ãƒ†ã‚­ã‚¹ãƒˆè¡¨ç¤ºã®ã‚µãƒ³ãƒ—ãƒ«ã§ã™&ã“ã‚“ã«ã¡ã¯ï¼&æ¬¡ã®ãƒšãƒ¼ã‚¸ã¯ã“ã‚Œã§çµ‚ã‚ã‚Šã ã‚ˆã€‚";
 
-    // 1•¶š‚¸‚Â•\¦‚·‚é‚½‚ß‚ÌƒLƒ…[
     private Queue<char> _charQueue;
-    // ƒy[ƒWisj‚²‚Æ‚É•\¦‚·‚é‚½‚ß‚ÌƒLƒ…[
     private Queue<string> _pageQueue;
 
-    // Œ»İÀs’†‚Ì•¶š‘—‚èƒRƒ‹[ƒ`ƒ“‚ğ•Û
     private Coroutine _displayCoroutine;
 
-    // MonoBehaviour‚ğŒp³‚µ‚Ä‚¢‚éê‡ŒÀ’è‚Å
-    // Å‰‚ÌXVŠÖ”(Updateƒƒ\ƒbƒh)‚ªŒÄ‚Î‚ê‚é‚ÉÅ‰‚ÉŒÄ‚Î‚ê‚é
+    private void Awake() // Startã‚ˆã‚Šæ—©ãç¢ºå®Ÿã«å®Ÿè¡Œã•ã‚Œã‚‹Awakeã§PlayerPrefsã‚’ãƒ­ãƒ¼ãƒ‰
+    {
+        // PlayerPrefsã‹ã‚‰ç¾åœ¨ã®è¡¨ç¤ºé€Ÿåº¦ã‚’ãƒ­ãƒ¼ãƒ‰ã—ã¾ã™ã€‚
+        // ã‚‚ã—ä¿å­˜ã•ã‚ŒãŸè¨­å®šãŒãªã‘ã‚Œã°ã€normalSpeedã‚’ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆã¨ã—ã¦ä½¿ç”¨ã—ã¾ã™ã€‚
+        captionSpeed = PlayerPrefs.GetFloat(CAPTION_SPEED_KEY, normalSpeed);
+    }
+
     private void Start()
     {
-        // PlayerPrefs‚©‚çŒ»İ‚Ì•\¦‘¬“x‚ğƒ[ƒh‚µ‚Ü‚·B
-        // ‚à‚µ•Û‘¶‚³‚ê‚½İ’è‚ª‚È‚¯‚ê‚ÎAnormalSpeed‚ğƒfƒtƒHƒ‹ƒg‚Æ‚µ‚Äg—p‚µ‚Ü‚·B
-        captionSpeed = PlayerPrefs.GetFloat(CAPTION_SPEED_KEY, normalSpeed);
-
-        // ‰Šú‰»ˆ—‚ğŠJn
+        // Init()ã‚’Startã§å‘¼ã³å‡ºã™ã“ã¨ã§ã€GameObjectãŒã‚¢ã‚¯ãƒ†ã‚£ãƒ–ã«ãªã£ãŸã¨ãã«ä¸€åº¦ã ã‘å®Ÿè¡Œã•ã‚Œã‚‹
         Init();
 
-        // Start()‚Å‚àUpdateSpeedDisplayText()‚ğŒÄ‚Ño‚µ‚Ä‚¨‚­‚±‚Æ‚ÅA
-        // ƒV[ƒ“ƒ[ƒh‚ÉƒIƒuƒWƒFƒNƒg‚ªƒAƒNƒeƒBƒu‚Å‚ ‚ê‚Î‚·‚®‚É•\¦‚³‚ê‚éB
-        // ‚½‚¾‚µAOnEnable()‚Å‚àŒÄ‚Ño‚·‚½‚ßAİ’è‰æ–Ê‚ª”ñƒAƒNƒeƒBƒu‚©‚çƒAƒNƒeƒBƒu‚É‚È‚éÛ‚É‚à‘Î‰‚Å‚«‚éB
+        // Start()ã§ã‚‚ç¾åœ¨ã®é€Ÿåº¦è¡¨ç¤ºã‚’æ›´æ–°
         UpdateSpeedDisplayText();
     }
 
-    // ƒQ[ƒ€ƒIƒuƒWƒFƒNƒg‚ªƒAƒNƒeƒBƒu‚É‚È‚é‚½‚Ñ‚ÉŒÄ‚Ño‚³‚ê‚é
     private void OnEnable()
     {
-        // ƒIƒuƒWƒFƒNƒg‚ªƒAƒNƒeƒBƒu‚É‚È‚Á‚½‚Æ‚«‚ÉAŒ»İ‚Ì‘¬“x•\¦‚ğXV
-        // ‚±‚ê‚É‚æ‚èAİ’è‰æ–Ê‚ª”ñƒAƒNƒeƒBƒu‚©‚çƒAƒNƒeƒBƒu‚É‚È‚Á‚½Û‚É‚à•\¦‚ªXV‚³‚ê‚é
-        // ‚½‚¾‚µAStart()‚æ‚èOnEnable()‚Ì•û‚ª‘‚­Às‚³‚ê‚é‚±‚Æ‚ª‚ ‚é‚½‚ßA
-        // captionSpeed‚ª‚Ü‚¾ƒ[ƒh‚³‚ê‚Ä‚¢‚È‚¢‰Â”\«‚àl—¶‚·‚é
-        if (captionSpeed == 0 && PlayerPrefs.HasKey(CAPTION_SPEED_KEY)) // ‚Ü‚¾ƒ[ƒh‚³‚ê‚Ä‚¢‚È‚¢A‚©‚ÂƒL[‚ª‘¶İ‚·‚éê‡
-        {
-            captionSpeed = PlayerPrefs.GetFloat(CAPTION_SPEED_KEY, normalSpeed);
-        }
-        else if (captionSpeed == 0) // ƒL[‚à‘¶İ‚µ‚È‚¢ê‡
-        {
-            captionSpeed = normalSpeed;
-        }
-
+        // ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆãŒã‚¢ã‚¯ãƒ†ã‚£ãƒ–ã«ãªã£ãŸã¨ãã«ã€ç¾åœ¨ã®é€Ÿåº¦è¡¨ç¤ºã‚’æ›´æ–°
+        // captionSpeedã¯Awakeã§ãƒ­ãƒ¼ãƒ‰æ¸ˆã¿ãªã®ã§ã€ã“ã“ã§ã¯è¡¨ç¤ºæ›´æ–°ã®ã¿ã§è‰¯ã„
         UpdateSpeedDisplayText();
     }
 
-    // MonoBehaviour‚ğŒp³‚µ‚Ä‚¢‚éê‡ŒÀ’è‚Å
-    // –ˆƒtƒŒ[ƒ€ŒÄ‚Î‚ê‚é
     private void Update()
     {
-        // ¶(=0)ƒNƒŠƒbƒN‚³‚ê‚½‚çOnClickƒƒ\ƒbƒh‚ğŒÄ‚Ño‚µ
-        if (Input.GetMouseButtonDown(0))
-        {
-            OnClick();
-        }
+        // Update()å†…ã®ã‚¯ãƒªãƒƒã‚¯æ¤œå‡ºã‚³ãƒ¼ãƒ‰ã¯ä»¥å‰ã®æŒ‡ç¤ºé€šã‚Šå‰Šé™¤æ¸ˆã¿
     }
 
     /// <summary>
-    /// •¶š—ñ‚ğw’è‚µ‚½‹æØ‚è•¶š‚²‚Æ‚É‹æØ‚èAƒLƒ…[‚ÉŠi”[‚µ‚½‚à‚Ì‚ğ•Ô‚·iƒy[ƒW‹æØ‚è—pj
+    /// æ–‡å­—åˆ—ã‚’æŒ‡å®šã—ãŸåŒºåˆ‡ã‚Šæ–‡å­—ã”ã¨ã«åŒºåˆ‡ã‚Šã€ã‚­ãƒ¥ãƒ¼ã«æ ¼ç´ã—ãŸã‚‚ã®ã‚’è¿”ã™ï¼ˆãƒšãƒ¼ã‚¸åŒºåˆ‡ã‚Šç”¨ï¼‰
     /// </summary>
     private Queue<string> SeparatePages(string str, char sep)
     {
@@ -108,7 +78,7 @@ public class TextManager : MonoBehaviour
     }
 
     /// <summary>
-    /// •¶‚ğ1•¶š‚²‚Æ‚É‹æØ‚èAƒLƒ…[‚ÉŠi”[‚µ‚½‚à‚Ì‚ğ•Ô‚·iƒZƒŠƒt‚Ì•¶š‘—‚è—pj
+    /// æ–‡ã‚’1æ–‡å­—ã”ã¨ã«åŒºåˆ‡ã‚Šã€ã‚­ãƒ¥ãƒ¼ã«æ ¼ç´ã—ãŸã‚‚ã®ã‚’è¿”ã™ï¼ˆã‚»ãƒªãƒ•ã®æ–‡å­—é€ã‚Šç”¨ï¼‰
     /// </summary>
     private Queue<char> SeparateCharacters(string str)
     {
@@ -122,86 +92,115 @@ public class TextManager : MonoBehaviour
     }
 
     /// <summary>
-    /// ƒLƒ…[‚©‚ç1•¶š‚ğæ‚èo‚µ‚Ä•\¦‚µAƒLƒ…[‚ª‹ó‚É‚È‚Á‚½‚çfalse‚ğ•Ô‚µ‚Ü‚·B
+    /// ã‚­ãƒ¥ãƒ¼ã‹ã‚‰1æ–‡å­—ã‚’å–ã‚Šå‡ºã—ã¦è¡¨ç¤ºã—ã€ã‚­ãƒ¥ãƒ¼ãŒç©ºã«ãªã£ãŸã‚‰falseã‚’è¿”ã—ã¾ã™ã€‚
     /// </summary>
     private bool OutputChar()
     {
+        // mainTextãŒnullã§ãªã„ã“ã¨ã‚’å¸¸ã«ç¢ºèªã™ã‚‹
+        if (mainText == null)
+        {
+            Debug.LogError("mainText (TextMeshProUGUI) is not assigned in the Inspector of TextManager.");
+            return false;
+        }
+
         if (_charQueue == null || _charQueue.Count <= 0)
         {
-            return false; // ƒLƒ…[‚É‰½‚àŠi”[‚³‚ê‚Ä‚¢‚È‚¯‚ê‚Îfalse‚ğ•Ô‚·
+            return false; // ã‚­ãƒ¥ãƒ¼ã«ä½•ã‚‚æ ¼ç´ã•ã‚Œã¦ã„ãªã‘ã‚Œã°falseã‚’è¿”ã™
         }
         mainText.text += _charQueue.Dequeue();
         return true;
     }
 
     /// <summary>
-    /// •¶š‘—‚è‚ğs‚¤ƒRƒ‹[ƒ`ƒ“
+    /// æ–‡å­—é€ã‚Šã‚’è¡Œã†ã‚³ãƒ«ãƒ¼ãƒãƒ³
     /// </summary>
-    /// <param name="wait">Ÿ‚Ì•¶š‚ğ•\¦‚·‚é‚Ü‚Å‚Ì‘Ò‹@ŠÔi•bj</param>
+    /// <param name="wait">æ¬¡ã®æ–‡å­—ã‚’è¡¨ç¤ºã™ã‚‹ã¾ã§ã®å¾…æ©Ÿæ™‚é–“ï¼ˆç§’ï¼‰</param>
     private IEnumerator ShowChars(float wait)
     {
-        // OutputCharƒƒ\ƒbƒh‚ªfalse‚ğ•Ô‚·iƒLƒ…[‚ª‹ó‚É‚È‚éj‚Ü‚Åƒ‹[ƒv‚µ‚Ü‚·
+        // OutputCharãƒ¡ã‚½ãƒƒãƒ‰ãŒfalseã‚’è¿”ã™ï¼ˆã‚­ãƒ¥ãƒ¼ãŒç©ºã«ãªã‚‹ï¼‰ã¾ã§ãƒ«ãƒ¼ãƒ—ã—ã¾ã™
         while (OutputChar())
         {
-            yield return new WaitForSeconds(wait); // w’è‚³‚ê‚½ŠÔ‚¾‚¯‘Ò‹@
+            yield return new WaitForSeconds(wait); // æŒ‡å®šã•ã‚ŒãŸæ™‚é–“ã ã‘å¾…æ©Ÿ
         }
-        _displayCoroutine = null; // ƒRƒ‹[ƒ`ƒ“‚ªI—¹‚µ‚½‚çnull‚É‚µ‚Ü‚·
+        _displayCoroutine = null; // ã‚³ãƒ«ãƒ¼ãƒãƒ³ãŒçµ‚äº†ã—ãŸã‚‰nullã«ã—ã¾ã™
         yield break;
     }
 
     /// <summary>
-    /// 1s‚ÌƒeƒLƒXƒg‚ğ“Ç‚İ‚İA•¶šƒLƒ…[‚ÉŠi”[‚µ‚Ä•¶š‘—‚è‚ğŠJn‚µ‚Ü‚·B
+    /// 1è¡Œã®ãƒ†ã‚­ã‚¹ãƒˆã‚’èª­ã¿è¾¼ã¿ã€æ–‡å­—ã‚­ãƒ¥ãƒ¼ã«æ ¼ç´ã—ã¦æ–‡å­—é€ã‚Šã‚’é–‹å§‹ã—ã¾ã™ã€‚
     /// </summary>
-    /// <param name="text">•\¦‚·‚éƒeƒLƒXƒgs</param>
+    /// <param name="text">è¡¨ç¤ºã™ã‚‹ãƒ†ã‚­ã‚¹ãƒˆè¡Œ</param>
     private void ReadLine(string text)
     {
-        // Šù‘¶‚Ì•¶š‘—‚èƒRƒ‹[ƒ`ƒ“‚ª‚ ‚ê‚Î’â~‚µ‚Ü‚·
+        // æ—¢å­˜ã®æ–‡å­—é€ã‚Šã‚³ãƒ«ãƒ¼ãƒãƒ³ãŒã‚ã‚Œã°åœæ­¢ã—ã¾ã™
         if (_displayCoroutine != null)
         {
             StopCoroutine(_displayCoroutine);
             _displayCoroutine = null;
         }
 
-        mainText.text = ""; // ƒƒCƒ“ƒeƒLƒXƒg‚ğˆê“xƒNƒŠƒA
-        _charQueue = SeparateCharacters(text); // ƒeƒLƒXƒg‘S‘Ì‚ğ•¶šƒLƒ…[‚É•ÏŠ·
+        // mainTextãŒnullã§ãªã„ã“ã¨ã‚’ã“ã“ã§å†åº¦ç¢ºèª (NullReferenceExceptionå¯¾ç­–)
+        if (mainText == null)
+        {
+            Debug.LogError("mainText (TextMeshProUGUI) is not assigned in the Inspector. Cannot read line.");
+            return;
+        }
 
-        // Œ»İ‚ÌcaptionSpeed‚ğg‚Á‚ÄV‚µ‚¢•¶š‘—‚èƒRƒ‹[ƒ`ƒ“‚ğŠJn‚µAQÆ‚ğ•Û‚µ‚Ü‚·
+        mainText.text = ""; // ãƒ¡ã‚¤ãƒ³ãƒ†ã‚­ã‚¹ãƒˆã‚’ä¸€åº¦ã‚¯ãƒªã‚¢
+        _charQueue = SeparateCharacters(text); // ãƒ†ã‚­ã‚¹ãƒˆå…¨ä½“ã‚’æ–‡å­—ã‚­ãƒ¥ãƒ¼ã«å¤‰æ›
+
+        // ç¾åœ¨ã®captionSpeedã‚’ä½¿ã£ã¦æ–°ã—ã„æ–‡å­—é€ã‚Šã‚³ãƒ«ãƒ¼ãƒãƒ³ã‚’é–‹å§‹ã—ã€å‚ç…§ã‚’ä¿æŒã—ã¾ã™
         _displayCoroutine = StartCoroutine(ShowChars(captionSpeed));
     }
 
     /// <summary>
-    /// ‘S•¶‚ğu‚É•\¦‚µ‚Ü‚·B
+    /// å…¨æ–‡ã‚’ç¬æ™‚ã«è¡¨ç¤ºã—ã¾ã™ã€‚
     /// </summary>
     private void OutputAllChar()
     {
-        // •¶š‘—‚èƒRƒ‹[ƒ`ƒ“‚ªÀs’†‚Å‚ ‚ê‚Î’â~‚µ‚Ü‚·
+        // æ–‡å­—é€ã‚Šã‚³ãƒ«ãƒ¼ãƒãƒ³ãŒå®Ÿè¡Œä¸­ã§ã‚ã‚Œã°åœæ­¢ã—ã¾ã™
         if (_displayCoroutine != null)
         {
             StopCoroutine(_displayCoroutine);
             _displayCoroutine = null;
         }
 
-        // ƒLƒ…[‚ª‹ó‚É‚È‚é‚Ü‚Åc‚è‚Ì•¶š‚ğ‘S‚Ä•\¦‚µ‚Ü‚·
+        // mainTextãŒnullã§ãªã„ã“ã¨ã‚’ç¢ºèª
+        if (mainText == null)
+        {
+            Debug.LogError("mainText (TextMeshProUGUI) is not assigned in the Inspector. Cannot output all chars.");
+            return;
+        }
+
+        // ã‚­ãƒ¥ãƒ¼ãŒç©ºã«ãªã‚‹ã¾ã§æ®‹ã‚Šã®æ–‡å­—ã‚’å…¨ã¦è¡¨ç¤ºã—ã¾ã™
         while (OutputChar()) ;
     }
 
     /// <summary>
-    /// ‰Šú‰»ˆ—iÅ‰‚Ìƒy[ƒW‚ğ“Ç‚İ‚İ‚Ü‚·j
+    /// åˆæœŸåŒ–å‡¦ç†ï¼ˆæœ€åˆã®ãƒšãƒ¼ã‚¸ã‚’èª­ã¿è¾¼ã¿ã¾ã™ï¼‰
     /// </summary>
     private void Init()
     {
+        // _fullStoryTextãŒç©ºã§ãªã„ã“ã¨ã‚’ç¢ºèª
+        if (string.IsNullOrEmpty(_fullStoryText))
+        {
+            Debug.LogWarning("TextManager: _fullStoryTextãŒè¨­å®šã•ã‚Œã¦ã„ã¾ã›ã‚“ã€‚");
+            _pageQueue = new Queue<string>(); // ç©ºã®ã‚­ãƒ¥ãƒ¼ã‚’åˆæœŸåŒ–
+            return;
+        }
+
         _pageQueue = SeparatePages(_fullStoryText, SEPARATE_PAGE);
         ShowNextPage();
     }
 
     /// <summary>
-    /// Ÿ‚Ìƒy[ƒWisj‚ğ•\¦‚µ‚Ü‚·B‚·‚×‚Ä‚Ìƒy[ƒW•\¦‚ªŠ®—¹‚µ‚½‚çfalse‚ğ•Ô‚µ‚Ü‚·B
+    /// æ¬¡ã®ãƒšãƒ¼ã‚¸ï¼ˆè¡Œï¼‰ã‚’è¡¨ç¤ºã—ã¾ã™ã€‚ã™ã¹ã¦ã®ãƒšãƒ¼ã‚¸è¡¨ç¤ºãŒå®Œäº†ã—ãŸã‚‰falseã‚’è¿”ã—ã¾ã™ã€‚
     /// </summary>
-    private bool ShowNextPage()
+    public bool ShowNextPage() // OnClickã‹ã‚‰å‘¼ã³å‡ºã™ãŸã‚publicã«ã™ã‚‹
     {
-        if (_pageQueue.Count <= 0)
+        if (_pageQueue == null || _pageQueue.Count <= 0)
         {
-            Debug.Log("‚·‚×‚Ä‚ÌƒeƒLƒXƒgƒy[ƒW‚ğ•\¦‚µ‚Ü‚µ‚½B");
+            Debug.Log("ã™ã¹ã¦ã®ãƒ†ã‚­ã‚¹ãƒˆãƒšãƒ¼ã‚¸ã‚’è¡¨ç¤ºã—ã¾ã—ãŸã€‚");
             return false;
         }
         ReadLine(_pageQueue.Dequeue());
@@ -209,63 +208,63 @@ public class TextManager : MonoBehaviour
     }
 
     /// <summary>
-    /// ƒNƒŠƒbƒN‚µ‚½‚Æ‚«‚Ìˆ—i•¶š‘—‚è’†‚Ìê‡‚Í‘S•¶•\¦AŠ®—¹‚µ‚Ä‚¢‚ê‚ÎŸ‚Ìƒy[ƒW‚Öi‚İ‚Ü‚·j
+    /// ã‚¯ãƒªãƒƒã‚¯ã—ãŸã¨ãã®å‡¦ç†ï¼ˆæ–‡å­—é€ã‚Šä¸­ã®å ´åˆã¯å…¨æ–‡è¡¨ç¤ºã€å®Œäº†ã—ã¦ã„ã‚Œã°æ¬¡ã®ãƒšãƒ¼ã‚¸ã¸é€²ã¿ã¾ã™ï¼‰
     /// </summary>
-    public void OnClick() // UIƒ{ƒ^ƒ“‚©‚çŒÄ‚Ño‚¹‚é‚æ‚¤‚Épublic‚É‚µ‚Ä‚¢‚Ü‚·
+    public void OnClick() // UIãƒœã‚¿ãƒ³ã‹ã‚‰å‘¼ã³å‡ºã›ã‚‹ã‚ˆã†ã«publicã«ã—ã¦ã„ã¾ã™
     {
-        // ‚Ü‚¾•¶š‘—‚è’†‚Å‚ ‚ê‚Î‘S•¶•\¦
-        if (_charQueue != null && _charQueue.Count > 0)
+        // æ–‡å­—é€ã‚Šã‚³ãƒ«ãƒ¼ãƒãƒ³ãŒå®Ÿè¡Œä¸­ã§ã‚ã‚Œã°å…¨æ–‡è¡¨ç¤º
+        if (_displayCoroutine != null && _charQueue != null && _charQueue.Count > 0)
         {
             OutputAllChar();
         }
         else
         {
-            // ‘S•¶•\¦‚ªI‚í‚Á‚Ä‚¢‚ê‚ÎŸ‚Ìƒy[ƒW‚Ö
+            // å…¨æ–‡è¡¨ç¤ºãŒçµ‚ã‚ã£ã¦ã„ã‚Œã°æ¬¡ã®ãƒšãƒ¼ã‚¸ã¸
             if (!ShowNextPage())
             {
-                // ‘S‚Ä‚Ìƒy[ƒW•\¦‚ªŠ®—¹‚µ‚½ê‡‚Ìˆ—
-                // —á: ƒV[ƒ“‘JˆÚA“Á’è‚ÌƒCƒxƒ“ƒg‚Ì”­¶‚È‚Ç
-                Debug.Log("•¨Œê‚ªI—¹‚µ‚Ü‚µ‚½I");
+                // å…¨ã¦ã®ãƒšãƒ¼ã‚¸è¡¨ç¤ºãŒå®Œäº†ã—ãŸå ´åˆã®å‡¦ç†
+                // ä¾‹: ã‚·ãƒ¼ãƒ³é·ç§»ã€ç‰¹å®šã®ã‚¤ãƒ™ãƒ³ãƒˆã®ç™ºç”Ÿãªã©
+                Debug.Log("ç‰©èªãŒçµ‚äº†ã—ã¾ã—ãŸï¼");
             }
         }
     }
 
-    // --- ‘¬“xİ’èƒƒ\ƒbƒh ---
+    // --- é€Ÿåº¦è¨­å®šãƒ¡ã‚½ãƒƒãƒ‰ ---
     /// <summary>
-    /// •\¦‘¬“x‚ğu‘‚¢v‚Éİ’è‚µAPlayerPrefs‚É•Û‘¶‚µ‚Ü‚·B
+    /// è¡¨ç¤ºé€Ÿåº¦ã‚’ã€Œæ—©ã„ã€ã«è¨­å®šã—ã€PlayerPrefsã«ä¿å­˜ã—ã¾ã™ã€‚
     /// </summary>
     public void SetSpeedFast()
     {
         captionSpeed = fastSpeed;
-        PlayerPrefs.SetFloat(CAPTION_SPEED_KEY, captionSpeed); // PlayerPrefs‚É‘¬“x‚ğ•Û‘¶
-        UpdateSpeedDisplayText(); // ‘¬“x•\¦ƒeƒLƒXƒg‚ğXV
-        Debug.Log("•¶š‘—‚è‘¬“x‚ğu‘‚¢v‚Éİ’è‚µ‚Ü‚µ‚½: " + captionSpeed);
+        PlayerPrefs.SetFloat(CAPTION_SPEED_KEY, captionSpeed);
+        UpdateSpeedDisplayText();
+        Debug.Log("æ–‡å­—é€ã‚Šé€Ÿåº¦ã‚’ã€Œæ—©ã„ã€ã«è¨­å®šã—ã¾ã—ãŸ: " + captionSpeed);
     }
 
     /// <summary>
-    /// •\¦‘¬“x‚ğu•’Êv‚Éİ’è‚µAPlayerPrefs‚É•Û‘¶‚µ‚Ü‚·B
+    /// è¡¨ç¤ºé€Ÿåº¦ã‚’ã€Œæ™®é€šã€ã«è¨­å®šã—ã€PlayerPrefsã«ä¿å­˜ã—ã¾ã™ã€‚
     /// </summary>
     public void SetSpeedNormal()
     {
         captionSpeed = normalSpeed;
-        PlayerPrefs.SetFloat(CAPTION_SPEED_KEY, captionSpeed); // PlayerPrefs‚É‘¬“x‚ğ•Û‘¶
-        UpdateSpeedDisplayText(); // ‘¬“x•\¦ƒeƒLƒXƒg‚ğXV
-        Debug.Log("•¶š‘—‚è‘¬“x‚ğu•’Êv‚Éİ’è‚µ‚Ü‚µ‚½: " + captionSpeed);
+        PlayerPrefs.SetFloat(CAPTION_SPEED_KEY, captionSpeed);
+        UpdateSpeedDisplayText();
+        Debug.Log("æ–‡å­—é€ã‚Šé€Ÿåº¦ã‚’ã€Œæ™®é€šã€ã«è¨­å®šã—ã¾ã—ãŸ: " + captionSpeed);
     }
 
     /// <summary>
-    /// •\¦‘¬“x‚ğu’x‚¢v‚Éİ’è‚µAPlayerPrefs‚É•Û‘¶‚µ‚Ü‚·B
+    /// è¡¨ç¤ºé€Ÿåº¦ã‚’ã€Œé…ã„ã€ã«è¨­å®šã—ã€PlayerPrefsã«ä¿å­˜ã—ã¾ã™ã€‚
     /// </summary>
     public void SetSpeedSlow()
     {
         captionSpeed = slowSpeed;
-        PlayerPrefs.SetFloat(CAPTION_SPEED_KEY, captionSpeed); // PlayerPrefs‚É‘¬“x‚ğ•Û‘¶
-        UpdateSpeedDisplayText(); // ‘¬“x•\¦ƒeƒLƒXƒg‚ğXV
-        Debug.Log("•¶š‘—‚è‘¬“x‚ğu’x‚¢v‚Éİ’è‚µ‚Ü‚µ‚½: " + captionSpeed);
+        PlayerPrefs.SetFloat(CAPTION_SPEED_KEY, captionSpeed);
+        UpdateSpeedDisplayText();
+        Debug.Log("æ–‡å­—é€ã‚Šé€Ÿåº¦ã‚’ã€Œé…ã„ã€ã«è¨­å®šã—ã¾ã—ãŸ: " + captionSpeed);
     }
 
     /// <summary>
-    /// Œ»İ‚Ì•\¦‘¬“x‚É‰‚¶‚ÄA‘¬“x•\¦ƒeƒLƒXƒg‚ğXV‚µ‚Ü‚·B
+    /// ç¾åœ¨ã®è¡¨ç¤ºé€Ÿåº¦ã«å¿œã˜ã¦ã€é€Ÿåº¦è¡¨ç¤ºãƒ†ã‚­ã‚¹ãƒˆã‚’æ›´æ–°ã—ã¾ã™ã€‚
     /// </summary>
     private void UpdateSpeedDisplayText()
     {
@@ -276,24 +275,23 @@ public class TextManager : MonoBehaviour
         }
 
         string speedText = "";
-        // •‚“®¬”“_”‚Ì”äŠr‚É‚Í Mathf.Approximately ‚ğg—p‚µ‚Ü‚·
         if (Mathf.Approximately(captionSpeed, fastSpeed))
         {
-            speedText = "‚Í‚â‚¢";
+            speedText = "ã¯ã‚„ã„";
         }
         else if (Mathf.Approximately(captionSpeed, normalSpeed))
         {
-            speedText = "‚Ó‚Â‚¤";
+            speedText = "ãµã¤ã†";
         }
         else if (Mathf.Approximately(captionSpeed, slowSpeed))
         {
-            speedText = "‚ä‚Á‚­‚è";
+            speedText = "ã‚†ã£ãã‚Š";
         }
         else
         {
-            speedText = "•s–¾‚È‘¬“x"; // —\Šú‚µ‚È‚¢’l‚Ìê‡
+            speedText = "ä¸æ˜ãªé€Ÿåº¦";
         }
 
-        speedDisplayText.text = "Œ»İ‚Ì•\¦‘¬“xF" + speedText;
+        speedDisplayText.text = "ç¾åœ¨ã®è¡¨ç¤ºé€Ÿåº¦ï¼š" + speedText;
     }
 }
