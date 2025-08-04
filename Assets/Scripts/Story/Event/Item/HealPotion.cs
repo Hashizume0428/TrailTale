@@ -17,6 +17,7 @@ namespace EventLibrary
             }
             // 回復効果を適用する処理
             hero.Heal(healAmount);
+            SoundManager.Instance.PlaySE(SESoundData.SE.HP_Item);
         }
     }
 }

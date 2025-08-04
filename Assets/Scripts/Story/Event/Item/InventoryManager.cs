@@ -30,6 +30,7 @@ public class InventoryManager : MonoBehaviour
     // アイテムの使用ボタンをクリックしたときの処理
     public void OnClickUseItemButton(ItemType itemType)
     {
+        SoundManager.Instance.PlaySE(SESoundData.SE.Click);
         Item item = GetItemByType(itemType);
         if (item != null)
         {

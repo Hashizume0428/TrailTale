@@ -42,6 +42,7 @@ public class AttackButtonController : MonoBehaviour
     
     public void OnClick()
     {
+        SoundManager.Instance.PlaySE(SESoundData.SE.Click);
         print("Attack button clicked!");
         
         // クールダウン中の場合は処理を停止
@@ -66,6 +67,7 @@ public class AttackButtonController : MonoBehaviour
     }
     void OnClickAttack()
     {
+        SoundManager.Instance.PlaySE(SESoundData.SE.Attack);
         List<GameObject> heroControllerEnemies = hero.GetComponent<HeroController>().Enemies;
 
         heroController.Attack(heroControllerEnemies, attackDamage);

@@ -50,6 +50,7 @@ public class ResultPanel : MonoBehaviour
 
     public void Hide()
     {
+        SoundManager.Instance.PlaySE(SESoundData.SE.Click);
         resultPanel.transform.DOScale(Vector3.zero, 0.2f).SetEase(Ease.InBack)
             .OnComplete(() =>
             {

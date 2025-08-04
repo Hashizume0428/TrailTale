@@ -43,6 +43,7 @@ public class MagicButonContoroller : MonoBehaviour
 
     public void OnClick()
     {
+        SoundManager.Instance.PlaySE(SESoundData.SE.Click);
         print("Magic button clicked!");
 
         // クールダウン中の場合は処理を停止
@@ -90,6 +91,7 @@ public class MagicButonContoroller : MonoBehaviour
     // }
         void OnClickMagic()
     {
+        SoundManager.Instance.PlaySE(SESoundData.SE.Magic);
         // 1. magicTriggerAreaオブジェクト自体のnullチェック
         if (magicTriggerArea == null)
         {

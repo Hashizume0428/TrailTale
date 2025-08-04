@@ -76,6 +76,7 @@ public class HeroController : MonoBehaviour
                 float waitTime = attackSpeedMax * (1f / hStatus.attackSpeed); // 攻撃間隔を計算
                 if (timer >= waitTime)
                 {
+                    SoundManager.Instance.PlaySE(SESoundData.SE.Attack);
                     Attack(Enemies, hStatus.attack);
                     // print("timer: " + timer);
                     timer -= waitTime;
@@ -101,7 +102,8 @@ public class HeroController : MonoBehaviour
 
     // 主人公の衝突判定はHeroTriggerArea.csで行う
     public void Attack(List<GameObject> target, int damage)
-    {
+    {   
+
         //attackArea内の敵のEnemyControllerを取得
         List<EnemyController> enemyControllers = new List<EnemyController>();
         foreach (GameObject enemy in target)
