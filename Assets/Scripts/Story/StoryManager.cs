@@ -145,9 +145,6 @@ public class StoryManager : MonoBehaviour
     public void StartStory()
     {
         SoundManager.Instance.PlaySE(SESoundData.SE.Click);
-        storyUI.SetActive(true);
-        mapUI.SetActive(false);
-        resultPanel.Hide();
 
         currentEventData = eventSet.GetEventData(currentStoryIndex, storyIndexList.Count - 1);
 
@@ -163,6 +160,9 @@ public class StoryManager : MonoBehaviour
         // それ以外ならストーリー開始
         if (latLngList.Count > 0)
         {
+            storyUI.SetActive(true);
+            mapUI.SetActive(false);
+            resultPanel.Hide();
             MakeStory(latLngList[currentStoryIndex], currentEventData);
         }
         else
@@ -188,9 +188,9 @@ public class StoryManager : MonoBehaviour
         playerData.battleType = (int)battleEventData.battleType;
         // バトルイベントの処理をここに実装
         Debug.Log("バトルイベントの種類: " + battleEventData.battleType);
-
         currentStoryIndex++;
-        
+        playerData.SetCurrentStoryIndex(currentStoryIndex);
+
         // TODO : Scene遷移処理
         SceneLoader.Instance.LoadMainScene("BattleScene");
 
