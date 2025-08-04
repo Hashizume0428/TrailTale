@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 public struct EnemyStatus
 {
@@ -18,6 +19,7 @@ public class EnemyController : MonoBehaviour
     private GameObject magicTriggerArea;
 
     public EnemyStatus eStatus;
+    public Slider hpSlider; // HPスライダー
     private float timer = 0f;//攻撃タイマー
     [Header("Enemy Settings")]
     [SerializeField] private int maxHP = 50; // 最大HP
@@ -41,6 +43,13 @@ public class EnemyController : MonoBehaviour
         eStatus.attackSpeed = attackSpeed;
         eStatus.transferSpeed = transferSpeed;
         eStatus.isDead = false;
+
+        // HPスライダーの初期設定
+        if (hpSlider != null)
+        {
+            hpSlider.maxValue = eStatus.MaxHP;
+            hpSlider.value = eStatus.hp;
+        }
         eStatus.isEncountered = false;
     }
     void Update()
@@ -93,7 +102,8 @@ public class EnemyController : MonoBehaviour
     }
     public bool OnDamage(int damage)
     {
-        eStatus.hp -= damage * (100 - eStatus.defense) / 100;
+        eStatus.hp -= Mathf.Max(1, damage - eStatus.defense); // 防御力を考慮してダメージを計算
+        hpSlider.value = eStatus.hp; // HPスライダーの更新
         gameObject.GetComponent<SpriteRenderer>().color = new Color32(255, 0, 0, 255); // ヒットアニメーションを再生
         Invoke("back", 0.2f); // 0.2秒後に元の色に戻す
         if (eStatus.hp <= 0)

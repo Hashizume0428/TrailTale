@@ -19,7 +19,7 @@ public class EventSet : MonoBehaviour
         // 最大イベント数に到達した場合、バトルイベントを返す
         if (currentIndex == maxIndex)
         {
-            return battleEvents[0]; // 通常戦闘イベントを返す
+            return battleEvents[1]; // ボス戦闘イベントを返す
         }
 
         // 最大イベント数が5以下の場合、ステータスイベントまたはアイテムイベントを返す

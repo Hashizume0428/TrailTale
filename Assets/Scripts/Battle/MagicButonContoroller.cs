@@ -5,7 +5,7 @@ public class MagicButonContoroller : MonoBehaviour
 {
     [Header("Magic Button Settings")]
     [SerializeField] int magicCost = 7;
-    [SerializeField] int magicDamage = 50;
+    [SerializeField] int magicDamageMultiple = 5;
     [SerializeField] int magicCooldown = 8;
     [SerializeField] private GameObject hero; // 主人公のGameObject
     [SerializeField] private GameObject magicTriggerArea; // MagicTriggerAreaのGameObject
@@ -110,6 +110,6 @@ public class MagicButonContoroller : MonoBehaviour
         // 3. MagicAreaEnemiesリスト自体のnullチェック
         List<GameObject> magicTriggerAreaEnemies = magicTriggerAreaComponent.MagicAreaEnemies;
 
-        heroController.Attack(magicTriggerAreaEnemies, magicDamage);
+        heroController.Attack(magicTriggerAreaEnemies, heroController.hStatus.attack * magicDamageMultiple);
     }
 }

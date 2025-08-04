@@ -22,15 +22,14 @@ public struct HeroStatus
 public class HeroController : MonoBehaviour
 {
     [Header("Hero Settings")]
-    [SerializeField] private int maxHP = 100; // 最大HP
-    [SerializeField] private int attack = 10; // 攻撃力
-    [SerializeField] private int defense = 0; // 防御力
     [SerializeField] private float attackSpeed = 1f; // 攻撃速度（通常の攻撃速度は2秒に一回）
     [SerializeField] private int maxCost = 10; // コストの最大値
     [SerializeField] private float autoCostInterval = 2f; // 自動コスト回復間隔（秒）
     [SerializeField] private int autoHealValue = 2; // 自動回復のスピード(1秒毎に回復するHPの値)
     [SerializeField] private float autoHealInterval = 1f; // 自動回復の間隔
     [SerializeField] private int autoCostValue = 1; // 自動コスト回復の値
+
+    public PlayerData playerData { private get; set; } // プレイヤーデータ
 
     public HeroStatus hStatus;
     [SerializeField] private GameObject enemy; //敵のGameObject
@@ -45,17 +44,18 @@ public class HeroController : MonoBehaviour
 
     public event Action<int > OnEnemyKilled; // 敵を倒したときのイベント
 
-    void Start()
+    public void Init(PlayerData playerData)
     {
-        hStatus.hp = maxHP; //初期HPを設定
-        hStatus.maxHP = maxHP; // 最大HPを設定
-        hStatus.attack = attack;
-        hStatus.defense = defense;
-        hStatus.attackSpeed = attackSpeed;
+        this.playerData = playerData;
+        hStatus.hp = playerData.hp; //初期HPを設定
+        hStatus.maxHP = playerData.hp; // 最大HPを設定
+        hStatus.attack = playerData.atk;
+        hStatus.defense = playerData.def;
+        hStatus.attackSpeed = Mathf.Max(0.2f, attackSpeed - playerData.spd * 0.15f);
         hStatus.autoHealInterval = autoHealInterval;
         hStatus.autoHealValue = autoHealValue; // 自動回復の値を設定
-        hStatus.cost = maxCost; // 初期コストを設定
-        hStatus.maxCost = maxCost; // 最大コストを設定
+        hStatus.cost = playerData.mp; // 初期コストを設定
+        hStatus.maxCost = playerData.mp; // 最大コストを設定
         hStatus.autoCostInterval = autoCostInterval; // 自動コスト回復間隔を設定
         hStatus.autoCostValue = autoCostValue; // 自動コスト回復の値を設定
         hStatus.isDead = false;
@@ -76,8 +76,11 @@ public class HeroController : MonoBehaviour
                 float waitTime = attackSpeedMax * (1f / hStatus.attackSpeed); // 攻撃間隔を計算
                 if (timer >= waitTime)
                 {
-                    SoundManager.Instance.PlaySE(SESoundData.SE.Attack);
-                    Attack(Enemies, hStatus.attack);
+                    if (Attack(Enemies, hStatus.attack))
+                    {
+                        // 攻撃が成功した場合の処理
+                        SoundManager.Instance.PlaySE(SESoundData.SE.Attack);
+                    }
                     // print("timer: " + timer);
                     timer -= waitTime;
                 }
@@ -101,8 +104,12 @@ public class HeroController : MonoBehaviour
     }
 
     // 主人公の衝突判定はHeroTriggerArea.csで行う
-    public void Attack(List<GameObject> target, int damage)
-    {   
+    public bool Attack(List<GameObject> target, int damage)
+    {
+        if (target == null || target.Count == 0)
+        {
+            return false;
+        }
 
         //attackArea内の敵のEnemyControllerを取得
         List<EnemyController> enemyControllers = new List<EnemyController>();
@@ -125,6 +132,7 @@ public class HeroController : MonoBehaviour
             }
             // print("Hero attacks Enemy! Enemy's HP: " + enemyController.eStatus.hp);
         }
+        return true; // 攻撃が成功した場合はtrueを返す
     }
 
     // 敵リストを取得するメソッド（読み取り専用）
@@ -153,7 +161,7 @@ public class HeroController : MonoBehaviour
 
     public bool OnDamage(int damage)
     {
-        hStatus.hp -= damage * (100 - hStatus.defense) / 100;
+        hStatus.hp -= Mathf.Max(1, damage - hStatus.defense); // 防御力を考慮してダメージを計算
         gameObject.GetComponent<SpriteRenderer>().color = new Color32(255, 0, 0, 255); //　主人公を赤色に
         shield.GetComponent<SpriteRenderer>().color = new Color32(255, 0, 0, 255); //　盾を赤色に
         Invoke("back", 0.2f); // 0.2秒後に元の色に戻す

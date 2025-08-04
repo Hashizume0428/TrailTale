@@ -107,6 +107,12 @@ public class StoryManager : MonoBehaviour
         // ログの地点から最大10個のインデックスを選択
         storyIndexList = locationLogReader.SelectClampIndex(latLngList, 1, 10);
 
+        if (currentStoryIndex >= storyIndexList.Count)
+        {
+            OnEndStory();
+            return;
+        }
+
         logPathRenderer.DrawLogPath(latLngList, storyIndexList);
 
         // マップの初期化を待つ
@@ -269,5 +275,6 @@ public class StoryManager : MonoBehaviour
     {
         playerData.SetCurrentStoryIndex(0);
         playerData.SetCurrentLog("");
+        SceneLoader.Instance.LoadMainScene("home");
     }
 }

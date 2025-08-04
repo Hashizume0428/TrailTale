@@ -27,6 +27,24 @@ public class PlayerData : ScriptableObject
 
     public int battleType = 0;
 
+    public void Init()
+    {
+        atk = 3;
+        def = 1;
+        hp = 10;
+        spd = 1;
+        mp = 5;
+
+        healPotion_S = 0;
+        healPotion_M = 0;
+        healPotion_L = 0;
+
+        latLngList = new LatLngList(new List<LatLng>(), new List<int>());
+        currentStoryIndex = 0;
+        currentLog = "";
+        battleType = 0; // デフォルトのバトルタイプ
+    }
+
     // ステータスを更新する
     public void UpdateStatus(StatusType statusType, int value)
     {
@@ -161,7 +179,8 @@ public class PlayerData : ScriptableObject
 
     public void Delete()
     {
-        SaveManager.DeletePlayerData();
+        Init();
+        Save();
     }
 
 

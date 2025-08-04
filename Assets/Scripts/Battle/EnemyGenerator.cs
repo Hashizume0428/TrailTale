@@ -129,8 +129,8 @@ public class EnemyGenerator : MonoBehaviour
     // 敵の生成処理
     private void GenerateEnemy(int enemyType)
     {
-        // 生成位置の計算（敵タイプに応じて少し位置をずらす）
-        Vector3 spawnPosition = new Vector3(2.8f, 0.1f + (enemyType * 0.2f), 0.0f);
+        // 生成位置の計算（ランダムで少し位置をずらす）
+        Vector3 spawnPosition = new Vector3(2.8f, Random.Range(-0.2f, 0.3f), 0.0f);
 
         // 敵の生成
         GameObject newEnemy = Instantiate(enemyPrefab[enemyType], spawnPosition, Quaternion.identity);

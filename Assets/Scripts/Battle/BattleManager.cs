@@ -24,6 +24,7 @@ public class BattleManager : MonoBehaviour
     private void Start()
     {
         enemyGenerator.Init(playerData); // プレイヤーデータを敵生成に渡す
+        heroController.Init(playerData); // プレイヤーデータをヒーローに渡す
         heroController.OnEnemyKilled += HandleEnemyKilled; // 敵を倒したときのイベントを登録
         status = statusDataBase.GetRandomStatus();
         resultPanel.Setup(status.icon, 1, "敵を全て倒した！\nあなたの\n" + status.name + "\nが1上がった！", () => { SceneLoader.Instance.LoadMainScene("Story"); }); // 結果パネルの初期化

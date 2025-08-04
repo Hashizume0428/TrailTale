@@ -5,7 +5,7 @@ public class AttackButtonController : MonoBehaviour
 {
     [Header("Attack Button Settings")]
     [SerializeField] int attackCost = 2;
-    [SerializeField] int attackDamage = 50;
+    [SerializeField] int attackMultiple = 3; // 攻撃力の倍率
     [SerializeField] float attackCooldown = 3f; // floatに変更
     [SerializeField] private GameObject hero; // 主人公のGameObject
 
@@ -70,6 +70,6 @@ public class AttackButtonController : MonoBehaviour
         SoundManager.Instance.PlaySE(SESoundData.SE.Attack);
         List<GameObject> heroControllerEnemies = hero.GetComponent<HeroController>().Enemies;
 
-        heroController.Attack(heroControllerEnemies, attackDamage);
+        heroController.Attack(heroControllerEnemies, heroController.hStatus.attack * attackMultiple);
     }
 }

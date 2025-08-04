@@ -511,6 +511,9 @@ MonoBehaviour:
   - se: 8
     audioClip: {fileID: 8300000, guid: 3d1397524b93dff46b03e6bac161b39a, type: 3}
     volume: 1
+  - se: 9
+    audioClip: {fileID: 8300000, guid: b04c29c4765c31d4fa96b8ca0f95db61, type: 3}
+    volume: 1
 --- !u!4 &318604526
 Transform:
   m_ObjectHideFlags: 0

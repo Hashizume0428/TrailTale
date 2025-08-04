@@ -9,6 +9,8 @@ public class GameManager : MonoBehaviour
 {
     [SerializeField] GameObject configPanel;
 
+    [SerializeField] PlayerData playerData; // PlayerDataの参照をInspectorから設定
+
     // シーン遷移までのラグ時間（秒）
     [Header("Scene Transition Settings")]
     [SerializeField] private float sceneTransitionDelay = 0.8f;
@@ -135,6 +137,12 @@ public class GameManager : MonoBehaviour
     {
         Debug.Log("HomeButton clicked.");
         StartCoroutine(LoadSceneWithDelay("home")); // コルーチンを開始
+    }
+
+    public void ResetButton()
+    {
+        playerData.Delete(); // PlayerDataを削除
+        TitleButton();
     }
 
     /// <summary>
