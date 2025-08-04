@@ -1,95 +1,70 @@
 using UnityEngine;
-using TMPro; // TextMeshProUGUI���g���ꍇ�͕K�{�ł��B
-using System.Collections; // �R���[�`�����g���ꍇ�͕K�{�ł��B
-using System.Collections.Generic; // Queue���g���ꍇ�͕K�{�ł��B
+using TMPro; // TextMeshProUGUIを使用する場合は必須です。
+using System.Collections; // コルーチンを使用する場合は必須です。
+using System.Collections.Generic; // Queueを使用する場合は必須です。
+using UnityEngine.UI; // Buttonコンポーネントを使用する場合に必要です。 
 
-// MonoBehaviour���p�����邱�ƂŃI�u�W�F�N�g�ɃR���|�[�l���g�Ƃ���
-// �A�^�b�`���邱�Ƃ��ł���悤�ɂȂ�
 public class TextManager : MonoBehaviour
 {
-    // SerializeField�Ə�����private�ȃp�����[�^�[�ł�
-    // �C���X�y�N�^�[��Œl��ύX�ł���
     [SerializeField]
-    private TextMeshProUGUI mainText; // ���C���̃e�L�X�g�\���p
-    // private TextMeshProUGUI nameText; // ���O�̕\���p �� �N���b���Ă��邩�̋@�\�͍폜�ς݂̂��߁A�����ł͍폜���܂��񂪁A����nameText���g���Ă��Ȃ��ꍇ�͍폜���Ă��������B
+    private TextMeshProUGUI mainText; // メインのテキスト表示用 (Inspectorで設定必須)
 
     [SerializeField]
-    private TextMeshProUGUI speedDisplayText; // ���݂̑��x�\���p
+    private TextMeshProUGUI speedDisplayText; // 現在の速度表示用 (Inspectorで設定必須)
 
-    [Header("Text Settings")] // �C���X�y�N�^�[�ł̕\���𕪂���₷������
-    // captionSpeed��PlayerPrefs���烍�[�h���邽�߁A�����ł�[SerializeField]��t���܂���B
+    [Header("Text Settings")]
     private float captionSpeed;
 
-    // �V�������x�i�K���`����l�B�C���X�y�N�^�[���璲���ł���悤��SerializeField���t���܂��B
     [SerializeField, Header("Caption Speeds (seconds per char)")]
-    private float fastSpeed = 0.02f;     // �������x�i�b/�����j
+    private float fastSpeed = 0.02f;     // 早い速度（秒/文字）
     [SerializeField]
-    private float captionSpeed = 0.05f; // 1�����\�����Ƃ̑ҋ@���� (�b)
+    private float normalSpeed = 0.05f; // 普通の速度（秒/文字）
+    [SerializeField]
+    private float slowSpeed = 0.1f;    // 遅い速度（秒/文字）
 
-    // �e�L�X�g�̃y�[�W��؂蕶��
     private const char SEPARATE_PAGE = '&';
-    // PlayerPrefs�Ŏg�p����L�[���i�萔�j
-    private const string CAPTION_SPEED_KEY = "CaptionSpeed"; // �������L�[��
+    private const string CAPTION_SPEED_KEY = "CaptionSpeed";
 
-    // �e�X�g�p�̃e�L�X�g�B���O�̃t�H�[�}�b�g���s�v�ɂȂ邽�ߏC�����܂����B
-    [TextArea(3, 10)] // �C���X�y�N�^�[�ŕ����s���͂ł���悤�ɂ���
+    [TextArea(3, 10)]
     [SerializeField]
     private string _fullStoryText =
-        "Hello,World!&����̓e�L�X�g�\���̃T���v���ł�&����ɂ��́I&���̃y�[�W�͂���ŏI��肾��B"; // ���O�\�����폜�����ꍇ�̃T���v��
+        "Hello,World!&これはテキスト表示のサンプルです&こんにちは！&次のページはこれで終わりだよ。";
 
-    // 1�������\�����邽�߂̃L���[
     private Queue<char> _charQueue;
-    // �y�[�W�i�s�j���Ƃɕ\�����邽�߂̃L���[
     private Queue<string> _pageQueue;
 
-    // ���ݎ��s���̕�������R���[�`����ێ�
     private Coroutine _displayCoroutine;
 
-    // MonoBehaviour���p�����Ă���ꍇ�����
-    // �ŏ��̍X�V�֐�(Update���\�b�h)���Ă΂�鎞�ɍŏ��ɌĂ΂��
+    private void Awake() // Startより早く確実に実行されるAwakeでPlayerPrefsをロード
+    {
+        // PlayerPrefsから現在の表示速度をロードします。
+        // もし保存された設定がなければ、normalSpeedをデフォルトとして使用します。
+        captionSpeed = PlayerPrefs.GetFloat(CAPTION_SPEED_KEY, normalSpeed);
+    }
+
     private void Start()
     {
-        // �������������J�n
+        // Init()をStartで呼び出すことで、GameObjectがアクティブになったときに一度だけ実行される
         Init();
 
-        // Start()�ł�UpdateSpeedDisplayText()���Ăяo���Ă������ƂŁA
-        // �V�[�����[�h���ɃI�u�W�F�N�g���A�N�e�B�u�ł���΂����ɕ\�������B
-        // �������AOnEnable()�ł��Ăяo�����߁A�ݒ��ʂ���A�N�e�B�u����A�N�e�B�u�ɂȂ�ۂɂ��Ή��ł���B
+        // Start()でも現在の速度表示を更新
         UpdateSpeedDisplayText();
     }
 
-    // �Q�[���I�u�W�F�N�g���A�N�e�B�u�ɂȂ邽�тɌĂяo�����
     private void OnEnable()
     {
-        // �I�u�W�F�N�g���A�N�e�B�u�ɂȂ����Ƃ��ɁA���݂̑��x�\�����X�V
-        // ����ɂ��A�ݒ��ʂ���A�N�e�B�u����A�N�e�B�u�ɂȂ����ۂɂ��\�����X�V�����
-        // �������AStart()���OnEnable()�̕����������s����邱�Ƃ����邽�߁A
-        // captionSpeed���܂����[�h����Ă��Ȃ��\�����l������
-        if (captionSpeed == 0 && PlayerPrefs.HasKey(CAPTION_SPEED_KEY)) // �܂����[�h����Ă��Ȃ��A���L�[�����݂���ꍇ
-        {
-            captionSpeed = PlayerPrefs.GetFloat(CAPTION_SPEED_KEY, normalSpeed);
-        }
-        else if (captionSpeed == 0) // �L�[�����݂��Ȃ��ꍇ
-        {
-            captionSpeed = normalSpeed;
-        }
-
+        // オブジェクトがアクティブになったときに、現在の速度表示を更新
+        // captionSpeedはAwakeでロード済みなので、ここでは表示更新のみで良い
         UpdateSpeedDisplayText();
     }
 
-    // MonoBehaviour���p�����Ă���ꍇ�����
-    // ���t���[���Ă΂��
     private void Update()
     {
-        // ��(=0)�N���b�N���ꂽ��OnClick���\�b�h���Ăяo��
-        if (Input.GetMouseButtonDown(0))
-        {
-            OnClick();
-        }
+        // Update()内のクリック検出コードは以前の指示通り削除済み
     }
 
     /// <summary>
-    /// ��������w�肵����؂蕶�����Ƃɋ�؂�A�L���[�Ɋi�[�������̂�Ԃ��i�y�[�W��؂�p�j
+    /// 文字列を指定した区切り文字ごとに区切り、キューに格納したものを返す（ページ区切り用）
     /// </summary>
     private Queue<string> SeparatePages(string str, char sep)
     {
@@ -103,7 +78,7 @@ public class TextManager : MonoBehaviour
     }
 
     /// <summary>
-    /// ����1�������Ƃɋ�؂�A�L���[�Ɋi�[�������̂�Ԃ��i�Z���t�̕�������p�j
+    /// 文を1文字ごとに区切り、キューに格納したものを返す（セリフの文字送り用）
     /// </summary>
     private Queue<char> SeparateCharacters(string str)
     {
@@ -117,90 +92,115 @@ public class TextManager : MonoBehaviour
     }
 
     /// <summary>
-    /// �L���[����1���������o���ĕ\������
-    /// �L���[����ɂȂ�����false��Ԃ�
+    /// キューから1文字を取り出して表示し、キューが空になったらfalseを返します。
     /// </summary>
     private bool OutputChar()
     {
+        // mainTextがnullでないことを常に確認する
+        if (mainText == null)
+        {
+            Debug.LogError("mainText (TextMeshProUGUI) is not assigned in the Inspector of TextManager.");
+            return false;
+        }
+
         if (_charQueue == null || _charQueue.Count <= 0)
         {
-            return false; // �L���[�ɉ����i�[����Ă��Ȃ����false��Ԃ�
+            return false; // キューに何も格納されていなければfalseを返す
         }
         mainText.text += _charQueue.Dequeue();
         return true;
     }
 
     /// <summary>
-    /// �������肷��R���[�`��
+    /// 文字送りを行うコルーチン
     /// </summary>
+    /// <param name="wait">次の文字を表示するまでの待機時間（秒）</param>
     private IEnumerator ShowChars(float wait)
     {
-        // OutputChar���\�b�h��false��Ԃ�(=�L���[����ɂȂ�)�܂Ń��[�v����
+        // OutputCharメソッドがfalseを返す（キューが空になる）までループします
         while (OutputChar())
         {
-            yield return new WaitForSeconds(wait); // wait�b�����ҋ@
+            yield return new WaitForSeconds(wait); // 指定された時間だけ待機
         }
-        _displayCoroutine = null; // �R���[�`�����I��������null�ɂ���
+        _displayCoroutine = null; // コルーチンが終了したらnullにします
         yield break;
     }
 
     /// <summary>
-    /// 1�s�̃e�L�X�g��ǂݍ��݁A�L���[�Ɋi�[���A����������J�n����
+    /// 1行のテキストを読み込み、文字キューに格納して文字送りを開始します。
     /// </summary>
+    /// <param name="text">表示するテキスト行</param>
     private void ReadLine(string text)
     {
-        // �����̕�������R���[�`��������Β�~
+        // 既存の文字送りコルーチンがあれば停止します
         if (_displayCoroutine != null)
         {
             StopCoroutine(_displayCoroutine);
             _displayCoroutine = null;
         }
 
-        // ���O�\���@�\���s�v�ɂȂ������߁A���O�̕�����ݒ�Ɋւ��鏈�����폜���܂��B
-        // �����ȑO��_fullStoryText�̌`�����ێ����Ă���ꍇ�A�����ł̕ύX���l�����Ă��������B
-        // �i�Ⴆ�΁A"�i���[�^�[�u�Z���t�v"�̂悤�Ȍ`������u�i���[�^�[�v�Ɓu�v���폜����K�v������ꍇ�j
-        // ���݂�_fullStoryText�̃t�H�[�}�b�g�i���O�Ȃ��j�ɍ��킹�Ē������܂����B
+        // mainTextがnullでないことをここで再度確認 (NullReferenceException対策)
+        if (mainText == null)
+        {
+            Debug.LogError("mainText (TextMeshProUGUI) is not assigned in the Inspector. Cannot read line.");
+            return;
+        }
 
-        mainText.text = ""; // ���C���e�L�X�g����x�N���A
-        _charQueue = SeparateCharacters(text); // �e�L�X�g�S�̂𕶎��L���[�ɕϊ�
+        mainText.text = ""; // メインテキストを一度クリア
+        _charQueue = SeparateCharacters(text); // テキスト全体を文字キューに変換
 
-        // �V������������R���[�`�����J�n���A�Q�Ƃ�ێ�
+        // 現在のcaptionSpeedを使って新しい文字送りコルーチンを開始し、参照を保持します
         _displayCoroutine = StartCoroutine(ShowChars(captionSpeed));
     }
 
     /// <summary>
-    /// �S�����u���ɕ\������
+    /// 全文を瞬時に表示します。
     /// </summary>
     private void OutputAllChar()
     {
-        // ��������R���[�`�������s���ł���Β�~
+        // 文字送りコルーチンが実行中であれば停止します
         if (_displayCoroutine != null)
         {
             StopCoroutine(_displayCoroutine);
             _displayCoroutine = null;
         }
 
-        // �L���[����ɂȂ�܂Ŏc��̕�����S�ĕ\��
+        // mainTextがnullでないことを確認
+        if (mainText == null)
+        {
+            Debug.LogError("mainText (TextMeshProUGUI) is not assigned in the Inspector. Cannot output all chars.");
+            return;
+        }
+
+        // キューが空になるまで残りの文字を全て表示します
         while (OutputChar()) ;
     }
 
     /// <summary>
-    /// ����������i�ŏ��̃y�[�W��ǂݍ��ށj
+    /// 初期化処理（最初のページを読み込みます）
     /// </summary>
     private void Init()
     {
+        // _fullStoryTextが空でないことを確認
+        if (string.IsNullOrEmpty(_fullStoryText))
+        {
+            Debug.LogWarning("TextManager: _fullStoryTextが設定されていません。");
+            _pageQueue = new Queue<string>(); // 空のキューを初期化
+            return;
+        }
+
         _pageQueue = SeparatePages(_fullStoryText, SEPARATE_PAGE);
         ShowNextPage();
     }
 
     /// <summary>
-    /// ���̃y�[�W�i�s�j��\������
+    /// 次のページ（行）を表示します。すべてのページ表示が完了したらfalseを返します。
     /// </summary>
-    private bool ShowNextPage()
+    public bool ShowNextPage() // OnClickから呼び出すためpublicにする
     {
-        if (_pageQueue.Count <= 0)
+        if (_pageQueue == null || _pageQueue.Count <= 0)
         {
-            Debug.Log("���ׂẴe�L�X�g�y�[�W��\�����܂����B");
+            Debug.Log("すべてのテキストページを表示しました。");
             return false;
         }
         ReadLine(_pageQueue.Dequeue());
@@ -208,63 +208,63 @@ public class TextManager : MonoBehaviour
     }
 
     /// <summary>
-    /// �N���b�N�����Ƃ��̏����i�S���\���܂��͎��̃y�[�W�֐i�ށj
+    /// クリックしたときの処理（文字送り中の場合は全文表示、完了していれば次のページへ進みます）
     /// </summary>
-    private void OnClick()
+    public void OnClick() // UIボタンから呼び出せるようにpublicにしています
     {
-        // �܂��������蒆�ł���ΑS���\��
-        if (_charQueue != null && _charQueue.Count > 0)
+        // 文字送りコルーチンが実行中であれば全文表示
+        if (_displayCoroutine != null && _charQueue != null && _charQueue.Count > 0)
         {
             OutputAllChar();
         }
         else
         {
-            // �S���\�����I����Ă���Ύ��̃y�[�W��
+            // 全文表示が終わっていれば次のページへ
             if (!ShowNextPage())
             {
-                // �S�Ẵy�[�W�\�������������ꍇ�̏���
-                // ��: �V�[���J�ځA����̃C�x���g�̔����Ȃ�
-                Debug.Log("���ꂪ�I�����܂����I");
+                // 全てのページ表示が完了した場合の処理
+                // 例: シーン遷移、特定のイベントの発生など
+                Debug.Log("物語が終了しました！");
             }
         }
     }
 
-    // --- ���x�ݒ胁�\�b�h ---
+    // --- 速度設定メソッド ---
     /// <summary>
-    /// �\�����x���u�����v�ɐݒ肵�APlayerPrefs�ɕۑ����܂��B
+    /// 表示速度を「早い」に設定し、PlayerPrefsに保存します。
     /// </summary>
     public void SetSpeedFast()
     {
         captionSpeed = fastSpeed;
-        PlayerPrefs.SetFloat(CAPTION_SPEED_KEY, captionSpeed); // PlayerPrefs�ɑ��x��ۑ�
-        UpdateSpeedDisplayText(); // ���x�\���e�L�X�g���X�V
-        Debug.Log("�������葬�x���u�����v�ɐݒ肵�܂���: " + captionSpeed);
+        PlayerPrefs.SetFloat(CAPTION_SPEED_KEY, captionSpeed);
+        UpdateSpeedDisplayText();
+        Debug.Log("文字送り速度を「早い」に設定しました: " + captionSpeed);
     }
 
     /// <summary>
-    /// �\�����x���u���ʁv�ɐݒ肵�APlayerPrefs�ɕۑ����܂��B
+    /// 表示速度を「普通」に設定し、PlayerPrefsに保存します。
     /// </summary>
     public void SetSpeedNormal()
     {
         captionSpeed = normalSpeed;
-        PlayerPrefs.SetFloat(CAPTION_SPEED_KEY, captionSpeed); // PlayerPrefs�ɑ��x��ۑ�
-        UpdateSpeedDisplayText(); // ���x�\���e�L�X�g���X�V
-        Debug.Log("�������葬�x���u���ʁv�ɐݒ肵�܂���: " + captionSpeed);
+        PlayerPrefs.SetFloat(CAPTION_SPEED_KEY, captionSpeed);
+        UpdateSpeedDisplayText();
+        Debug.Log("文字送り速度を「普通」に設定しました: " + captionSpeed);
     }
 
     /// <summary>
-    /// �\�����x���u�x���v�ɐݒ肵�APlayerPrefs�ɕۑ����܂��B
+    /// 表示速度を「遅い」に設定し、PlayerPrefsに保存します。
     /// </summary>
     public void SetSpeedSlow()
     {
         captionSpeed = slowSpeed;
-        PlayerPrefs.SetFloat(CAPTION_SPEED_KEY, captionSpeed); // PlayerPrefs�ɑ��x��ۑ�
-        UpdateSpeedDisplayText(); // ���x�\���e�L�X�g���X�V
-        Debug.Log("�������葬�x���u�x���v�ɐݒ肵�܂���: " + captionSpeed);
+        PlayerPrefs.SetFloat(CAPTION_SPEED_KEY, captionSpeed);
+        UpdateSpeedDisplayText();
+        Debug.Log("文字送り速度を「遅い」に設定しました: " + captionSpeed);
     }
 
     /// <summary>
-    /// ���݂̕\�����x�ɉ����āA���x�\���e�L�X�g���X�V���܂��B
+    /// 現在の表示速度に応じて、速度表示テキストを更新します。
     /// </summary>
     private void UpdateSpeedDisplayText()
     {
@@ -275,24 +275,23 @@ public class TextManager : MonoBehaviour
         }
 
         string speedText = "";
-        // ���������_���̔�r�ɂ� Mathf.Approximately ���g�p���܂�
         if (Mathf.Approximately(captionSpeed, fastSpeed))
         {
-            speedText = "�͂₢";
+            speedText = "はやい";
         }
         else if (Mathf.Approximately(captionSpeed, normalSpeed))
         {
-            speedText = "�ӂ�";
+            speedText = "ふつう";
         }
         else if (Mathf.Approximately(captionSpeed, slowSpeed))
         {
-            speedText = "�������";
+            speedText = "ゆっくり";
         }
         else
         {
-            speedText = "�s���ȑ��x"; // �\�����Ȃ��l�̏ꍇ
+            speedText = "不明な速度";
         }
 
-        speedDisplayText.text = "���݂̕\�����x�F" + speedText;
+        speedDisplayText.text = "現在の表示速度：" + speedText;
     }
 }

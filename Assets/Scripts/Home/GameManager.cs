@@ -1,36 +1,74 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.UI;
-using System.Collections; // �R���[�`�����g�p���邽�߂ɕK�v�ł�
+using UnityEngine.UI; // Button を使用するために必要です
+using System.Collections;
+using System.Collections.Generic;
+using TMPro; // TextMeshProUGUI を使用するために必要です
 
 public class GameManager : MonoBehaviour
 {
     [SerializeField] GameObject configPanel;
 
-    // �V�[���J�ڂ܂ł̃��O���ԁi�b�j
+    // シーン遷移までのラグ時間（秒）
     [Header("Scene Transition Settings")]
     [SerializeField] private float sceneTransitionDelay = 0.8f;
 
-    // --- �V���O���g���p�^�[�� (����GameManager��DontDestroyOnLoad�Ȃ�) ---
-    // ��������GameManager��DontDestroyOnLoad�ŉi��������Ă���Ȃ�A
-    // �ȉ��̃V���O���g��������Awake�ɒǉ����Ă��������B
+    // ★★★GameManagerのシングルトンパターンは削除されたままです★★★
     // private static GameManager instance = null;
     // public static GameManager Instance { get { return instance; } }
-    // void Awake() {
-    //     if (instance != null && instance != this) { Destroy(this.gameObject); return; }
-    //     instance = this;
-    //     DontDestroyOnLoad(this.gameObject);
+    //
+    // void Awake()
+    // {
+    //      if (instance != null && instance != this)
+    //      {
+    //          Destroy(this.gameObject);
+    //          return;
+    //      }
+    //      instance = this;
+    //      DontDestroyOnLoad(this.gameObject);
     // }
+    // ★★★GameManagerのシングルトンパターンは削除されたままです★★★
 
-    // --- �����̃��\�b�h�i�C���j ---
 
-    public void StartButton() // ���\�b�h����StartBotton����StartButton�ɏC�����܂����i�����j
+    // UIボタンのリスナーを保持するリスト (このロジックはGameManagerをシングルトン化しない場合は通常不要ですが、
+    // 以前のOnSceneLoadedForSEメソッドの残骸なので、もし使わないなら削除できます。)
+    private List<Button> registeredButtons = new List<Button>();
+
+    // --- 新規追加部分 ---
+    [Header("Route Info Text Toggle")]
+    [SerializeField] private TextMeshProUGUI routeInfoDisplayTextBox; // 経路情報を表示するUIテキストボックス（TextMeshProUGUI型）
+    private bool isRouteInfoAcquiring = false; // 経路情報が取得中かどうかの状態
+
+    // PlayerPrefsで使用するキー
+    private const string ROUTE_INFO_STATUS_KEY = "IsRouteInfoAcquiring";
+
+    void Start()
     {
-        Debug.Log("Start Button clicked.");
-        StartCoroutine(LoadSceneWithDelay("home")); // �R���[�`�����J�n
+        // アプリケーション起動時やシーンロード時にPlayerPrefsから状態を読み込む
+        // PlayerPrefs.GetIntは、キーが存在しない場合に指定したデフォルト値（ここでは0）を返します。
+        // 0をfalse、1をtrueとして扱います。
+        isRouteInfoAcquiring = (PlayerPrefs.GetInt(ROUTE_INFO_STATUS_KEY, 0) == 1);
+
+        // UIテキストボックスが設定されていれば、初期表示を更新
+        if (routeInfoDisplayTextBox != null)
+        {
+            UpdateRouteInfoDisplayText();
+        }
+        else
+        {
+            Debug.LogWarning("[GameManager] Start: routeInfoDisplayTextBoxが設定されていません。Inspectorで設定してください。");
+        }
     }
 
-    public void ShowConfigPanel() // ���\�b�h����ShowconfigPanel����ShowConfigPanel�ɏC�����܂����i�����j
+    // --- 既存のメソッド（変更なし） ---
+
+    public void StartButton()
+    {
+        Debug.Log("Start Button clicked.");
+        StartCoroutine(LoadSceneWithDelay("home")); // コルーチンを開始
+    }
+
+    public void ShowConfigPanel()
     {
         if (configPanel != null)
         {
@@ -43,7 +81,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void HideConfigPanel() // ���\�b�h����HideConfigPanel����HideConfigPanel�ɏC�����܂����i�����j
+    public void HideConfigPanel()
     {
         if (configPanel != null)
         {
@@ -56,63 +94,118 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void ItemPageButton() // ���\�b�h����ItemPageBotton����ItemPageButton�ɏC�����܂����i�����j
+    public void ItemPageButton()
     {
         Debug.Log("ItemPageButton clicked.");
-        StartCoroutine(LoadSceneWithDelay("Item")); // �R���[�`�����J�n
+        StartCoroutine(LoadSceneWithDelay("Item")); // コルーチンを開始
     }
 
-    public void StatusPageButton() // ���\�b�h����StatusPageBotton����StatusPageButton�ɏC�����܂����i�����j
+    public void StatusPageButton()
     {
         Debug.Log("StatusPageButton clicked.");
-        StartCoroutine(LoadSceneWithDelay("Status")); // �R���[�`�����J�n
+        StartCoroutine(LoadSceneWithDelay("Status")); // コルーチンを開始
     }
 
-    public void ScenarioPageButton() // ���\�b�h����ScenarioPageBotton����ScenarioPageButton�ɏC�����܂����i�����j
+    public void ScenarioPageButton()
     {
         Debug.Log("ScenarioPageButton clicked.");
-        StartCoroutine(LoadSceneWithDelay("ScenarioTest")); // �R���[�`�����J�n
+        StartCoroutine(LoadSceneWithDelay("ScenarioTest")); // コルーチンを開始
     }
 
-    public void SettingButton() // ���\�b�h����SettingBotton����SettingButton�ɏC�����܂����i�����j
+    public void SettingButton()
     {
         Debug.Log("SettingButton clicked.");
-        StartCoroutine(LoadSceneWithDelay("Setting")); // �R���[�`�����J�n
+        StartCoroutine(LoadSceneWithDelay("Setting")); // コルーチンを開始
     }
 
-    public void BacknumberButton() // ���\�b�h����BackbumerBotton����BacknumberButton�ɏC�����܂����i�����j
+    public void BacknumberButton()
     {
         Debug.Log("BacknumberButton clicked.");
-        StartCoroutine(LoadSceneWithDelay("Backnumber")); // �R���[�`�����J�n
+        StartCoroutine(LoadSceneWithDelay("Backnumber")); // コルーチンを開始
     }
 
-    public void TitleButton() // ���\�b�h����TitleBotton����TitleButton�ɏC�����܂����i�����j
+    public void TitleButton()
     {
         Debug.Log("TitleButton clicked.");
-        StartCoroutine(LoadSceneWithDelay("Title")); // �R���[�`�����J�n
+        StartCoroutine(LoadSceneWithDelay("Title")); // コルーチンを開始
     }
 
-    public void HomeButton() // ���\�b�h����HomeBotton����HomeButton�ɏC�����܂����i�����j
+    public void HomeButton()
     {
         Debug.Log("HomeButton clicked.");
-        StartCoroutine(LoadSceneWithDelay("home")); // �R���[�`�����J�n
+        StartCoroutine(LoadSceneWithDelay("home")); // コルーチンを開始
     }
-
-    // --- �V�K�ǉ����\�b�h ---
 
     /// <summary>
-    /// �w�肳�ꂽ���ԑҋ@������A�V�[�������[�h����R���[�`��
+    /// 指定された時間待機した後、シーンをロードするコルーチン
     /// </summary>
-    /// <param name="sceneName">���[�h����V�[���̖��O</param>
+    /// <param name="sceneName">ロードするシーンの名前</param>
     private IEnumerator LoadSceneWithDelay(string sceneName)
     {
-        // �����ŁA�N���b�N���ꂽ�{�^���𖳌�������Ȃǂ�UI�t�B�[�h�o�b�N������Ɨǂ��ł��傤
-        // ��: EventSystem.current.currentSelectedGameObject.GetComponent<Button>().interactable = false;
-
         Debug.Log($"Waiting for {sceneTransitionDelay} seconds before loading scene: {sceneName}");
-        yield return new WaitForSeconds(sceneTransitionDelay); // �w�肳�ꂽ�b���ҋ@
+        yield return new WaitForSeconds(sceneTransitionDelay); // 指定された秒数待機
 
         Debug.Log($"Loading scene: {sceneName}");
-        SceneManager.LoadScene(sceneName); // �V�[�������[�h
+        SceneManager.LoadScene(sceneName); // シーンをロード
+    }
+
+    // UIボタンのOnClickイベントから直接呼び出すSE再生メソッド
+    /// <summary>
+    /// UIボタンのOnClickイベントから直接呼び出して、クリックSEを再生します。
+    /// このメソッドは、既存のボタン機能に影響を与えません。
+    /// </summary>
+    public void PlayClickSFXOnButton()
+    {
+        if (SoundManager.Instance != null)
+        {
+            SoundManager.Instance.PlayClickSFX();
+            Debug.Log("[GameManager] UIボタンクリックSEを再生しました。");
+        }
+        else
+        {
+            Debug.LogWarning("[GameManager] SoundManagerのインスタンスが見つからないため、クリックSEを再生できません。");
+        }
+    }
+
+    /// <summary>
+    /// UIボタンクリックで経路情報表示テキストを切り替えるメソッド。
+    /// このメソッドは、UIボタンのOnClickイベントに設定します。
+    /// </summary>
+    public void ToggleRouteInfoText()
+    {
+        if (routeInfoDisplayTextBox == null)
+        {
+            Debug.LogWarning("[GameManager] ToggleRouteInfoText: routeInfoDisplayTextBoxが設定されていません。Inspectorで設定してください。");
+            return;
+        }
+
+        isRouteInfoAcquiring = !isRouteInfoAcquiring; // 状態を反転させる
+
+        // PlayerPrefsに状態を保存
+        PlayerPrefs.SetInt(ROUTE_INFO_STATUS_KEY, isRouteInfoAcquiring ? 1 : 0);
+        PlayerPrefs.Save(); // 変更を保存 (即座に保存する場合。通常はアプリケーション終了時に自動保存されますが、明示的に呼ぶことも可能です)
+
+        UpdateRouteInfoDisplayText(); // 表示を更新
+    }
+
+    /// <summary>
+    /// 現在のisRouteInfoAcquiringの状態に基づいてテキスト表示を更新するヘルパーメソッド
+    /// </summary>
+    private void UpdateRouteInfoDisplayText()
+    {
+        if (routeInfoDisplayTextBox == null) return; // 念のためnullチェック
+
+        if (isRouteInfoAcquiring)
+        {
+            routeInfoDisplayTextBox.text = "【経路情報取得中】";
+            Debug.Log("[GameManager] 経路情報表示: 取得中");
+        }
+        else
+        {
+            routeInfoDisplayTextBox.text = "【経路情報取得停止中】";
+            Debug.Log("[GameManager] 経路情報表示: 取得停止中");
+        }
     }
 }
+
+  
