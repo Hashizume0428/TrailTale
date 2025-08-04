@@ -43,6 +43,7 @@ public class ResultPanel : MonoBehaviour
 
     public void Show()
     {
+        SoundManager.Instance.PlaySE(SESoundData.SE.Get);
         resultPanel.transform.localScale = Vector3.zero;
         resultArea.SetActive(true);
         resultPanel.transform.DOScale(Vector3.one, 0.2f).SetEase(Ease.OutBack);
