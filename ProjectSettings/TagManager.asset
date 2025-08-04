@@ -7,14 +7,17 @@ TagManager:
   - BGM_Slider
   - SE_Slider
   - ConfigButton
+  - Hero
+  - Enemy
+  - HeroTriggerArea
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Enemy
   - Water
   - UI
-  - 
+  - BackGround
   - 
   - 
   - 
