@@ -64,6 +64,7 @@ public class GameManager : MonoBehaviour
 
     public void StartButton()
     {
+        SoundManager.Instance.PlaySE(SESoundData.SE.Page);
         Debug.Log("Start Button clicked.");
         StartCoroutine(LoadSceneWithDelay("home")); // コルーチンを開始
     }

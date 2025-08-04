@@ -395,6 +395,7 @@ public class BGMSoundData
         Battle01,//バトル画面のBGM
         Battle02,//バトル画面のBGM
         Story,//ストーリー画面のBGM
+       
     }
 
     public BGM bgm;
@@ -417,7 +418,7 @@ public class SESoundData
         HP_Item, //ポーション回復音
         Click, //ボタンクリックSE
         Dragon, //ドラゴン（ボス）SE
-
+        Page,
     }
 
     public SE se;
