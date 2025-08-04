@@ -27,7 +27,7 @@ EditorBuildSettings:
     path: Assets/Scenes/ScenarioTest.unity
     guid: fc0bae33bc67a1442bfa824c7f795563
   - enabled: 0
-    path: Assets/Scenes/Backnumber.unity
+    path: Assets/Scenes/Library/Backnumber.unity
     guid: 53cad8649b285a747b16e026ad0f985e
   - enabled: 0
     path: Assets/Scenes/TilesAPI.unity
