@@ -140,6 +140,14 @@ public class SoundManager : MonoBehaviour
                 Debug.Log($"[SoundManager] シーン '{scene.name}' のBGMをHomeに設定します。");
                 PlayBGM(BGMSoundData.BGM.Home);
                 break;
+            case "BattleScene":
+                Debug.Log($"[SoundManager] シーン '{scene.name}' のBGMをBattle01に設定します。");
+                PlayBGM(BGMSoundData.BGM.Battle01);
+                break;
+            case "Story":
+                Debug.Log($"[SoundManager] シーン '{scene.name}' のBGMをStoryに設定します。");
+                PlayBGM(BGMSoundData.BGM.Story);
+                break;
             default:
                 Debug.Log($"[SoundManager] シーン '{scene.name}' に対応する特定のBGMは設定されていません。");
                 break;
@@ -218,7 +226,7 @@ public class SoundManager : MonoBehaviour
         }
         else
         {
-            Debug.LogWarning("[SoundManager] SE_Sliderタグを持つスライダーがResources.FindObjectsOfTypeAllでも見つかりませんでした。");
+            // ... （中略）
         }
     }
 
@@ -272,6 +280,7 @@ public class SoundManager : MonoBehaviour
 
             bgmAudioSource.clip = data.audioClip;
             bgmAudioSource.volume = data.volume;
+            bgmAudioSource.loop = true; // この行を追加
             bgmAudioSource.Play();
             Debug.Log($"[SoundManager] BGM '{bgm}' を再生しました。 AudioClip: {data.audioClip.name}");
         }
@@ -385,6 +394,7 @@ public class BGMSoundData
         Home,　//ホーム画面のBGM
         Battle01,//バトル画面のBGM
         Battle02,//バトル画面のBGM
+        Story,//ストーリー画面のBGM
     }
 
     public BGM bgm;

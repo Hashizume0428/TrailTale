@@ -125,6 +125,7 @@ public class StoryManager : MonoBehaviour
         // 確認画面のセットアップ
         confirmPanel.Setup(() =>
         {
+            SoundManager.Instance.PlaySE(SESoundData.SE.Click);
             Debug.Log("HOME画面に戻ります。");
             SceneLoader.Instance.LoadMainScene("home");
         });
@@ -143,6 +144,7 @@ public class StoryManager : MonoBehaviour
 
     public void StartStory()
     {
+        SoundManager.Instance.PlaySE(SESoundData.SE.Click);
         storyUI.SetActive(true);
         mapUI.SetActive(false);
         resultPanel.Hide();
@@ -195,6 +197,7 @@ public class StoryManager : MonoBehaviour
     // ストーリーの次へボタンが押されたとき
     public async void OnClickNext()
     {
+        SoundManager.Instance.PlaySE(SESoundData.SE.Click);
         startStoryButton.interactable = false;
         // 選択されたオプションに基づいてステータスを更新
         if (currentEventData.GetEventType() == EventLibrary.EventType.Status)
@@ -235,6 +238,7 @@ public class StoryManager : MonoBehaviour
     // リザルトの確認ボタンを押したとき
     public async void OnClickConfirmResult()
     {
+        SoundManager.Instance.PlaySE(SESoundData.SE.Click);
         currentStoryIndex++;
         playerData.SetCurrentStoryIndex(currentStoryIndex);
         if (currentStoryIndex < latLngList.Count)
