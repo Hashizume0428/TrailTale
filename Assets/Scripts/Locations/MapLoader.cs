@@ -125,7 +125,7 @@ public class MapLoader : MonoBehaviour
         foreach (var chunk in logPathTiles.Chunk(10))
         {
             await UniTask.WhenAll(chunk.Select(tile => FetchAndDisplayTile(currentZoom, tile.x, -tile.y)));
-            await UniTask.Delay(100);
+            await UniTask.Delay(10);
         }
 
         Debug.Log($"<color=green>ログパスのタイルを{logPathTiles.Count}個ロードしました。</color>");

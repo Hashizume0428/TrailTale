@@ -6,17 +6,34 @@ using System.Threading;
 
 public class Loading : MonoBehaviour
 {
+    public bool playOnAwake = false;
+
     [SerializeField]
     private GameObject loadingPanel;
 
     [SerializeField]
     private TextMeshProUGUI loadingText;
 
+    [SerializeField]
+    private Image loadingImage;
+
+    [SerializeField]
+    private Sprite[] loadingSprites;
+
+    private int currentSpriteIndex = 0;
+
     CancellationTokenSource cts;
 
     private void Start()
     {
-        loadingPanel.SetActive(false);
+        if (playOnAwake)
+        {
+            ShowLoading();
+        }
+        else
+        {
+            loadingPanel.SetActive(false);
+        }
     }
 
     public void ShowLoading()
@@ -40,13 +57,23 @@ public class Loading : MonoBehaviour
         while (!token.IsCancellationRequested)
         {
             loadingText.text = "ロード中";
+            UpdateImage();
             await UniTask.Delay(800, cancellationToken: token);
             loadingText.text = "ロード中.";
+            UpdateImage();
             await UniTask.Delay(800, cancellationToken: token);
             loadingText.text = "ロード中..";
+            UpdateImage();
             await UniTask.Delay(800, cancellationToken: token);
             loadingText.text = "ロード中...";
+            UpdateImage();
             await UniTask.Delay(800, cancellationToken: token);
         }
+    }
+
+    private void UpdateImage()
+    {
+        currentSpriteIndex = (currentSpriteIndex + 1) % loadingSprites.Length;
+        loadingImage.sprite = loadingSprites[currentSpriteIndex];
     }
 }
