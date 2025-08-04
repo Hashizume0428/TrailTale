@@ -135,7 +135,7 @@ public class HeroController : MonoBehaviour
         }
     }
 
-    public void OnDamage(int damage)
+    public bool OnDamage(int damage)
     {
         hStatus.hp -= damage * (100 - hStatus.defense) / 100;
         gameObject.GetComponent<SpriteRenderer>().color = new Color32(255, 0, 0, 255); //　主人公を赤色に
@@ -144,9 +144,15 @@ public class HeroController : MonoBehaviour
         if (hStatus.hp <= 0)
         {
             hStatus.isDead = true;
-            Destroy(gameObject);
+            Invoke("DeathAnim", 0.2f); // 死亡アニメーションを再生
+            return true; // 死亡フラグを返す
         }
+        return false; // 死亡フラグを返さない
     }
+    void DeathAnim()
+        {
+        Destroy(this.gameObject);
+        }
     void back()
     {
         gameObject.GetComponent<SpriteRenderer>().color = new Color32(255, 255, 255, 255); // 元の色に戻す

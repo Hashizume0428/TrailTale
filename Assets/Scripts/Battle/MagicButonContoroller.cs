@@ -98,7 +98,7 @@ public class MagicButonContoroller : MonoBehaviour
         }
         
         // 2. MagicTriggerAreaコンポーネントのnullチェック
-        MagicTriggerArea magicTriggerAreaComponent = magicTriggerArea.GetComponent<MagicTriggerArea>();
+        MagicTriggerAreaController magicTriggerAreaComponent = magicTriggerArea.GetComponent<MagicTriggerAreaController>();
         if (magicTriggerAreaComponent == null)
         {
             print("MagicTriggerArea component not found!");
