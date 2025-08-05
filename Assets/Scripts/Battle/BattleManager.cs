@@ -23,6 +23,7 @@ public class BattleManager : MonoBehaviour
 
     private void Start()
     {
+        playerData.Load();
         enemyGenerator.Init(playerData); // プレイヤーデータを敵生成に渡す
         heroController.Init(playerData); // プレイヤーデータをヒーローに渡す
         heroController.OnEnemyKilled += HandleEnemyKilled; // 敵を倒したときのイベントを登録

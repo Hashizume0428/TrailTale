@@ -12,14 +12,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1a1b63ff90fe5d94187ac7e82dcb90f0, type: 3}
   m_Name: PlayerData
   m_EditorClassIdentifier: 
-  atk: 1
+  atk: 10
   def: 1
-  hp: 1
-  spd: 1
-  mp: 1
+  hp: 18
+  spd: 2
+  mp: 10
   latLngList:
     latLngs: []
     eventOccurred: 
   healPotion_S: 0
   healPotion_M: 0
-  healPotion_L: 0
+  healPotion_L: 1
+  currentStoryIndex: 0
+  currentLog: 
+  battleType: 1

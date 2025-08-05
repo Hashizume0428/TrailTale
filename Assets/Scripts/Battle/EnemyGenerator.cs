@@ -71,6 +71,7 @@ public class EnemyGenerator : MonoBehaviour
         if (playerData.battleType == (int)EventLibrary.BattleType.Boss)
         {
             bossCount = 1; // ボス戦の場合はボスの数を1に設定
+            Invoke("GenerateBoss", 10.0f);
         }
         else
         {
@@ -89,11 +90,6 @@ public class EnemyGenerator : MonoBehaviour
             // print("Maximum enemy count reached: " + EnemySumCount);
             // 最大敵数に達した場合は生成を停止
             StopAllGeneration();
-
-            if (playerData.battleType == (int)EventLibrary.BattleType.Boss)
-            {
-                GenerateBoss(); // ボスを生成
-            }
         }
 
     }
