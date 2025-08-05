@@ -1321,6 +1321,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   configPanel: {fileID: 4087805947933376796}
+  playerData: {fileID: 11400000, guid: 284b54170ae143f42bcc21acf4d70cf3, type: 2}
   sceneTransitionDelay: 0.2
   routeInfoDisplayTextBox: {fileID: 0}
 --- !u!4 &1577014322
@@ -1333,56 +1334,6 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0.20331796, y: 0.032324128, z: 2.3969362}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1596781431
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1596781433}
-  - component: {fileID: 1596781432}
-  m_Layer: 0
-  m_Name: TextManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1596781432
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1596781431}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a278aa1a7551de64eb26a7e711f48328, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  mainText: {fileID: 0}
-  speedDisplayText: {fileID: 7696917509754107955}
-  fastSpeed: 0.02
-  normalSpeed: 0.05
-  slowSpeed: 0.1
-  _fullStoryText: "Hello,World!&\u3053\u308C\u306F\u30C6\u30AD\u30B9\u30C8\u8868\u793A\u306E\u30B5\u30F3\u30D7\u30EB\u3067\u3059&\u3053\u3093\u306B\u3061\u306F\uFF01&\u6B21\u306E\u30DA\u30FC\u30B8\u306F\u3053\u308C\u3067\u7D42\u308F\u308A\u3060\u3088\u3002"
---- !u!4 &1596781433
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1596781431}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 307.65845, y: 1067.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1875,7 +1826,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1596781432}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: TextManager, Assembly-CSharp
         m_MethodName: SetSpeedFast
         m_Mode: 1
@@ -3661,7 +3612,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1596781432}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: TextManager, Assembly-CSharp
         m_MethodName: SetSpeedNormal
         m_Mode: 1
@@ -4289,7 +4240,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1596781432}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: TextManager, Assembly-CSharp
         m_MethodName: SetSpeedSlow
         m_Mode: 1
@@ -5055,4 +5006,3 @@ SceneRoots:
   - {fileID: 5265037209537708521}
   - {fileID: 1577014322}
   - {fileID: 308057013}
-  - {fileID: 1596781433}

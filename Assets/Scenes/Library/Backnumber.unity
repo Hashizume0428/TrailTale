@@ -228,7 +228,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   configPanel: {fileID: 4087805947933376796}
+  playerData: {fileID: 0}
   sceneTransitionDelay: 0.2
+  routeInfoDisplayTextBox: {fileID: 0}
 --- !u!4 &1577014322
 Transform:
   m_ObjectHideFlags: 0
@@ -260,7 +262,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1596781432
 MonoBehaviour:
   m_ObjectHideFlags: 0
