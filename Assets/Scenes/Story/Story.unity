@@ -3921,6 +3921,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1669186563159594414, guid: 3808e931181958143a1793f118095248, type: 3}
+      propertyPath: playOnAwake
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5659715037184318747, guid: 3808e931181958143a1793f118095248, type: 3}
       propertyPath: m_Name
       value: LoadingUI
